@@ -4,9 +4,12 @@ Farm Management is a Frappe/ERPNext v15 custom app for agricultural ERP workflow
 
 ## Installation
 
-1. Install the app in a Frappe bench.
-2. Run `bench --site <site> install-app farm_management`.
-3. Run `bench --site <site> migrate` to load DocTypes, custom fields, and fixtures.
+1. Put this repository at `apps/farm_management` in a Frappe bench.
+2. Install the Python package into the bench environment with `bench setup requirements` or `./env/bin/pip install -e apps/farm_management`.
+3. Run `bench --site <site> install-app farm_management`.
+4. Run `bench --site <site> migrate` to load DocTypes, custom fields, and fixtures.
+
+If a site already lists `farm_management` in `sites/apps.txt` but the package was not installed in the bench virtualenv, Frappe will raise `ModuleNotFoundError: No module named 'farm_management'`. Re-run step 2, then restart the bench processes.
 
 ## Configuration
 
