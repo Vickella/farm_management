@@ -1,0 +1,66 @@
+[
+  {
+    "doctype": "Pest",
+    "pest_name": "Fall Armyworm",
+    "pest_type": "Insect",
+    "affects": "Crops",
+    "severity_level": "High",
+    "recommended_treatment": "Integrated pest management and approved treatment."
+  },
+  {
+    "doctype": "Pest",
+    "pest_name": "Aphids",
+    "pest_type": "Insect",
+    "affects": "Crops",
+    "severity_level": "High",
+    "recommended_treatment": "Integrated pest management and approved treatment."
+  },
+  {
+    "doctype": "Pest",
+    "pest_name": "Bollworm",
+    "pest_type": "Insect",
+    "affects": "Crops",
+    "severity_level": "High",
+    "recommended_treatment": "Integrated pest management and approved treatment."
+  },
+  {
+    "doctype": "Pest",
+    "pest_name": "Stem Borer",
+    "pest_type": "Insect",
+    "affects": "Crops",
+    "severity_level": "High",
+    "recommended_treatment": "Integrated pest management and approved treatment."
+  },
+  {
+    "doctype": "Pest",
+    "pest_name": "Whitefly",
+    "pest_type": "Insect",
+    "affects": "Crops",
+    "severity_level": "High",
+    "recommended_treatment": "Integrated pest management and approved treatment."
+  },
+  {
+    "doctype": "Pest",
+    "pest_name": "Red Spider Mite",
+    "pest_type": "Insect",
+    "affects": "Crops",
+    "severity_level": "High",
+    "recommended_treatment": "Integrated pest management and approved treatment."
+  },
+  {
+    "doctype": "Pest",
+    "pest_name": "Cutworm",
+    "pest_type": "Insect",
+    "affects": "Crops",
+    "severity_level": "High",
+    "recommended_treatment": "Integrated pest management and approved treatment."
+  },
+  {
+    "doctype": "Pest",
+    "pest_name": "Thrips",
+    "pest_type": "Insect",
+    "affects": "Crops",
+    "severity_level": "High",
+    "recommended_treatment": "Integrated pest management and approved treatment."
+  }
+]

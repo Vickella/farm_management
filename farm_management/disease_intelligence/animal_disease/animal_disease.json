@@ -1,0 +1,96 @@
+{
+  "doctype": "DocType",
+  "name": "Animal Disease",
+  "module": "Disease Intelligence",
+  "custom": 0,
+  "istable": 0,
+  "issingle": 0,
+  "is_submittable": 0,
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "disease_name",
+    "affects",
+    "symptoms",
+    "mortality_risk",
+    "is_notifiable",
+    "prevention_method",
+    "vaccination_available",
+    "vaccination_schedule",
+    "treatment",
+    "zoonotic_risk"
+  ],
+  "fields": [
+    {
+      "fieldname": "disease_name",
+      "label": "Disease Name",
+      "fieldtype": "Data",
+      "reqd": 1,
+      "unique": 1
+    },
+    {
+      "fieldname": "affects",
+      "label": "Affects",
+      "fieldtype": "Select",
+      "options": "Cattle\nGoats\nSheep\nPigs\nPoultry\nAquaculture\nAll Livestock"
+    },
+    {
+      "fieldname": "symptoms",
+      "label": "Symptoms",
+      "fieldtype": "Text Editor",
+      "reqd": 1
+    },
+    {
+      "fieldname": "mortality_risk",
+      "label": "Mortality Risk",
+      "fieldtype": "Select",
+      "options": "Low\nMedium\nHigh\nVery High",
+      "reqd": 1
+    },
+    {
+      "fieldname": "is_notifiable",
+      "label": "Is Notifiable",
+      "fieldtype": "Check"
+    },
+    {
+      "fieldname": "prevention_method",
+      "label": "Prevention Method",
+      "fieldtype": "Text Editor"
+    },
+    {
+      "fieldname": "vaccination_available",
+      "label": "Vaccination Available",
+      "fieldtype": "Check"
+    },
+    {
+      "fieldname": "vaccination_schedule",
+      "label": "Vaccination Schedule",
+      "fieldtype": "Small Text"
+    },
+    {
+      "fieldname": "treatment",
+      "label": "Treatment",
+      "fieldtype": "Text Editor"
+    },
+    {
+      "fieldname": "zoonotic_risk",
+      "label": "Zoonotic Risk",
+      "fieldtype": "Check"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1,
+      "submit": 0,
+      "cancel": 0,
+      "amend": 0
+    }
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "autoname": "field:disease_name"
+}

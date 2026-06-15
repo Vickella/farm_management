@@ -1,0 +1,90 @@
+{
+  "doctype": "DocType",
+  "name": "Farm Pen",
+  "module": "Farm Infrastructure",
+  "custom": 0,
+  "istable": 0,
+  "issingle": 0,
+  "is_submittable": 0,
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "pen_number",
+    "farm",
+    "pen_type",
+    "capacity",
+    "animal_type",
+    "vaccination_status",
+    "current_occupancy",
+    "occupancy_rate",
+    "notes"
+  ],
+  "fields": [
+    {
+      "fieldname": "pen_number",
+      "label": "Pen Number",
+      "fieldtype": "Data",
+      "reqd": 1
+    },
+    {
+      "fieldname": "farm",
+      "label": "Farm",
+      "fieldtype": "Link",
+      "options": "Farm",
+      "reqd": 1
+    },
+    {
+      "fieldname": "pen_type",
+      "label": "Pen Type",
+      "fieldtype": "Select",
+      "options": "Kraal\nPen\nStall\nShed"
+    },
+    {
+      "fieldname": "capacity",
+      "label": "Capacity",
+      "fieldtype": "Int"
+    },
+    {
+      "fieldname": "animal_type",
+      "label": "Animal Type",
+      "fieldtype": "Link",
+      "options": "Farm Type"
+    },
+    {
+      "fieldname": "vaccination_status",
+      "label": "Vaccination Status",
+      "fieldtype": "Select",
+      "options": "Up to Date\nDue\nOverdue"
+    },
+    {
+      "fieldname": "current_occupancy",
+      "label": "Current Occupancy",
+      "fieldtype": "Int"
+    },
+    {
+      "fieldname": "occupancy_rate",
+      "label": "Occupancy Rate",
+      "fieldtype": "Float",
+      "read_only": 1
+    },
+    {
+      "fieldname": "notes",
+      "label": "Notes",
+      "fieldtype": "Small Text"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1,
+      "submit": 0,
+      "cancel": 0,
+      "amend": 0
+    }
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC"
+}

@@ -1,0 +1,79 @@
+{
+  "doctype": "DocType",
+  "name": "Farm BOM Item",
+  "module": "Farm Bom",
+  "custom": 0,
+  "istable": 1,
+  "issingle": 0,
+  "is_submittable": 0,
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "item_category",
+    "item_description",
+    "item",
+    "quantity",
+    "unit",
+    "unit_cost",
+    "total_cost"
+  ],
+  "fields": [
+    {
+      "fieldname": "item_category",
+      "label": "Item Category",
+      "fieldtype": "Select",
+      "options": "Feed\nMedication\nSeed\nFertilizer\nChemical\nLabor\nUtility\nEquipment\nOther",
+      "reqd": 1
+    },
+    {
+      "fieldname": "item_description",
+      "label": "Item Description",
+      "fieldtype": "Data",
+      "reqd": 1
+    },
+    {
+      "fieldname": "item",
+      "label": "Item",
+      "fieldtype": "Link",
+      "options": "Item"
+    },
+    {
+      "fieldname": "quantity",
+      "label": "Quantity",
+      "fieldtype": "Float",
+      "reqd": 1
+    },
+    {
+      "fieldname": "unit",
+      "label": "Unit",
+      "fieldtype": "Select",
+      "options": "kg\nLitre\nBag\nPiece\nHour\nDay",
+      "reqd": 1
+    },
+    {
+      "fieldname": "unit_cost",
+      "label": "Unit Cost",
+      "fieldtype": "Currency"
+    },
+    {
+      "fieldname": "total_cost",
+      "label": "Total Cost",
+      "fieldtype": "Currency",
+      "read_only": 1
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1,
+      "submit": 0,
+      "cancel": 0,
+      "amend": 0
+    }
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC"
+}

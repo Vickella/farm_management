@@ -1,0 +1,111 @@
+{
+  "doctype": "DocType",
+  "name": "Input Loan Disbursement",
+  "module": "Contract Farming",
+  "custom": 0,
+  "istable": 0,
+  "issingle": 0,
+  "is_submittable": 0,
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "agreement",
+    "farmer",
+    "disbursement_date",
+    "input_type",
+    "item",
+    "quantity",
+    "unit",
+    "value",
+    "recovered",
+    "recovery_date",
+    "recovery_reference",
+    "notes"
+  ],
+  "fields": [
+    {
+      "fieldname": "agreement",
+      "label": "Agreement",
+      "fieldtype": "Link",
+      "options": "Contract Farming Agreement",
+      "reqd": 1
+    },
+    {
+      "fieldname": "farmer",
+      "label": "Farmer",
+      "fieldtype": "Link",
+      "options": "Outgrower Farmer",
+      "reqd": 1
+    },
+    {
+      "fieldname": "disbursement_date",
+      "label": "Disbursement Date",
+      "fieldtype": "Date",
+      "reqd": 1
+    },
+    {
+      "fieldname": "input_type",
+      "label": "Input Type",
+      "fieldtype": "Select",
+      "options": "Seed\nFertilizer\nChemical\nCash",
+      "reqd": 1
+    },
+    {
+      "fieldname": "item",
+      "label": "Item",
+      "fieldtype": "Link",
+      "options": "Item"
+    },
+    {
+      "fieldname": "quantity",
+      "label": "Quantity",
+      "fieldtype": "Float"
+    },
+    {
+      "fieldname": "unit",
+      "label": "Unit",
+      "fieldtype": "Data"
+    },
+    {
+      "fieldname": "value",
+      "label": "Value",
+      "fieldtype": "Currency",
+      "reqd": 1
+    },
+    {
+      "fieldname": "recovered",
+      "label": "Recovered",
+      "fieldtype": "Check"
+    },
+    {
+      "fieldname": "recovery_date",
+      "label": "Recovery Date",
+      "fieldtype": "Date"
+    },
+    {
+      "fieldname": "recovery_reference",
+      "label": "Recovery Reference",
+      "fieldtype": "Data"
+    },
+    {
+      "fieldname": "notes",
+      "label": "Notes",
+      "fieldtype": "Small Text"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1,
+      "submit": 0,
+      "cancel": 0,
+      "amend": 0
+    }
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "autoname": "ILD-.####"
+}

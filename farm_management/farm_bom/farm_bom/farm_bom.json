@@ -1,0 +1,104 @@
+{
+  "doctype": "DocType",
+  "name": "Farm BOM",
+  "module": "Farm Bom",
+  "custom": 0,
+  "istable": 0,
+  "issingle": 0,
+  "is_submittable": 0,
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "bom_title",
+    "project_type",
+    "farm",
+    "planned_quantity",
+    "planned_quantity_unit",
+    "production_cycle_days",
+    "planned_start_date",
+    "planned_end_date",
+    "bom_items",
+    "total_estimated_cost",
+    "notes"
+  ],
+  "fields": [
+    {
+      "fieldname": "bom_title",
+      "label": "BOM Title",
+      "fieldtype": "Data",
+      "reqd": 1
+    },
+    {
+      "fieldname": "project_type",
+      "label": "Project Type",
+      "fieldtype": "Select",
+      "options": "Crop Production\nPoultry Production\nFish Farming\nDairy Production\nGoat Farming\nPig Farming\nGreenhouse Farming",
+      "reqd": 1
+    },
+    {
+      "fieldname": "farm",
+      "label": "Farm",
+      "fieldtype": "Link",
+      "options": "Farm"
+    },
+    {
+      "fieldname": "planned_quantity",
+      "label": "Planned Quantity",
+      "fieldtype": "Float",
+      "reqd": 1
+    },
+    {
+      "fieldname": "planned_quantity_unit",
+      "label": "Planned Quantity Unit",
+      "fieldtype": "Select",
+      "options": "Birds\nHead\nHectare\nKg\nUnits"
+    },
+    {
+      "fieldname": "production_cycle_days",
+      "label": "Production Cycle Days",
+      "fieldtype": "Int"
+    },
+    {
+      "fieldname": "planned_start_date",
+      "label": "Planned Start Date",
+      "fieldtype": "Date"
+    },
+    {
+      "fieldname": "planned_end_date",
+      "label": "Planned End Date",
+      "fieldtype": "Date"
+    },
+    {
+      "fieldname": "bom_items",
+      "label": "BOM Items",
+      "fieldtype": "Table",
+      "options": "Farm BOM Item"
+    },
+    {
+      "fieldname": "total_estimated_cost",
+      "label": "Total Estimated Cost",
+      "fieldtype": "Currency",
+      "read_only": 1
+    },
+    {
+      "fieldname": "notes",
+      "label": "Notes",
+      "fieldtype": "Small Text"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1,
+      "submit": 0,
+      "cancel": 0,
+      "amend": 0
+    }
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "autoname": "FBOM-.####"
+}

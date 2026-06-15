@@ -1,0 +1,135 @@
+{
+  "doctype": "DocType",
+  "name": "Contract Farming Agreement",
+  "module": "Contract Farming",
+  "custom": 0,
+  "istable": 0,
+  "issingle": 0,
+  "is_submittable": 0,
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "farmer",
+    "farm",
+    "contract_start_date",
+    "contract_end_date",
+    "crop_type",
+    "contracted_area_ha",
+    "production_target_kg",
+    "agreed_purchase_price_per_kg",
+    "seed_value",
+    "fertilizer_value",
+    "chemical_value",
+    "total_input_loan",
+    "total_expected_purchase",
+    "quality_standards",
+    "status"
+  ],
+  "fields": [
+    {
+      "fieldname": "farmer",
+      "label": "Farmer",
+      "fieldtype": "Link",
+      "options": "Outgrower Farmer",
+      "reqd": 1
+    },
+    {
+      "fieldname": "farm",
+      "label": "Farm",
+      "fieldtype": "Link",
+      "options": "Farm",
+      "reqd": 1
+    },
+    {
+      "fieldname": "contract_start_date",
+      "label": "Contract Start Date",
+      "fieldtype": "Date",
+      "reqd": 1
+    },
+    {
+      "fieldname": "contract_end_date",
+      "label": "Contract End Date",
+      "fieldtype": "Date",
+      "reqd": 1
+    },
+    {
+      "fieldname": "crop_type",
+      "label": "Crop Type",
+      "fieldtype": "Link",
+      "options": "Crop Type",
+      "reqd": 1
+    },
+    {
+      "fieldname": "contracted_area_ha",
+      "label": "Contracted Area Ha",
+      "fieldtype": "Float",
+      "reqd": 1
+    },
+    {
+      "fieldname": "production_target_kg",
+      "label": "Production Target Kg",
+      "fieldtype": "Float",
+      "reqd": 1
+    },
+    {
+      "fieldname": "agreed_purchase_price_per_kg",
+      "label": "Agreed Purchase Price Per Kg",
+      "fieldtype": "Currency",
+      "reqd": 1
+    },
+    {
+      "fieldname": "seed_value",
+      "label": "Seed Value",
+      "fieldtype": "Currency"
+    },
+    {
+      "fieldname": "fertilizer_value",
+      "label": "Fertilizer Value",
+      "fieldtype": "Currency"
+    },
+    {
+      "fieldname": "chemical_value",
+      "label": "Chemical Value",
+      "fieldtype": "Currency"
+    },
+    {
+      "fieldname": "total_input_loan",
+      "label": "Total Input Loan",
+      "fieldtype": "Currency",
+      "read_only": 1
+    },
+    {
+      "fieldname": "total_expected_purchase",
+      "label": "Total Expected Purchase",
+      "fieldtype": "Currency",
+      "read_only": 1
+    },
+    {
+      "fieldname": "quality_standards",
+      "label": "Quality Standards",
+      "fieldtype": "Text Editor"
+    },
+    {
+      "fieldname": "status",
+      "label": "Status",
+      "fieldtype": "Select",
+      "options": "Draft\nActive\nCompleted\nDefaulted\nCancelled",
+      "reqd": 1
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1,
+      "submit": 0,
+      "cancel": 0,
+      "amend": 0
+    }
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "autoname": "CFA-.####"
+}

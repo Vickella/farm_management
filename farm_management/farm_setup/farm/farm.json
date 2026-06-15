@@ -1,0 +1,134 @@
+{
+  "doctype": "DocType",
+  "name": "Farm",
+  "module": "Farm Setup",
+  "custom": 0,
+  "istable": 0,
+  "issingle": 0,
+  "is_submittable": 0,
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "farm_name",
+    "owner",
+    "farm_registration_number",
+    "farm_type",
+    "location",
+    "gps_coordinates",
+    "total_land_size",
+    "irrigation_type",
+    "water_source",
+    "soil_type",
+    "climate_zone",
+    "farm_manager",
+    "operational_status",
+    "amended_from"
+  ],
+  "fields": [
+    {
+      "fieldname": "farm_name",
+      "label": "Farm Name",
+      "fieldtype": "Data",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "owner",
+      "label": "Owner",
+      "fieldtype": "Link",
+      "options": "Customer",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "farm_registration_number",
+      "label": "Farm Registration Number",
+      "fieldtype": "Data"
+    },
+    {
+      "fieldname": "farm_type",
+      "label": "Farm Type",
+      "fieldtype": "Table MultiSelect",
+      "options": "Farm Type",
+      "reqd": 1
+    },
+    {
+      "fieldname": "location",
+      "label": "Location",
+      "fieldtype": "Data",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "gps_coordinates",
+      "label": "GPS Coordinates",
+      "fieldtype": "Geolocation"
+    },
+    {
+      "fieldname": "total_land_size",
+      "label": "Total Land Size (Ha)",
+      "fieldtype": "Float",
+      "reqd": 1
+    },
+    {
+      "fieldname": "irrigation_type",
+      "label": "Irrigation Type",
+      "fieldtype": "Select",
+      "options": "None\nDrip\nSprinkler\nFlood\nCentre Pivot\nRainfed"
+    },
+    {
+      "fieldname": "water_source",
+      "label": "Water Source",
+      "fieldtype": "Select",
+      "options": "Borehole\nRiver\nDam\nMunicipal\nRainwater Harvesting"
+    },
+    {
+      "fieldname": "soil_type",
+      "label": "Soil Type",
+      "fieldtype": "Select",
+      "options": "Sandy\nClay\nLoam\nSandy Loam\nClay Loam\nSilt"
+    },
+    {
+      "fieldname": "climate_zone",
+      "label": "Climate Zone",
+      "fieldtype": "Select",
+      "options": "Region 1\nRegion 2\nRegion 3\nRegion 4\nRegion 5"
+    },
+    {
+      "fieldname": "farm_manager",
+      "label": "Farm Manager",
+      "fieldtype": "Link",
+      "options": "Employee"
+    },
+    {
+      "fieldname": "operational_status",
+      "label": "Operational Status",
+      "fieldtype": "Select",
+      "options": "Active\nDormant\nDecommissioned",
+      "reqd": 1,
+      "in_list_view": 1,
+      "default": "Active"
+    },
+    {
+      "fieldname": "amended_from",
+      "label": "Amended From",
+      "fieldtype": "Link",
+      "options": "Farm"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1,
+      "submit": 0,
+      "cancel": 0,
+      "amend": 0
+    }
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "autoname": "FM-.####",
+  "title_field": "farm_name"
+}
