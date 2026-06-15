@@ -1,0 +1,107 @@
+{
+  "doctype": "DocType",
+  "name": "Harvest Recovery",
+  "module": "Contract Farming",
+  "custom": 0,
+  "istable": 0,
+  "issingle": 0,
+  "is_submittable": 0,
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "agreement",
+    "farmer",
+    "recovery_date",
+    "quantity_delivered_kg",
+    "quality_grade",
+    "purchase_price_per_kg",
+    "gross_payment",
+    "loan_recovery_amount",
+    "net_payment",
+    "payment_reference",
+    "payment_status"
+  ],
+  "fields": [
+    {
+      "fieldname": "agreement",
+      "label": "Agreement",
+      "fieldtype": "Link",
+      "options": "Contract Farming Agreement",
+      "reqd": 1
+    },
+    {
+      "fieldname": "farmer",
+      "label": "Farmer",
+      "fieldtype": "Link",
+      "options": "Outgrower Farmer",
+      "reqd": 1
+    },
+    {
+      "fieldname": "recovery_date",
+      "label": "Recovery Date",
+      "fieldtype": "Date",
+      "reqd": 1
+    },
+    {
+      "fieldname": "quantity_delivered_kg",
+      "label": "Quantity Delivered Kg",
+      "fieldtype": "Float",
+      "reqd": 1
+    },
+    {
+      "fieldname": "quality_grade",
+      "label": "Quality Grade",
+      "fieldtype": "Select",
+      "options": "Grade A\nGrade B\nGrade C\nRejected"
+    },
+    {
+      "fieldname": "purchase_price_per_kg",
+      "label": "Purchase Price Per Kg",
+      "fieldtype": "Currency",
+      "reqd": 1
+    },
+    {
+      "fieldname": "gross_payment",
+      "label": "Gross Payment",
+      "fieldtype": "Currency",
+      "read_only": 1
+    },
+    {
+      "fieldname": "loan_recovery_amount",
+      "label": "Loan Recovery Amount",
+      "fieldtype": "Currency"
+    },
+    {
+      "fieldname": "net_payment",
+      "label": "Net Payment",
+      "fieldtype": "Currency",
+      "read_only": 1
+    },
+    {
+      "fieldname": "payment_reference",
+      "label": "Payment Reference",
+      "fieldtype": "Data"
+    },
+    {
+      "fieldname": "payment_status",
+      "label": "Payment Status",
+      "fieldtype": "Select",
+      "options": "Pending\nPaid\nPartial"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1,
+      "submit": 0,
+      "cancel": 0,
+      "amend": 0
+    }
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "autoname": "HR-.####"
+}

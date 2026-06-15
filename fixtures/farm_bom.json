@@ -1,0 +1,45 @@
+[
+  {
+    "doctype": "Farm BOM",
+    "bom_title": "100 Broiler Cycle",
+    "project_type": "Poultry Production",
+    "planned_quantity": 100,
+    "planned_quantity_unit": "Birds",
+    "production_cycle_days": 42,
+    "bom_items": [
+      {
+        "doctype": "Farm BOM Item",
+        "item_category": "Other",
+        "item_description": "Chicks",
+        "quantity": 100,
+        "unit": "Piece",
+        "unit_cost": 1
+      },
+      {
+        "doctype": "Farm BOM Item",
+        "item_category": "Feed",
+        "item_description": "Starter Feed",
+        "quantity": 150,
+        "unit": "kg",
+        "unit_cost": 0.6
+      }
+    ]
+  },
+  {
+    "doctype": "Farm BOM",
+    "bom_title": "10Ha Maize Production",
+    "project_type": "Crop Production",
+    "planned_quantity": 10,
+    "planned_quantity_unit": "Hectare",
+    "bom_items": [
+      {
+        "doctype": "Farm BOM Item",
+        "item_category": "Seed",
+        "item_description": "Seed",
+        "quantity": 25,
+        "unit": "kg",
+        "unit_cost": 4
+      }
+    ]
+  }
+]

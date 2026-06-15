@@ -1,0 +1,177 @@
+[
+  {
+    "doctype": "Farm Activity Type",
+    "activity_name": "Crop Farming - Land Preparation",
+    "farm_category": "Crop Farming",
+    "default_frequency": "As Required",
+    "is_active": 1
+  },
+  {
+    "doctype": "Farm Activity Type",
+    "activity_name": "Crop Farming - Ploughing",
+    "farm_category": "Crop Farming",
+    "default_frequency": "As Required",
+    "is_active": 1
+  },
+  {
+    "doctype": "Farm Activity Type",
+    "activity_name": "Crop Farming - Planting",
+    "farm_category": "Crop Farming",
+    "default_frequency": "As Required",
+    "is_active": 1
+  },
+  {
+    "doctype": "Farm Activity Type",
+    "activity_name": "Crop Farming - Irrigation",
+    "farm_category": "Crop Farming",
+    "default_frequency": "As Required",
+    "is_active": 1
+  },
+  {
+    "doctype": "Farm Activity Type",
+    "activity_name": "Crop Farming - Weeding",
+    "farm_category": "Crop Farming",
+    "default_frequency": "As Required",
+    "is_active": 1
+  },
+  {
+    "doctype": "Farm Activity Type",
+    "activity_name": "Crop Farming - Pest Control",
+    "farm_category": "Crop Farming",
+    "default_frequency": "As Required",
+    "is_active": 1
+  },
+  {
+    "doctype": "Farm Activity Type",
+    "activity_name": "Crop Farming - Fertilizer Application",
+    "farm_category": "Crop Farming",
+    "default_frequency": "As Required",
+    "is_active": 1
+  },
+  {
+    "doctype": "Farm Activity Type",
+    "activity_name": "Crop Farming - Harvesting",
+    "farm_category": "Crop Farming",
+    "default_frequency": "As Required",
+    "is_active": 1
+  },
+  {
+    "doctype": "Farm Activity Type",
+    "activity_name": "Poultry - Feeding",
+    "farm_category": "Poultry",
+    "default_frequency": "As Required",
+    "is_active": 1
+  },
+  {
+    "doctype": "Farm Activity Type",
+    "activity_name": "Poultry - Vaccination",
+    "farm_category": "Poultry",
+    "default_frequency": "As Required",
+    "is_active": 1
+  },
+  {
+    "doctype": "Farm Activity Type",
+    "activity_name": "Poultry - Temperature Monitoring",
+    "farm_category": "Poultry",
+    "default_frequency": "As Required",
+    "is_active": 1
+  },
+  {
+    "doctype": "Farm Activity Type",
+    "activity_name": "Poultry - Cleaning",
+    "farm_category": "Poultry",
+    "default_frequency": "As Required",
+    "is_active": 1
+  },
+  {
+    "doctype": "Farm Activity Type",
+    "activity_name": "Poultry - Medication",
+    "farm_category": "Poultry",
+    "default_frequency": "As Required",
+    "is_active": 1
+  },
+  {
+    "doctype": "Farm Activity Type",
+    "activity_name": "Poultry - Brooding",
+    "farm_category": "Poultry",
+    "default_frequency": "As Required",
+    "is_active": 1
+  },
+  {
+    "doctype": "Farm Activity Type",
+    "activity_name": "Poultry - Egg Collection",
+    "farm_category": "Poultry",
+    "default_frequency": "As Required",
+    "is_active": 1
+  },
+  {
+    "doctype": "Farm Activity Type",
+    "activity_name": "Livestock - Dipping",
+    "farm_category": "Livestock",
+    "default_frequency": "As Required",
+    "is_active": 1
+  },
+  {
+    "doctype": "Farm Activity Type",
+    "activity_name": "Livestock - Vaccination",
+    "farm_category": "Livestock",
+    "default_frequency": "As Required",
+    "is_active": 1
+  },
+  {
+    "doctype": "Farm Activity Type",
+    "activity_name": "Livestock - Deworming",
+    "farm_category": "Livestock",
+    "default_frequency": "As Required",
+    "is_active": 1
+  },
+  {
+    "doctype": "Farm Activity Type",
+    "activity_name": "Livestock - Artificial Insemination",
+    "farm_category": "Livestock",
+    "default_frequency": "As Required",
+    "is_active": 1
+  },
+  {
+    "doctype": "Farm Activity Type",
+    "activity_name": "Livestock - Weight Monitoring",
+    "farm_category": "Livestock",
+    "default_frequency": "As Required",
+    "is_active": 1
+  },
+  {
+    "doctype": "Farm Activity Type",
+    "activity_name": "Aquaculture - Water Testing",
+    "farm_category": "Aquaculture",
+    "default_frequency": "As Required",
+    "is_active": 1
+  },
+  {
+    "doctype": "Farm Activity Type",
+    "activity_name": "Aquaculture - Feeding",
+    "farm_category": "Aquaculture",
+    "default_frequency": "As Required",
+    "is_active": 1
+  },
+  {
+    "doctype": "Farm Activity Type",
+    "activity_name": "Aquaculture - Oxygen Monitoring",
+    "farm_category": "Aquaculture",
+    "default_frequency": "As Required",
+    "is_active": 1
+  },
+  {
+    "doctype": "Farm Activity Type",
+    "activity_name": "Aquaculture - Disease Inspection",
+    "farm_category": "Aquaculture",
+    "default_frequency": "As Required",
+    "is_active": 1
+  },
+  {
+    "doctype": "Farm Activity Type",
+    "activity_name": "Aquaculture - Harvest Planning",
+    "farm_category": "Aquaculture",
+    "default_frequency": "As Required",
+    "is_active": 1
+  }
+]

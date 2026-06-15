@@ -1,0 +1,95 @@
+{
+  "doctype": "DocType",
+  "name": "Outgrower Farmer",
+  "module": "Contract Farming",
+  "custom": 0,
+  "istable": 0,
+  "issingle": 0,
+  "is_submittable": 0,
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "farmer_name",
+    "national_id",
+    "phone",
+    "email",
+    "location",
+    "farm_size_ha",
+    "primary_crop",
+    "bank_name",
+    "bank_account_number",
+    "is_active"
+  ],
+  "fields": [
+    {
+      "fieldname": "farmer_name",
+      "label": "Farmer Name",
+      "fieldtype": "Data",
+      "reqd": 1
+    },
+    {
+      "fieldname": "national_id",
+      "label": "National ID",
+      "fieldtype": "Data",
+      "reqd": 1,
+      "unique": 1
+    },
+    {
+      "fieldname": "phone",
+      "label": "Phone",
+      "fieldtype": "Data"
+    },
+    {
+      "fieldname": "email",
+      "label": "Email",
+      "fieldtype": "Data"
+    },
+    {
+      "fieldname": "location",
+      "label": "Location",
+      "fieldtype": "Data"
+    },
+    {
+      "fieldname": "farm_size_ha",
+      "label": "Farm Size Ha",
+      "fieldtype": "Float"
+    },
+    {
+      "fieldname": "primary_crop",
+      "label": "Primary Crop",
+      "fieldtype": "Link",
+      "options": "Crop Type"
+    },
+    {
+      "fieldname": "bank_name",
+      "label": "Bank Name",
+      "fieldtype": "Data"
+    },
+    {
+      "fieldname": "bank_account_number",
+      "label": "Bank Account Number",
+      "fieldtype": "Data"
+    },
+    {
+      "fieldname": "is_active",
+      "label": "Is Active",
+      "fieldtype": "Check",
+      "default": 1
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1,
+      "submit": 0,
+      "cancel": 0,
+      "amend": 0
+    }
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "autoname": "OGF-.####"
+}

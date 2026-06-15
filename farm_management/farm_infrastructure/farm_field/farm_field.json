@@ -1,0 +1,93 @@
+{
+  "doctype": "DocType",
+  "name": "Farm Field",
+  "module": "Farm Infrastructure",
+  "custom": 0,
+  "istable": 0,
+  "issingle": 0,
+  "is_submittable": 0,
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "field_number",
+    "farm",
+    "field_size_ha",
+    "soil_type",
+    "crop_assigned",
+    "irrigation_method",
+    "current_status",
+    "last_harvest_date",
+    "notes"
+  ],
+  "fields": [
+    {
+      "fieldname": "field_number",
+      "label": "Field Number",
+      "fieldtype": "Data",
+      "reqd": 1
+    },
+    {
+      "fieldname": "farm",
+      "label": "Farm",
+      "fieldtype": "Link",
+      "options": "Farm",
+      "reqd": 1
+    },
+    {
+      "fieldname": "field_size_ha",
+      "label": "Field Size Ha",
+      "fieldtype": "Float",
+      "reqd": 1
+    },
+    {
+      "fieldname": "soil_type",
+      "label": "Soil Type",
+      "fieldtype": "Select",
+      "options": "Sandy\nClay\nLoam\nSandy Loam\nClay Loam\nSilt"
+    },
+    {
+      "fieldname": "crop_assigned",
+      "label": "Crop Assigned",
+      "fieldtype": "Link",
+      "options": "Crop Type"
+    },
+    {
+      "fieldname": "irrigation_method",
+      "label": "Irrigation Method",
+      "fieldtype": "Select",
+      "options": "None\nDrip\nSprinkler\nFlood"
+    },
+    {
+      "fieldname": "current_status",
+      "label": "Current Status",
+      "fieldtype": "Select",
+      "options": "Active\nFallow\nUnder Preparation\nHarvested",
+      "reqd": 1
+    },
+    {
+      "fieldname": "last_harvest_date",
+      "label": "Last Harvest Date",
+      "fieldtype": "Date"
+    },
+    {
+      "fieldname": "notes",
+      "label": "Notes",
+      "fieldtype": "Small Text"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1,
+      "submit": 0,
+      "cancel": 0,
+      "amend": 0
+    }
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "autoname": "format:{farm}-{field_number}"
+}

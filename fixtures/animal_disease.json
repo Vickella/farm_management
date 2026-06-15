@@ -1,0 +1,65 @@
+[
+  {
+    "doctype": "Animal Disease",
+    "disease_name": "Newcastle Disease",
+    "affects": "All Livestock",
+    "symptoms": "Clinical signs vary; consult a veterinarian.",
+    "mortality_risk": "High"
+  },
+  {
+    "doctype": "Animal Disease",
+    "disease_name": "Foot and Mouth Disease",
+    "affects": "All Livestock",
+    "symptoms": "Clinical signs vary; consult a veterinarian.",
+    "mortality_risk": "High"
+  },
+  {
+    "doctype": "Animal Disease",
+    "disease_name": "Anthrax",
+    "affects": "All Livestock",
+    "symptoms": "Clinical signs vary; consult a veterinarian.",
+    "mortality_risk": "High"
+  },
+  {
+    "doctype": "Animal Disease",
+    "disease_name": "Mastitis",
+    "affects": "All Livestock",
+    "symptoms": "Clinical signs vary; consult a veterinarian.",
+    "mortality_risk": "High"
+  },
+  {
+    "doctype": "Animal Disease",
+    "disease_name": "Coccidiosis",
+    "affects": "All Livestock",
+    "symptoms": "Clinical signs vary; consult a veterinarian.",
+    "mortality_risk": "High"
+  },
+  {
+    "doctype": "Animal Disease",
+    "disease_name": "African Swine Fever",
+    "affects": "All Livestock",
+    "symptoms": "Clinical signs vary; consult a veterinarian.",
+    "mortality_risk": "High"
+  },
+  {
+    "doctype": "Animal Disease",
+    "disease_name": "Avian Influenza",
+    "affects": "All Livestock",
+    "symptoms": "Clinical signs vary; consult a veterinarian.",
+    "mortality_risk": "High"
+  },
+  {
+    "doctype": "Animal Disease",
+    "disease_name": "Lumpy Skin Disease",
+    "affects": "All Livestock",
+    "symptoms": "Clinical signs vary; consult a veterinarian.",
+    "mortality_risk": "High"
+  },
+  {
+    "doctype": "Animal Disease",
+    "disease_name": "Theileriosis (East Coast Fever)",
+    "affects": "All Livestock",
+    "symptoms": "Clinical signs vary; consult a veterinarian.",
+    "mortality_risk": "High"
+  }
+]

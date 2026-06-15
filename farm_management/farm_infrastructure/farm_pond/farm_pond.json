@@ -1,0 +1,100 @@
+{
+  "doctype": "DocType",
+  "name": "Farm Pond",
+  "module": "Farm Infrastructure",
+  "custom": 0,
+  "istable": 0,
+  "issingle": 0,
+  "is_submittable": 0,
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "pond_number",
+    "farm",
+    "depth_meters",
+    "water_capacity_litres",
+    "species",
+    "water_quality_ph",
+    "water_quality_temperature",
+    "water_quality_oxygen_ppm",
+    "stocking_date",
+    "harvest_projection_date",
+    "current_status"
+  ],
+  "fields": [
+    {
+      "fieldname": "pond_number",
+      "label": "Pond Number",
+      "fieldtype": "Data",
+      "reqd": 1
+    },
+    {
+      "fieldname": "farm",
+      "label": "Farm",
+      "fieldtype": "Link",
+      "options": "Farm",
+      "reqd": 1
+    },
+    {
+      "fieldname": "depth_meters",
+      "label": "Depth Meters",
+      "fieldtype": "Float"
+    },
+    {
+      "fieldname": "water_capacity_litres",
+      "label": "Water Capacity Litres",
+      "fieldtype": "Float"
+    },
+    {
+      "fieldname": "species",
+      "label": "Species",
+      "fieldtype": "Link",
+      "options": "Farm Type"
+    },
+    {
+      "fieldname": "water_quality_ph",
+      "label": "Water Quality Ph",
+      "fieldtype": "Float"
+    },
+    {
+      "fieldname": "water_quality_temperature",
+      "label": "Water Quality Temperature",
+      "fieldtype": "Float"
+    },
+    {
+      "fieldname": "water_quality_oxygen_ppm",
+      "label": "Water Quality Oxygen Ppm",
+      "fieldtype": "Float"
+    },
+    {
+      "fieldname": "stocking_date",
+      "label": "Stocking Date",
+      "fieldtype": "Date"
+    },
+    {
+      "fieldname": "harvest_projection_date",
+      "label": "Harvest Projection Date",
+      "fieldtype": "Date"
+    },
+    {
+      "fieldname": "current_status",
+      "label": "Current Status",
+      "fieldtype": "Select",
+      "options": "Active\nDry\nUnder Maintenance"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1,
+      "submit": 0,
+      "cancel": 0,
+      "amend": 0
+    }
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC"
+}

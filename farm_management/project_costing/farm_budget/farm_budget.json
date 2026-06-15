@@ -1,0 +1,110 @@
+{
+  "doctype": "DocType",
+  "name": "Farm Budget",
+  "module": "Project Costing",
+  "custom": 0,
+  "istable": 0,
+  "issingle": 0,
+  "is_submittable": 0,
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "budget_title",
+    "farm",
+    "project",
+    "farm_bom",
+    "budget_period_start",
+    "budget_period_end",
+    "budget_items",
+    "total_budget",
+    "total_actual",
+    "total_variance",
+    "status"
+  ],
+  "fields": [
+    {
+      "fieldname": "budget_title",
+      "label": "Budget Title",
+      "fieldtype": "Data",
+      "reqd": 1
+    },
+    {
+      "fieldname": "farm",
+      "label": "Farm",
+      "fieldtype": "Link",
+      "options": "Farm",
+      "reqd": 1
+    },
+    {
+      "fieldname": "project",
+      "label": "Project",
+      "fieldtype": "Link",
+      "options": "Project"
+    },
+    {
+      "fieldname": "farm_bom",
+      "label": "Farm BOM",
+      "fieldtype": "Link",
+      "options": "Farm BOM"
+    },
+    {
+      "fieldname": "budget_period_start",
+      "label": "Budget Period Start",
+      "fieldtype": "Date",
+      "reqd": 1
+    },
+    {
+      "fieldname": "budget_period_end",
+      "label": "Budget Period End",
+      "fieldtype": "Date",
+      "reqd": 1
+    },
+    {
+      "fieldname": "budget_items",
+      "label": "Budget Items",
+      "fieldtype": "Table",
+      "options": "Farm Budget Item"
+    },
+    {
+      "fieldname": "total_budget",
+      "label": "Total Budget",
+      "fieldtype": "Currency",
+      "read_only": 1
+    },
+    {
+      "fieldname": "total_actual",
+      "label": "Total Actual",
+      "fieldtype": "Currency",
+      "read_only": 1
+    },
+    {
+      "fieldname": "total_variance",
+      "label": "Total Variance",
+      "fieldtype": "Currency",
+      "read_only": 1
+    },
+    {
+      "fieldname": "status",
+      "label": "Status",
+      "fieldtype": "Select",
+      "options": "Draft\nApproved\nActive\nClosed",
+      "reqd": 1,
+      "default": "Draft"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1,
+      "submit": 0,
+      "cancel": 0,
+      "amend": 0
+    }
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "autoname": "FBUDG-.####"
+}

@@ -1,0 +1,102 @@
+{
+  "doctype": "DocType",
+  "name": "Harvest Transaction",
+  "module": "Biological Assets",
+  "custom": 0,
+  "istable": 0,
+  "issingle": 0,
+  "is_submittable": 1,
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "farm",
+    "biological_asset",
+    "harvest_date",
+    "quantity_harvested",
+    "unit",
+    "quality_grade",
+    "conversion_item",
+    "stock_entry",
+    "harvest_value",
+    "notes"
+  ],
+  "fields": [
+    {
+      "fieldname": "farm",
+      "label": "Farm",
+      "fieldtype": "Link",
+      "options": "Farm",
+      "reqd": 1
+    },
+    {
+      "fieldname": "biological_asset",
+      "label": "Biological Asset",
+      "fieldtype": "Link",
+      "options": "Biological Asset",
+      "reqd": 1
+    },
+    {
+      "fieldname": "harvest_date",
+      "label": "Harvest Date",
+      "fieldtype": "Date",
+      "reqd": 1
+    },
+    {
+      "fieldname": "quantity_harvested",
+      "label": "Quantity Harvested",
+      "fieldtype": "Float",
+      "reqd": 1
+    },
+    {
+      "fieldname": "unit",
+      "label": "Unit",
+      "fieldtype": "Select",
+      "options": "kg\nTonne\nBag\nHead\nBird",
+      "reqd": 1
+    },
+    {
+      "fieldname": "quality_grade",
+      "label": "Quality Grade",
+      "fieldtype": "Select",
+      "options": "Grade A\nGrade B\nGrade C\nOff-grade"
+    },
+    {
+      "fieldname": "conversion_item",
+      "label": "Conversion Item",
+      "fieldtype": "Link",
+      "options": "Item"
+    },
+    {
+      "fieldname": "stock_entry",
+      "label": "Stock Entry",
+      "fieldtype": "Link",
+      "options": "Stock Entry",
+      "read_only": 1
+    },
+    {
+      "fieldname": "harvest_value",
+      "label": "Harvest Value",
+      "fieldtype": "Currency"
+    },
+    {
+      "fieldname": "notes",
+      "label": "Notes",
+      "fieldtype": "Small Text"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1,
+      "submit": 1,
+      "cancel": 1,
+      "amend": 1
+    }
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "autoname": "HT-.####"
+}
