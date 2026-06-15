@@ -1,0 +1,53 @@
+{
+  "doctype": "DocType",
+  "name": "Farm Type",
+  "module": "Farm Setup",
+  "custom": 0,
+  "istable": 0,
+  "issingle": 0,
+  "is_submittable": 0,
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "farm_type_name",
+    "category",
+    "description"
+  ],
+  "fields": [
+    {
+      "fieldname": "farm_type_name",
+      "label": "Farm Type Name",
+      "fieldtype": "Data",
+      "reqd": 1,
+      "unique": 1
+    },
+    {
+      "fieldname": "category",
+      "label": "Category",
+      "fieldtype": "Select",
+      "options": "Crop Farming\nHorticulture\nAnimal Husbandry\nPoultry\nAquaculture",
+      "reqd": 1
+    },
+    {
+      "fieldname": "description",
+      "label": "Description",
+      "fieldtype": "Small Text"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1,
+      "submit": 0,
+      "cancel": 0,
+      "amend": 0
+    }
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "autoname": "field:farm_type_name",
+  "title_field": "farm_type_name"
+}

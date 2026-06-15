@@ -1,0 +1,89 @@
+{
+  "doctype": "DocType",
+  "name": "Fowl Run",
+  "module": "Farm Infrastructure",
+  "custom": 0,
+  "istable": 0,
+  "issingle": 0,
+  "is_submittable": 0,
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "run_number",
+    "farm",
+    "capacity",
+    "bird_type",
+    "temperature_celsius",
+    "mortality_rate_percent",
+    "feeding_schedule",
+    "current_flock_size",
+    "current_status"
+  ],
+  "fields": [
+    {
+      "fieldname": "run_number",
+      "label": "Run Number",
+      "fieldtype": "Data",
+      "reqd": 1
+    },
+    {
+      "fieldname": "farm",
+      "label": "Farm",
+      "fieldtype": "Link",
+      "options": "Farm",
+      "reqd": 1
+    },
+    {
+      "fieldname": "capacity",
+      "label": "Capacity",
+      "fieldtype": "Int"
+    },
+    {
+      "fieldname": "bird_type",
+      "label": "Bird Type",
+      "fieldtype": "Link",
+      "options": "Farm Type"
+    },
+    {
+      "fieldname": "temperature_celsius",
+      "label": "Temperature Celsius",
+      "fieldtype": "Float"
+    },
+    {
+      "fieldname": "mortality_rate_percent",
+      "label": "Mortality Rate Percent",
+      "fieldtype": "Float"
+    },
+    {
+      "fieldname": "feeding_schedule",
+      "label": "Feeding Schedule",
+      "fieldtype": "Select",
+      "options": "Ad Lib\nRestricted\nTimed"
+    },
+    {
+      "fieldname": "current_flock_size",
+      "label": "Current Flock Size",
+      "fieldtype": "Int"
+    },
+    {
+      "fieldname": "current_status",
+      "label": "Current Status",
+      "fieldtype": "Select",
+      "options": "Active\nEmpty\nCleaning"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1,
+      "submit": 0,
+      "cancel": 0,
+      "amend": 0
+    }
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC"
+}

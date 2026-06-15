@@ -1,0 +1,170 @@
+[
+  {
+    "doctype": "Farm Type",
+    "farm_type_name": "Maize",
+    "category": "Crop Farming",
+    "description": "Maize farming"
+  },
+  {
+    "doctype": "Farm Type",
+    "farm_type_name": "Wheat",
+    "category": "Crop Farming",
+    "description": "Wheat farming"
+  },
+  {
+    "doctype": "Farm Type",
+    "farm_type_name": "Soybeans",
+    "category": "Crop Farming",
+    "description": "Soybeans farming"
+  },
+  {
+    "doctype": "Farm Type",
+    "farm_type_name": "Tobacco",
+    "category": "Crop Farming",
+    "description": "Tobacco farming"
+  },
+  {
+    "doctype": "Farm Type",
+    "farm_type_name": "Cotton",
+    "category": "Crop Farming",
+    "description": "Cotton farming"
+  },
+  {
+    "doctype": "Farm Type",
+    "farm_type_name": "Sugar Beans",
+    "category": "Crop Farming",
+    "description": "Sugar Beans farming"
+  },
+  {
+    "doctype": "Farm Type",
+    "farm_type_name": "Groundnuts",
+    "category": "Crop Farming",
+    "description": "Groundnuts farming"
+  },
+  {
+    "doctype": "Farm Type",
+    "farm_type_name": "Tomatoes",
+    "category": "Horticulture",
+    "description": "Tomatoes farming"
+  },
+  {
+    "doctype": "Farm Type",
+    "farm_type_name": "Potatoes",
+    "category": "Horticulture",
+    "description": "Potatoes farming"
+  },
+  {
+    "doctype": "Farm Type",
+    "farm_type_name": "Onions",
+    "category": "Horticulture",
+    "description": "Onions farming"
+  },
+  {
+    "doctype": "Farm Type",
+    "farm_type_name": "Cabbage",
+    "category": "Horticulture",
+    "description": "Cabbage farming"
+  },
+  {
+    "doctype": "Farm Type",
+    "farm_type_name": "Peppers",
+    "category": "Horticulture",
+    "description": "Peppers farming"
+  },
+  {
+    "doctype": "Farm Type",
+    "farm_type_name": "Flowers",
+    "category": "Horticulture",
+    "description": "Flowers farming"
+  },
+  {
+    "doctype": "Farm Type",
+    "farm_type_name": "Greenhouse Farming",
+    "category": "Horticulture",
+    "description": "Greenhouse Farming farming"
+  },
+  {
+    "doctype": "Farm Type",
+    "farm_type_name": "Cattle",
+    "category": "Animal Husbandry",
+    "description": "Cattle farming"
+  },
+  {
+    "doctype": "Farm Type",
+    "farm_type_name": "Goats",
+    "category": "Animal Husbandry",
+    "description": "Goats farming"
+  },
+  {
+    "doctype": "Farm Type",
+    "farm_type_name": "Sheep",
+    "category": "Animal Husbandry",
+    "description": "Sheep farming"
+  },
+  {
+    "doctype": "Farm Type",
+    "farm_type_name": "Pigs",
+    "category": "Animal Husbandry",
+    "description": "Pigs farming"
+  },
+  {
+    "doctype": "Farm Type",
+    "farm_type_name": "Rabbits",
+    "category": "Animal Husbandry",
+    "description": "Rabbits farming"
+  },
+  {
+    "doctype": "Farm Type",
+    "farm_type_name": "Broilers",
+    "category": "Poultry",
+    "description": "Broilers farming"
+  },
+  {
+    "doctype": "Farm Type",
+    "farm_type_name": "Layers",
+    "category": "Poultry",
+    "description": "Layers farming"
+  },
+  {
+    "doctype": "Farm Type",
+    "farm_type_name": "Road Runners",
+    "category": "Poultry",
+    "description": "Road Runners farming"
+  },
+  {
+    "doctype": "Farm Type",
+    "farm_type_name": "Turkey",
+    "category": "Poultry",
+    "description": "Turkey farming"
+  },
+  {
+    "doctype": "Farm Type",
+    "farm_type_name": "Ducks",
+    "category": "Poultry",
+    "description": "Ducks farming"
+  },
+  {
+    "doctype": "Farm Type",
+    "farm_type_name": "Tilapia",
+    "category": "Aquaculture",
+    "description": "Tilapia farming"
+  },
+  {
+    "doctype": "Farm Type",
+    "farm_type_name": "Catfish",
+    "category": "Aquaculture",
+    "description": "Catfish farming"
+  },
+  {
+    "doctype": "Farm Type",
+    "farm_type_name": "Trout",
+    "category": "Aquaculture",
+    "description": "Trout farming"
+  },
+  {
+    "doctype": "Farm Type",
+    "farm_type_name": "Shrimp",
+    "category": "Aquaculture",
+    "description": "Shrimp farming"
+  }
+]

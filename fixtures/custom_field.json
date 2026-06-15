@@ -1,0 +1,142 @@
+[
+  {
+    "doctype": "Custom Field",
+    "dt": "Project",
+    "fieldname": "agriculture_project_type",
+    "label": "Agriculture Project Type",
+    "fieldtype": "Select",
+    "options": "\nCrop Production\nPoultry Production\nFish Farming\nDairy Production\nGoat Farming\nPig Farming\nGreenhouse Farming",
+    "insert_after": "project_name",
+    "module": "Farm Management"
+  },
+  {
+    "doctype": "Custom Field",
+    "dt": "Project",
+    "fieldname": "farm",
+    "label": "Farm",
+    "fieldtype": "Link",
+    "options": "Farm",
+    "insert_after": "agriculture_project_type",
+    "module": "Farm Management"
+  },
+  {
+    "doctype": "Custom Field",
+    "dt": "Project",
+    "fieldname": "crop_variety",
+    "label": "Crop Variety",
+    "fieldtype": "Link",
+    "options": "Crop Type",
+    "insert_after": "farm",
+    "module": "Farm Management"
+  },
+  {
+    "doctype": "Custom Field",
+    "dt": "Project",
+    "fieldname": "planting_date",
+    "label": "Planting Date",
+    "fieldtype": "Date",
+    "options": null,
+    "insert_after": "crop_variety",
+    "module": "Farm Management"
+  },
+  {
+    "doctype": "Custom Field",
+    "dt": "Project",
+    "fieldname": "expected_yield",
+    "label": "Expected Yield",
+    "fieldtype": "Float",
+    "options": null,
+    "insert_after": "planting_date",
+    "module": "Farm Management"
+  },
+  {
+    "doctype": "Custom Field",
+    "dt": "Project",
+    "fieldname": "harvest_date",
+    "label": "Expected Harvest Date",
+    "fieldtype": "Date",
+    "options": null,
+    "insert_after": "expected_yield",
+    "module": "Farm Management"
+  },
+  {
+    "doctype": "Custom Field",
+    "dt": "Project",
+    "fieldname": "field_allocation",
+    "label": "Field Allocation",
+    "fieldtype": "Link",
+    "options": "Farm Field",
+    "insert_after": "harvest_date",
+    "module": "Farm Management"
+  },
+  {
+    "doctype": "Custom Field",
+    "dt": "Project",
+    "fieldname": "breed",
+    "label": "Breed / Strain",
+    "fieldtype": "Data",
+    "options": null,
+    "insert_after": "farm",
+    "module": "Farm Management"
+  },
+  {
+    "doctype": "Custom Field",
+    "dt": "Project",
+    "fieldname": "initial_quantity",
+    "label": "Initial Quantity (Birds/Head)",
+    "fieldtype": "Int",
+    "options": null,
+    "insert_after": "breed",
+    "module": "Farm Management"
+  },
+  {
+    "doctype": "Custom Field",
+    "dt": "Project",
+    "fieldname": "growth_period_days",
+    "label": "Growth Period (Days)",
+    "fieldtype": "Int",
+    "options": null,
+    "insert_after": "initial_quantity",
+    "module": "Farm Management"
+  },
+  {
+    "doctype": "Custom Field",
+    "dt": "Project",
+    "fieldname": "mortality_target_percent",
+    "label": "Mortality Target (%)",
+    "fieldtype": "Float",
+    "options": null,
+    "insert_after": "growth_period_days",
+    "module": "Farm Management"
+  },
+  {
+    "doctype": "Custom Field",
+    "dt": "Project",
+    "fieldname": "fish_species",
+    "label": "Fish Species",
+    "fieldtype": "Link",
+    "options": "Farm Type",
+    "insert_after": "farm",
+    "module": "Farm Management"
+  },
+  {
+    "doctype": "Custom Field",
+    "dt": "Project",
+    "fieldname": "fingerling_quantity",
+    "label": "Fingerling Quantity",
+    "fieldtype": "Int",
+    "options": null,
+    "insert_after": "fish_species",
+    "module": "Farm Management"
+  },
+  {
+    "doctype": "Custom Field",
+    "dt": "Project",
+    "fieldname": "pond_allocation",
+    "label": "Pond Allocation",
+    "fieldtype": "Link",
+    "options": "Farm Pond",
+    "insert_after": "fingerling_quantity",
+    "module": "Farm Management"
+  }
+]

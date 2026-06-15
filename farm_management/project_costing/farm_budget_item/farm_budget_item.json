@@ -1,0 +1,90 @@
+{
+  "doctype": "DocType",
+  "name": "Farm Budget Item",
+  "module": "Project Costing",
+  "custom": 0,
+  "istable": 1,
+  "issingle": 0,
+  "is_submittable": 0,
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "item_category",
+    "item_description",
+    "budgeted_quantity",
+    "budgeted_unit_cost",
+    "budgeted_amount",
+    "actual_amount",
+    "variance",
+    "variance_percent",
+    "variance_type"
+  ],
+  "fields": [
+    {
+      "fieldname": "item_category",
+      "label": "Item Category",
+      "fieldtype": "Select",
+      "options": "Feed\nMedication\nSeed\nFertilizer\nChemical\nLabor\nUtility\nEquipment\nOther"
+    },
+    {
+      "fieldname": "item_description",
+      "label": "Item Description",
+      "fieldtype": "Data",
+      "reqd": 1
+    },
+    {
+      "fieldname": "budgeted_quantity",
+      "label": "Budgeted Quantity",
+      "fieldtype": "Float"
+    },
+    {
+      "fieldname": "budgeted_unit_cost",
+      "label": "Budgeted Unit Cost",
+      "fieldtype": "Currency"
+    },
+    {
+      "fieldname": "budgeted_amount",
+      "label": "Budgeted Amount",
+      "fieldtype": "Currency",
+      "read_only": 1
+    },
+    {
+      "fieldname": "actual_amount",
+      "label": "Actual Amount",
+      "fieldtype": "Currency"
+    },
+    {
+      "fieldname": "variance",
+      "label": "Variance",
+      "fieldtype": "Currency",
+      "read_only": 1
+    },
+    {
+      "fieldname": "variance_percent",
+      "label": "Variance Percent",
+      "fieldtype": "Float",
+      "read_only": 1
+    },
+    {
+      "fieldname": "variance_type",
+      "label": "Variance Type",
+      "fieldtype": "Select",
+      "options": "Favourable\nAdverse",
+      "read_only": 1
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1,
+      "submit": 0,
+      "cancel": 0,
+      "amend": 0
+    }
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC"
+}

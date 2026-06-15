@@ -1,0 +1,120 @@
+{
+  "doctype": "DocType",
+  "name": "Farm Activity",
+  "module": "Farm Calendar",
+  "custom": 0,
+  "istable": 0,
+  "issingle": 0,
+  "is_submittable": 0,
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "activity_title",
+    "farm",
+    "project",
+    "activity_type",
+    "scheduled_date",
+    "actual_date",
+    "assigned_to",
+    "status",
+    "cost_center",
+    "estimated_cost",
+    "actual_cost",
+    "notes",
+    "completion_notes"
+  ],
+  "fields": [
+    {
+      "fieldname": "activity_title",
+      "label": "Activity Title",
+      "fieldtype": "Data",
+      "reqd": 1
+    },
+    {
+      "fieldname": "farm",
+      "label": "Farm",
+      "fieldtype": "Link",
+      "options": "Farm",
+      "reqd": 1
+    },
+    {
+      "fieldname": "project",
+      "label": "Project",
+      "fieldtype": "Link",
+      "options": "Project"
+    },
+    {
+      "fieldname": "activity_type",
+      "label": "Activity Type",
+      "fieldtype": "Link",
+      "options": "Farm Activity Type",
+      "reqd": 1
+    },
+    {
+      "fieldname": "scheduled_date",
+      "label": "Scheduled Date",
+      "fieldtype": "Date",
+      "reqd": 1
+    },
+    {
+      "fieldname": "actual_date",
+      "label": "Actual Date",
+      "fieldtype": "Date"
+    },
+    {
+      "fieldname": "assigned_to",
+      "label": "Assigned To",
+      "fieldtype": "Link",
+      "options": "Employee"
+    },
+    {
+      "fieldname": "status",
+      "label": "Status",
+      "fieldtype": "Select",
+      "options": "Scheduled\nIn Progress\nCompleted\nCancelled",
+      "reqd": 1,
+      "default": "Scheduled"
+    },
+    {
+      "fieldname": "cost_center",
+      "label": "Cost Center",
+      "fieldtype": "Link",
+      "options": "Cost Center"
+    },
+    {
+      "fieldname": "estimated_cost",
+      "label": "Estimated Cost",
+      "fieldtype": "Currency"
+    },
+    {
+      "fieldname": "actual_cost",
+      "label": "Actual Cost",
+      "fieldtype": "Currency"
+    },
+    {
+      "fieldname": "notes",
+      "label": "Notes",
+      "fieldtype": "Small Text"
+    },
+    {
+      "fieldname": "completion_notes",
+      "label": "Completion Notes",
+      "fieldtype": "Small Text"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1,
+      "submit": 0,
+      "cancel": 0,
+      "amend": 0
+    }
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "autoname": "FA-.####"
+}
