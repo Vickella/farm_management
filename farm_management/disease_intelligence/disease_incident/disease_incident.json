@@ -1,127 +1,156 @@
 {
-  "doctype": "DocType",
-  "name": "Disease Incident",
-  "module": "Disease Intelligence",
-  "custom": 0,
-  "istable": 0,
-  "issingle": 0,
-  "is_submittable": 0,
-  "editable_grid": 1,
-  "engine": "InnoDB",
-  "field_order": [
-    "farm",
-    "incident_date",
-    "incident_type",
-    "pest",
-    "animal_disease",
-    "affected_area_or_animals",
-    "severity",
-    "treatment_applied",
-    "treatment_cost",
-    "loss_estimate",
-    "resolved",
-    "resolution_date",
-    "reported_by",
-    "notes"
-  ],
-  "fields": [
-    {
-      "fieldname": "farm",
-      "label": "Farm",
-      "fieldtype": "Link",
-      "options": "Farm",
-      "reqd": 1
-    },
-    {
-      "fieldname": "incident_date",
-      "label": "Incident Date",
-      "fieldtype": "Date",
-      "reqd": 1
-    },
-    {
-      "fieldname": "incident_type",
-      "label": "Incident Type",
-      "fieldtype": "Select",
-      "options": "Pest\nAnimal Disease",
-      "reqd": 1
-    },
-    {
-      "fieldname": "pest",
-      "label": "Pest",
-      "fieldtype": "Link",
-      "options": "Pest",
-      "depends_on": "eval:doc.incident_type == 'Pest'"
-    },
-    {
-      "fieldname": "animal_disease",
-      "label": "Animal Disease",
-      "fieldtype": "Link",
-      "options": "Animal Disease",
-      "depends_on": "eval:doc.incident_type == 'Animal Disease'"
-    },
-    {
-      "fieldname": "affected_area_or_animals",
-      "label": "Affected Area Or Animals",
-      "fieldtype": "Small Text",
-      "reqd": 1
-    },
-    {
-      "fieldname": "severity",
-      "label": "Severity",
-      "fieldtype": "Select",
-      "options": "Low\nMedium\nHigh\nCritical",
-      "reqd": 1
-    },
-    {
-      "fieldname": "treatment_applied",
-      "label": "Treatment Applied",
-      "fieldtype": "Text Editor"
-    },
-    {
-      "fieldname": "treatment_cost",
-      "label": "Treatment Cost",
-      "fieldtype": "Currency"
-    },
-    {
-      "fieldname": "loss_estimate",
-      "label": "Loss Estimate",
-      "fieldtype": "Currency"
-    },
-    {
-      "fieldname": "resolved",
-      "label": "Resolved",
-      "fieldtype": "Check"
-    },
-    {
-      "fieldname": "resolution_date",
-      "label": "Resolution Date",
-      "fieldtype": "Date"
-    },
-    {
-      "fieldname": "reported_by",
-      "label": "Reported By",
-      "fieldtype": "Link",
-      "options": "Employee"
-    },
-    {
-      "fieldname": "notes",
-      "label": "Notes",
-      "fieldtype": "Small Text"
-    }
-  ],
-  "permissions": [
-    {
-      "role": "System Manager",
-      "read": 1,
-      "write": 1,
-      "create": 1,
-      "delete": 1,
-      "submit": 0,
-      "cancel": 0,
-      "amend": 0
-    }
-  ],
-  "sort_field": "modified",
-  "sort_order": "DESC",
-  "autoname": "DI-.####"
+ "actions": [],
+ "creation": "2024-01-01 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "farm",
+  "incident_date",
+  "incident_type",
+  "pest",
+  "animal_disease",
+  "severity",
+  "affected_area_or_animals",
+  "treatment_applied",
+  "treatment_cost",
+  "loss_estimate",
+  "resolved",
+  "resolution_date",
+  "reported_by",
+  "notes"
+ ],
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "DI-.####"
+  },
+  {
+   "fieldname": "farm",
+   "fieldtype": "Link",
+   "label": "Farm",
+   "options": "Farm",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "incident_date",
+   "fieldtype": "Date",
+   "label": "Incident Date",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "incident_type",
+   "fieldtype": "Select",
+   "label": "Incident Type",
+   "options": "Pest\nAnimal Disease",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "pest",
+   "fieldtype": "Link",
+   "label": "Pest",
+   "options": "Pest",
+   "depends_on": "eval:doc.incident_type=='Pest'"
+  },
+  {
+   "fieldname": "animal_disease",
+   "fieldtype": "Link",
+   "label": "Animal Disease",
+   "options": "Animal Disease",
+   "depends_on": "eval:doc.incident_type=='Animal Disease'"
+  },
+  {
+   "fieldname": "severity",
+   "fieldtype": "Select",
+   "label": "Severity",
+   "options": "Low\nMedium\nHigh\nCritical",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "affected_area_or_animals",
+   "fieldtype": "Small Text",
+   "label": "Affected Area or Animals",
+   "reqd": 1
+  },
+  {
+   "fieldname": "treatment_applied",
+   "fieldtype": "Text Editor",
+   "label": "Treatment Applied"
+  },
+  {
+   "fieldname": "treatment_cost",
+   "fieldtype": "Currency",
+   "label": "Treatment Cost"
+  },
+  {
+   "fieldname": "loss_estimate",
+   "fieldtype": "Currency",
+   "label": "Loss Estimate"
+  },
+  {
+   "fieldname": "resolved",
+   "fieldtype": "Check",
+   "label": "Resolved"
+  },
+  {
+   "fieldname": "resolution_date",
+   "fieldtype": "Date",
+   "label": "Resolution Date"
+  },
+  {
+   "fieldname": "reported_by",
+   "fieldtype": "Link",
+   "label": "Reported By",
+   "options": "Employee"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Small Text",
+   "label": "Notes"
+  }
+ ],
+ "links": [],
+ "modified": "2024-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Disease Intelligence",
+ "name": "Disease Incident",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Farm Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1,
+ "autoname": "naming_series:"
 }

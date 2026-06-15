@@ -1,93 +1,132 @@
 {
-  "doctype": "DocType",
-  "name": "Farm Field",
-  "module": "Farm Infrastructure",
-  "custom": 0,
-  "istable": 0,
-  "issingle": 0,
-  "is_submittable": 0,
-  "editable_grid": 1,
-  "engine": "InnoDB",
-  "field_order": [
-    "field_number",
-    "farm",
-    "field_size_ha",
-    "soil_type",
-    "crop_assigned",
-    "irrigation_method",
-    "current_status",
-    "last_harvest_date",
-    "notes"
-  ],
-  "fields": [
-    {
-      "fieldname": "field_number",
-      "label": "Field Number",
-      "fieldtype": "Data",
-      "reqd": 1
-    },
-    {
-      "fieldname": "farm",
-      "label": "Farm",
-      "fieldtype": "Link",
-      "options": "Farm",
-      "reqd": 1
-    },
-    {
-      "fieldname": "field_size_ha",
-      "label": "Field Size Ha",
-      "fieldtype": "Float",
-      "reqd": 1
-    },
-    {
-      "fieldname": "soil_type",
-      "label": "Soil Type",
-      "fieldtype": "Select",
-      "options": "Sandy\nClay\nLoam\nSandy Loam\nClay Loam\nSilt"
-    },
-    {
-      "fieldname": "crop_assigned",
-      "label": "Crop Assigned",
-      "fieldtype": "Link",
-      "options": "Crop Type"
-    },
-    {
-      "fieldname": "irrigation_method",
-      "label": "Irrigation Method",
-      "fieldtype": "Select",
-      "options": "None\nDrip\nSprinkler\nFlood"
-    },
-    {
-      "fieldname": "current_status",
-      "label": "Current Status",
-      "fieldtype": "Select",
-      "options": "Active\nFallow\nUnder Preparation\nHarvested",
-      "reqd": 1
-    },
-    {
-      "fieldname": "last_harvest_date",
-      "label": "Last Harvest Date",
-      "fieldtype": "Date"
-    },
-    {
-      "fieldname": "notes",
-      "label": "Notes",
-      "fieldtype": "Small Text"
-    }
-  ],
-  "permissions": [
-    {
-      "role": "System Manager",
-      "read": 1,
-      "write": 1,
-      "create": 1,
-      "delete": 1,
-      "submit": 0,
-      "cancel": 0,
-      "amend": 0
-    }
-  ],
-  "sort_field": "modified",
-  "sort_order": "DESC",
-  "autoname": "format:{farm}-{field_number}"
+ "actions": [],
+ "creation": "2024-01-01 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "field_number",
+  "farm",
+  "column_break_1",
+  "current_status",
+  "field_size_ha",
+  "crop_assigned",
+  "section_break_2",
+  "soil_type",
+  "irrigation_method",
+  "last_harvest_date",
+  "notes"
+ ],
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "FF-.####"
+  },
+  {
+   "fieldname": "field_number",
+   "fieldtype": "Data",
+   "label": "Field Number",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "farm",
+   "fieldtype": "Link",
+   "label": "Farm",
+   "options": "Farm",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "current_status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Active\nFallow\nUnder Preparation\nHarvested",
+   "reqd": 1,
+   "default": "Active",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "field_size_ha",
+   "fieldtype": "Float",
+   "label": "Field Size (Ha)",
+   "reqd": 1
+  },
+  {
+   "fieldname": "crop_assigned",
+   "fieldtype": "Link",
+   "label": "Crop Assigned",
+   "options": "Crop Type"
+  },
+  {
+   "fieldname": "section_break_2",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "soil_type",
+   "fieldtype": "Select",
+   "label": "Soil Type",
+   "options": "\nSandy\nClay\nLoam\nSandy Loam\nClay Loam\nSilt"
+  },
+  {
+   "fieldname": "irrigation_method",
+   "fieldtype": "Select",
+   "label": "Irrigation Method",
+   "options": "\nNone\nDrip\nSprinkler\nFlood"
+  },
+  {
+   "fieldname": "last_harvest_date",
+   "fieldtype": "Date",
+   "label": "Last Harvest Date"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Small Text",
+   "label": "Notes"
+  }
+ ],
+ "links": [],
+ "modified": "2024-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Farm Infrastructure",
+ "name": "Farm Field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Farm Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1,
+ "autoname": "naming_series:"
 }

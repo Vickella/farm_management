@@ -1,103 +1,119 @@
 {
-  "doctype": "DocType",
-  "name": "Pest",
-  "module": "Disease Intelligence",
-  "custom": 0,
-  "istable": 0,
-  "issingle": 0,
-  "is_submittable": 0,
-  "editable_grid": 1,
-  "engine": "InnoDB",
-  "field_order": [
-    "pest_name",
-    "scientific_name",
-    "pest_type",
-    "affects",
-    "signs_and_symptoms",
-    "causes",
-    "severity_level",
-    "recommended_treatment",
-    "chemical_treatment",
-    "organic_treatment",
-    "image"
-  ],
-  "fields": [
-    {
-      "fieldname": "pest_name",
-      "label": "Pest Name",
-      "fieldtype": "Data",
-      "reqd": 1,
-      "unique": 1
-    },
-    {
-      "fieldname": "scientific_name",
-      "label": "Scientific Name",
-      "fieldtype": "Data"
-    },
-    {
-      "fieldname": "pest_type",
-      "label": "Pest Type",
-      "fieldtype": "Select",
-      "options": "Insect\nFungal\nBacterial\nViral\nWeed\nRodent",
-      "reqd": 1
-    },
-    {
-      "fieldname": "affects",
-      "label": "Affects",
-      "fieldtype": "Select",
-      "options": "Crops\nLivestock\nPoultry\nAquaculture\nAll"
-    },
-    {
-      "fieldname": "signs_and_symptoms",
-      "label": "Signs And Symptoms",
-      "fieldtype": "Text Editor"
-    },
-    {
-      "fieldname": "causes",
-      "label": "Causes",
-      "fieldtype": "Small Text"
-    },
-    {
-      "fieldname": "severity_level",
-      "label": "Severity Level",
-      "fieldtype": "Select",
-      "options": "Low\nMedium\nHigh\nCritical",
-      "reqd": 1
-    },
-    {
-      "fieldname": "recommended_treatment",
-      "label": "Recommended Treatment",
-      "fieldtype": "Text Editor"
-    },
-    {
-      "fieldname": "chemical_treatment",
-      "label": "Chemical Treatment",
-      "fieldtype": "Small Text"
-    },
-    {
-      "fieldname": "organic_treatment",
-      "label": "Organic Treatment",
-      "fieldtype": "Small Text"
-    },
-    {
-      "fieldname": "image",
-      "label": "Image",
-      "fieldtype": "Attach Image"
-    }
-  ],
-  "permissions": [
-    {
-      "role": "System Manager",
-      "read": 1,
-      "write": 1,
-      "create": 1,
-      "delete": 1,
-      "submit": 0,
-      "cancel": 0,
-      "amend": 0
-    }
-  ],
-  "sort_field": "modified",
-  "sort_order": "DESC",
-  "autoname": "field:pest_name"
+ "actions": [],
+ "creation": "2024-01-01 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "pest_name",
+  "scientific_name",
+  "pest_type",
+  "affects",
+  "severity_level",
+  "signs_and_symptoms",
+  "causes",
+  "recommended_treatment",
+  "chemical_treatment",
+  "organic_treatment"
+ ],
+ "fields": [
+  {
+   "fieldname": "pest_name",
+   "fieldtype": "Data",
+   "label": "Pest Name",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "scientific_name",
+   "fieldtype": "Data",
+   "label": "Scientific Name"
+  },
+  {
+   "fieldname": "pest_type",
+   "fieldtype": "Select",
+   "label": "Pest Type",
+   "options": "Insect\nFungal\nBacterial\nViral\nWeed\nRodent",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "affects",
+   "fieldtype": "Select",
+   "label": "Affects",
+   "options": "Crops\nLivestock\nPoultry\nAquaculture\nAll"
+  },
+  {
+   "fieldname": "severity_level",
+   "fieldtype": "Select",
+   "label": "Severity Level",
+   "options": "Low\nMedium\nHigh\nCritical",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "signs_and_symptoms",
+   "fieldtype": "Text Editor",
+   "label": "Signs and Symptoms"
+  },
+  {
+   "fieldname": "causes",
+   "fieldtype": "Small Text",
+   "label": "Causes"
+  },
+  {
+   "fieldname": "recommended_treatment",
+   "fieldtype": "Text Editor",
+   "label": "Recommended Treatment"
+  },
+  {
+   "fieldname": "chemical_treatment",
+   "fieldtype": "Small Text",
+   "label": "Chemical Treatment"
+  },
+  {
+   "fieldname": "organic_treatment",
+   "fieldtype": "Small Text",
+   "label": "Organic Treatment"
+  }
+ ],
+ "links": [],
+ "modified": "2024-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Disease Intelligence",
+ "name": "Pest",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Farm Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1,
+ "autoname": "field:pest_name",
+ "title_field": "pest_name",
+ "naming_rule": "By fieldname"
 }

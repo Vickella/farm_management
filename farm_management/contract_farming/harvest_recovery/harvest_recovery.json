@@ -1,107 +1,143 @@
 {
-  "doctype": "DocType",
-  "name": "Harvest Recovery",
-  "module": "Contract Farming",
-  "custom": 0,
-  "istable": 0,
-  "issingle": 0,
-  "is_submittable": 0,
-  "editable_grid": 1,
-  "engine": "InnoDB",
-  "field_order": [
-    "agreement",
-    "farmer",
-    "recovery_date",
-    "quantity_delivered_kg",
-    "quality_grade",
-    "purchase_price_per_kg",
-    "gross_payment",
-    "loan_recovery_amount",
-    "net_payment",
-    "payment_reference",
-    "payment_status"
-  ],
-  "fields": [
-    {
-      "fieldname": "agreement",
-      "label": "Agreement",
-      "fieldtype": "Link",
-      "options": "Contract Farming Agreement",
-      "reqd": 1
-    },
-    {
-      "fieldname": "farmer",
-      "label": "Farmer",
-      "fieldtype": "Link",
-      "options": "Outgrower Farmer",
-      "reqd": 1
-    },
-    {
-      "fieldname": "recovery_date",
-      "label": "Recovery Date",
-      "fieldtype": "Date",
-      "reqd": 1
-    },
-    {
-      "fieldname": "quantity_delivered_kg",
-      "label": "Quantity Delivered Kg",
-      "fieldtype": "Float",
-      "reqd": 1
-    },
-    {
-      "fieldname": "quality_grade",
-      "label": "Quality Grade",
-      "fieldtype": "Select",
-      "options": "Grade A\nGrade B\nGrade C\nRejected"
-    },
-    {
-      "fieldname": "purchase_price_per_kg",
-      "label": "Purchase Price Per Kg",
-      "fieldtype": "Currency",
-      "reqd": 1
-    },
-    {
-      "fieldname": "gross_payment",
-      "label": "Gross Payment",
-      "fieldtype": "Currency",
-      "read_only": 1
-    },
-    {
-      "fieldname": "loan_recovery_amount",
-      "label": "Loan Recovery Amount",
-      "fieldtype": "Currency"
-    },
-    {
-      "fieldname": "net_payment",
-      "label": "Net Payment",
-      "fieldtype": "Currency",
-      "read_only": 1
-    },
-    {
-      "fieldname": "payment_reference",
-      "label": "Payment Reference",
-      "fieldtype": "Data"
-    },
-    {
-      "fieldname": "payment_status",
-      "label": "Payment Status",
-      "fieldtype": "Select",
-      "options": "Pending\nPaid\nPartial"
-    }
-  ],
-  "permissions": [
-    {
-      "role": "System Manager",
-      "read": 1,
-      "write": 1,
-      "create": 1,
-      "delete": 1,
-      "submit": 0,
-      "cancel": 0,
-      "amend": 0
-    }
-  ],
-  "sort_field": "modified",
-  "sort_order": "DESC",
-  "autoname": "HR-.####"
+ "actions": [],
+ "creation": "2024-01-01 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "agreement",
+  "farmer",
+  "recovery_date",
+  "quantity_delivered_kg",
+  "quality_grade",
+  "purchase_price_per_kg",
+  "column_break_1",
+  "gross_payment",
+  "loan_recovery_amount",
+  "net_payment",
+  "payment_status",
+  "payment_reference"
+ ],
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "HR-.####"
+  },
+  {
+   "fieldname": "agreement",
+   "fieldtype": "Link",
+   "label": "Agreement",
+   "options": "Contract Farming Agreement",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "farmer",
+   "fieldtype": "Link",
+   "label": "Farmer",
+   "options": "Outgrower Farmer",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "recovery_date",
+   "fieldtype": "Date",
+   "label": "Recovery Date",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "quantity_delivered_kg",
+   "fieldtype": "Float",
+   "label": "Quantity Delivered Kg",
+   "reqd": 1
+  },
+  {
+   "fieldname": "quality_grade",
+   "fieldtype": "Select",
+   "label": "Quality Grade",
+   "options": "Grade A\nGrade B\nGrade C\nRejected",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "purchase_price_per_kg",
+   "fieldtype": "Currency",
+   "label": "Purchase Price Per Kg",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "gross_payment",
+   "fieldtype": "Currency",
+   "label": "Gross Payment",
+   "read_only": 1
+  },
+  {
+   "fieldname": "loan_recovery_amount",
+   "fieldtype": "Currency",
+   "label": "Loan Recovery Amount"
+  },
+  {
+   "fieldname": "net_payment",
+   "fieldtype": "Currency",
+   "label": "Net Payment",
+   "read_only": 1
+  },
+  {
+   "fieldname": "payment_status",
+   "fieldtype": "Select",
+   "label": "Payment Status",
+   "options": "Pending\nPaid\nPartial",
+   "default": "Pending",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "payment_reference",
+   "fieldtype": "Data",
+   "label": "Payment Reference"
+  }
+ ],
+ "links": [],
+ "modified": "2024-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Contract Farming",
+ "name": "Harvest Recovery",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Farm Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1,
+ "autoname": "naming_series:"
 }

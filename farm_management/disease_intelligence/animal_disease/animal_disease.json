@@ -1,96 +1,118 @@
 {
-  "doctype": "DocType",
-  "name": "Animal Disease",
-  "module": "Disease Intelligence",
-  "custom": 0,
-  "istable": 0,
-  "issingle": 0,
-  "is_submittable": 0,
-  "editable_grid": 1,
-  "engine": "InnoDB",
-  "field_order": [
-    "disease_name",
-    "affects",
-    "symptoms",
-    "mortality_risk",
-    "is_notifiable",
-    "prevention_method",
-    "vaccination_available",
-    "vaccination_schedule",
-    "treatment",
-    "zoonotic_risk"
-  ],
-  "fields": [
-    {
-      "fieldname": "disease_name",
-      "label": "Disease Name",
-      "fieldtype": "Data",
-      "reqd": 1,
-      "unique": 1
-    },
-    {
-      "fieldname": "affects",
-      "label": "Affects",
-      "fieldtype": "Select",
-      "options": "Cattle\nGoats\nSheep\nPigs\nPoultry\nAquaculture\nAll Livestock"
-    },
-    {
-      "fieldname": "symptoms",
-      "label": "Symptoms",
-      "fieldtype": "Text Editor",
-      "reqd": 1
-    },
-    {
-      "fieldname": "mortality_risk",
-      "label": "Mortality Risk",
-      "fieldtype": "Select",
-      "options": "Low\nMedium\nHigh\nVery High",
-      "reqd": 1
-    },
-    {
-      "fieldname": "is_notifiable",
-      "label": "Is Notifiable",
-      "fieldtype": "Check"
-    },
-    {
-      "fieldname": "prevention_method",
-      "label": "Prevention Method",
-      "fieldtype": "Text Editor"
-    },
-    {
-      "fieldname": "vaccination_available",
-      "label": "Vaccination Available",
-      "fieldtype": "Check"
-    },
-    {
-      "fieldname": "vaccination_schedule",
-      "label": "Vaccination Schedule",
-      "fieldtype": "Small Text"
-    },
-    {
-      "fieldname": "treatment",
-      "label": "Treatment",
-      "fieldtype": "Text Editor"
-    },
-    {
-      "fieldname": "zoonotic_risk",
-      "label": "Zoonotic Risk",
-      "fieldtype": "Check"
-    }
-  ],
-  "permissions": [
-    {
-      "role": "System Manager",
-      "read": 1,
-      "write": 1,
-      "create": 1,
-      "delete": 1,
-      "submit": 0,
-      "cancel": 0,
-      "amend": 0
-    }
-  ],
-  "sort_field": "modified",
-  "sort_order": "DESC",
-  "autoname": "field:disease_name"
+ "actions": [],
+ "creation": "2024-01-01 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "disease_name",
+  "affects",
+  "mortality_risk",
+  "is_notifiable",
+  "zoonotic_risk",
+  "vaccination_available",
+  "symptoms",
+  "prevention_method",
+  "vaccination_schedule",
+  "treatment"
+ ],
+ "fields": [
+  {
+   "fieldname": "disease_name",
+   "fieldtype": "Data",
+   "label": "Disease Name",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "affects",
+   "fieldtype": "Select",
+   "label": "Affects",
+   "options": "Cattle\nGoats\nSheep\nPigs\nPoultry\nAquaculture\nAll Livestock",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "mortality_risk",
+   "fieldtype": "Select",
+   "label": "Mortality Risk",
+   "options": "Low\nMedium\nHigh\nVery High",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "is_notifiable",
+   "fieldtype": "Check",
+   "label": "Is Notifiable"
+  },
+  {
+   "fieldname": "zoonotic_risk",
+   "fieldtype": "Check",
+   "label": "Zoonotic Risk"
+  },
+  {
+   "fieldname": "vaccination_available",
+   "fieldtype": "Check",
+   "label": "Vaccination Available"
+  },
+  {
+   "fieldname": "symptoms",
+   "fieldtype": "Text Editor",
+   "label": "Symptoms",
+   "reqd": 1
+  },
+  {
+   "fieldname": "prevention_method",
+   "fieldtype": "Text Editor",
+   "label": "Prevention Method"
+  },
+  {
+   "fieldname": "vaccination_schedule",
+   "fieldtype": "Small Text",
+   "label": "Vaccination Schedule"
+  },
+  {
+   "fieldname": "treatment",
+   "fieldtype": "Text Editor",
+   "label": "Treatment"
+  }
+ ],
+ "links": [],
+ "modified": "2024-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Disease Intelligence",
+ "name": "Animal Disease",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Farm Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1,
+ "autoname": "field:disease_name",
+ "title_field": "disease_name",
+ "naming_rule": "By fieldname"
 }

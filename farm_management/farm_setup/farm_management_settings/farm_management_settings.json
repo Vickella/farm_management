@@ -1,0 +1,115 @@
+{
+ "actions": [],
+ "creation": "2024-01-01 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "biological_asset_account",
+  "fair_value_gain_loss_account",
+  "default_cost_center",
+  "section_break_ai",
+  "ai_api_key",
+  "ai_provider",
+  "section_break_flags",
+  "enable_ai_assistant",
+  "enable_auto_activity_generation",
+  "enable_fair_value_scheduler"
+ ],
+ "fields": [
+  {
+   "fieldname": "biological_asset_account",
+   "fieldtype": "Link",
+   "label": "Biological Asset Account",
+   "options": "Account"
+  },
+  {
+   "fieldname": "fair_value_gain_loss_account",
+   "fieldtype": "Link",
+   "label": "Fair Value Gain/Loss Account",
+   "options": "Account"
+  },
+  {
+   "fieldname": "default_cost_center",
+   "fieldtype": "Link",
+   "label": "Default Cost Center",
+   "options": "Cost Center"
+  },
+  {
+   "fieldname": "section_break_ai",
+   "fieldtype": "Section Break",
+   "label": "AI Configuration"
+  },
+  {
+   "fieldname": "ai_api_key",
+   "fieldtype": "Password",
+   "label": "AI API Key"
+  },
+  {
+   "fieldname": "ai_provider",
+   "fieldtype": "Select",
+   "label": "AI Provider",
+   "options": "\nOpenAI\nAnthropic\nLocal"
+  },
+  {
+   "fieldname": "section_break_flags",
+   "fieldtype": "Section Break",
+   "label": "Feature Flags"
+  },
+  {
+   "fieldname": "enable_ai_assistant",
+   "fieldtype": "Check",
+   "label": "Enable AI Assistant",
+   "default": "1"
+  },
+  {
+   "fieldname": "enable_auto_activity_generation",
+   "fieldtype": "Check",
+   "label": "Enable Auto Activity Generation",
+   "default": "1"
+  },
+  {
+   "fieldname": "enable_fair_value_scheduler",
+   "fieldtype": "Check",
+   "label": "Enable Fair Value Scheduler",
+   "default": "1"
+  }
+ ],
+ "links": [],
+ "modified": "2024-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Farm Setup",
+ "name": "Farm Management Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Farm Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1,
+ "issingle": 1
+}

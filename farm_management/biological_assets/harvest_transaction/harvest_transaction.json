@@ -1,102 +1,131 @@
 {
-  "doctype": "DocType",
-  "name": "Harvest Transaction",
-  "module": "Biological Assets",
-  "custom": 0,
-  "istable": 0,
-  "issingle": 0,
-  "is_submittable": 1,
-  "editable_grid": 1,
-  "engine": "InnoDB",
-  "field_order": [
-    "farm",
-    "biological_asset",
-    "harvest_date",
-    "quantity_harvested",
-    "unit",
-    "quality_grade",
-    "conversion_item",
-    "stock_entry",
-    "harvest_value",
-    "notes"
-  ],
-  "fields": [
-    {
-      "fieldname": "farm",
-      "label": "Farm",
-      "fieldtype": "Link",
-      "options": "Farm",
-      "reqd": 1
-    },
-    {
-      "fieldname": "biological_asset",
-      "label": "Biological Asset",
-      "fieldtype": "Link",
-      "options": "Biological Asset",
-      "reqd": 1
-    },
-    {
-      "fieldname": "harvest_date",
-      "label": "Harvest Date",
-      "fieldtype": "Date",
-      "reqd": 1
-    },
-    {
-      "fieldname": "quantity_harvested",
-      "label": "Quantity Harvested",
-      "fieldtype": "Float",
-      "reqd": 1
-    },
-    {
-      "fieldname": "unit",
-      "label": "Unit",
-      "fieldtype": "Select",
-      "options": "kg\nTonne\nBag\nHead\nBird",
-      "reqd": 1
-    },
-    {
-      "fieldname": "quality_grade",
-      "label": "Quality Grade",
-      "fieldtype": "Select",
-      "options": "Grade A\nGrade B\nGrade C\nOff-grade"
-    },
-    {
-      "fieldname": "conversion_item",
-      "label": "Conversion Item",
-      "fieldtype": "Link",
-      "options": "Item"
-    },
-    {
-      "fieldname": "stock_entry",
-      "label": "Stock Entry",
-      "fieldtype": "Link",
-      "options": "Stock Entry",
-      "read_only": 1
-    },
-    {
-      "fieldname": "harvest_value",
-      "label": "Harvest Value",
-      "fieldtype": "Currency"
-    },
-    {
-      "fieldname": "notes",
-      "label": "Notes",
-      "fieldtype": "Small Text"
-    }
-  ],
-  "permissions": [
-    {
-      "role": "System Manager",
-      "read": 1,
-      "write": 1,
-      "create": 1,
-      "delete": 1,
-      "submit": 1,
-      "cancel": 1,
-      "amend": 1
-    }
-  ],
-  "sort_field": "modified",
-  "sort_order": "DESC",
-  "autoname": "HT-.####"
+ "actions": [],
+ "creation": "2024-01-01 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "farm",
+  "biological_asset",
+  "harvest_date",
+  "quantity_harvested",
+  "unit",
+  "quality_grade",
+  "conversion_item",
+  "harvest_value",
+  "stock_entry",
+  "notes"
+ ],
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "HT-.####"
+  },
+  {
+   "fieldname": "farm",
+   "fieldtype": "Link",
+   "label": "Farm",
+   "options": "Farm",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "biological_asset",
+   "fieldtype": "Link",
+   "label": "Biological Asset",
+   "options": "Biological Asset",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "harvest_date",
+   "fieldtype": "Date",
+   "label": "Harvest Date",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "quantity_harvested",
+   "fieldtype": "Float",
+   "label": "Quantity Harvested",
+   "reqd": 1
+  },
+  {
+   "fieldname": "unit",
+   "fieldtype": "Select",
+   "label": "Unit",
+   "options": "kg\nTonne\nBag\nHead\nBird",
+   "reqd": 1
+  },
+  {
+   "fieldname": "quality_grade",
+   "fieldtype": "Select",
+   "label": "Quality Grade",
+   "options": "Grade A\nGrade B\nGrade C\nOff-grade"
+  },
+  {
+   "fieldname": "conversion_item",
+   "fieldtype": "Link",
+   "label": "Conversion Item",
+   "options": "Item"
+  },
+  {
+   "fieldname": "harvest_value",
+   "fieldtype": "Currency",
+   "label": "Harvest Value"
+  },
+  {
+   "fieldname": "stock_entry",
+   "fieldtype": "Link",
+   "label": "Stock Entry",
+   "options": "Stock Entry",
+   "read_only": 1
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Small Text",
+   "label": "Notes"
+  }
+ ],
+ "links": [],
+ "modified": "2024-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Biological Assets",
+ "name": "Harvest Transaction",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Farm Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1,
+ "autoname": "naming_series:",
+ "is_submittable": 1
 }

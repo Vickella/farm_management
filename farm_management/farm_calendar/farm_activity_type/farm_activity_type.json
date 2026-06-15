@@ -1,67 +1,87 @@
 {
-  "doctype": "DocType",
-  "name": "Farm Activity Type",
-  "module": "Farm Calendar",
-  "custom": 0,
-  "istable": 0,
-  "issingle": 0,
-  "is_submittable": 0,
-  "editable_grid": 1,
-  "engine": "InnoDB",
-  "field_order": [
-    "activity_name",
-    "farm_category",
-    "default_frequency",
-    "description",
-    "is_active"
-  ],
-  "fields": [
-    {
-      "fieldname": "activity_name",
-      "label": "Activity Name",
-      "fieldtype": "Data",
-      "reqd": 1,
-      "unique": 1
-    },
-    {
-      "fieldname": "farm_category",
-      "label": "Farm Category",
-      "fieldtype": "Select",
-      "options": "Crop Farming\nPoultry\nLivestock\nAquaculture",
-      "reqd": 1
-    },
-    {
-      "fieldname": "default_frequency",
-      "label": "Default Frequency",
-      "fieldtype": "Select",
-      "options": "Daily\nWeekly\nFortnightly\nMonthly\nSeasonal\nAs Required"
-    },
-    {
-      "fieldname": "description",
-      "label": "Description",
-      "fieldtype": "Small Text"
-    },
-    {
-      "fieldname": "is_active",
-      "label": "Is Active",
-      "fieldtype": "Check",
-      "default": 1
-    }
-  ],
-  "permissions": [
-    {
-      "role": "System Manager",
-      "read": 1,
-      "write": 1,
-      "create": 1,
-      "delete": 1,
-      "submit": 0,
-      "cancel": 0,
-      "amend": 0
-    }
-  ],
-  "sort_field": "modified",
-  "sort_order": "DESC",
-  "autoname": "field:activity_name",
-  "title_field": "activity_name"
+ "actions": [],
+ "creation": "2024-01-01 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "activity_name",
+  "farm_category",
+  "default_frequency",
+  "description",
+  "is_active"
+ ],
+ "fields": [
+  {
+   "fieldname": "activity_name",
+   "fieldtype": "Data",
+   "label": "Activity Name",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "farm_category",
+   "fieldtype": "Select",
+   "label": "Farm Category",
+   "options": "Crop Farming\nPoultry\nLivestock\nAquaculture",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "default_frequency",
+   "fieldtype": "Select",
+   "label": "Default Frequency",
+   "options": "Daily\nWeekly\nFortnightly\nMonthly\nSeasonal\nAs Required"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Small Text",
+   "label": "Description"
+  },
+  {
+   "fieldname": "is_active",
+   "fieldtype": "Check",
+   "label": "Is Active",
+   "default": 1
+  }
+ ],
+ "links": [],
+ "modified": "2024-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Farm Calendar",
+ "name": "Farm Activity Type",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Farm Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1,
+ "autoname": "field:activity_name",
+ "title_field": "activity_name",
+ "naming_rule": "By fieldname"
 }

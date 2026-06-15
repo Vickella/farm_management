@@ -1,71 +1,96 @@
 {
-  "doctype": "DocType",
-  "name": "Crop Type",
-  "module": "Farm Setup",
-  "custom": 0,
-  "istable": 0,
-  "issingle": 0,
-  "is_submittable": 0,
-  "editable_grid": 1,
-  "engine": "InnoDB",
-  "field_order": [
-    "crop_name",
-    "category",
-    "growth_period_days",
-    "expected_yield_per_ha",
-    "yield_unit",
-    "notes"
-  ],
-  "fields": [
-    {
-      "fieldname": "crop_name",
-      "label": "Crop Name",
-      "fieldtype": "Data",
-      "reqd": 1,
-      "unique": 1
-    },
-    {
-      "fieldname": "category",
-      "label": "Category",
-      "fieldtype": "Link",
-      "options": "Farm Type"
-    },
-    {
-      "fieldname": "growth_period_days",
-      "label": "Growth Period Days",
-      "fieldtype": "Int"
-    },
-    {
-      "fieldname": "expected_yield_per_ha",
-      "label": "Expected Yield Per Ha",
-      "fieldtype": "Float"
-    },
-    {
-      "fieldname": "yield_unit",
-      "label": "Yield Unit",
-      "fieldtype": "Select",
-      "options": "kg\nTonne\nBag\nCrate"
-    },
-    {
-      "fieldname": "notes",
-      "label": "Notes",
-      "fieldtype": "Small Text"
-    }
-  ],
-  "permissions": [
-    {
-      "role": "System Manager",
-      "read": 1,
-      "write": 1,
-      "create": 1,
-      "delete": 1,
-      "submit": 0,
-      "cancel": 0,
-      "amend": 0
-    }
-  ],
-  "sort_field": "modified",
-  "sort_order": "DESC",
-  "autoname": "field:crop_name",
-  "title_field": "crop_name"
+ "actions": [],
+ "creation": "2024-01-01 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "crop_name",
+  "category",
+  "column_break_1",
+  "growth_period_days",
+  "expected_yield_per_ha",
+  "yield_unit",
+  "notes"
+ ],
+ "fields": [
+  {
+   "fieldname": "crop_name",
+   "fieldtype": "Data",
+   "label": "Crop Name",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "category",
+   "fieldtype": "Link",
+   "label": "Category",
+   "options": "Farm Type",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "growth_period_days",
+   "fieldtype": "Int",
+   "label": "Growth Period (Days)"
+  },
+  {
+   "fieldname": "expected_yield_per_ha",
+   "fieldtype": "Float",
+   "label": "Expected Yield per Ha"
+  },
+  {
+   "fieldname": "yield_unit",
+   "fieldtype": "Select",
+   "label": "Yield Unit",
+   "options": "\nkg\nTonne\nBag\nCrate"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Small Text",
+   "label": "Notes"
+  }
+ ],
+ "links": [],
+ "modified": "2024-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Farm Setup",
+ "name": "Crop Type",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Farm Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 0,
+ "autoname": "field:crop_name",
+ "title_field": "crop_name",
+ "naming_rule": "By fieldname"
 }

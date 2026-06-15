@@ -1,89 +1,135 @@
 {
-  "doctype": "DocType",
-  "name": "Fowl Run",
-  "module": "Farm Infrastructure",
-  "custom": 0,
-  "istable": 0,
-  "issingle": 0,
-  "is_submittable": 0,
-  "editable_grid": 1,
-  "engine": "InnoDB",
-  "field_order": [
-    "run_number",
-    "farm",
-    "capacity",
-    "bird_type",
-    "temperature_celsius",
-    "mortality_rate_percent",
-    "feeding_schedule",
-    "current_flock_size",
-    "current_status"
-  ],
-  "fields": [
-    {
-      "fieldname": "run_number",
-      "label": "Run Number",
-      "fieldtype": "Data",
-      "reqd": 1
-    },
-    {
-      "fieldname": "farm",
-      "label": "Farm",
-      "fieldtype": "Link",
-      "options": "Farm",
-      "reqd": 1
-    },
-    {
-      "fieldname": "capacity",
-      "label": "Capacity",
-      "fieldtype": "Int"
-    },
-    {
-      "fieldname": "bird_type",
-      "label": "Bird Type",
-      "fieldtype": "Link",
-      "options": "Farm Type"
-    },
-    {
-      "fieldname": "temperature_celsius",
-      "label": "Temperature Celsius",
-      "fieldtype": "Float"
-    },
-    {
-      "fieldname": "mortality_rate_percent",
-      "label": "Mortality Rate Percent",
-      "fieldtype": "Float"
-    },
-    {
-      "fieldname": "feeding_schedule",
-      "label": "Feeding Schedule",
-      "fieldtype": "Select",
-      "options": "Ad Lib\nRestricted\nTimed"
-    },
-    {
-      "fieldname": "current_flock_size",
-      "label": "Current Flock Size",
-      "fieldtype": "Int"
-    },
-    {
-      "fieldname": "current_status",
-      "label": "Current Status",
-      "fieldtype": "Select",
-      "options": "Active\nEmpty\nCleaning"
-    }
-  ],
-  "permissions": [
-    {
-      "role": "System Manager",
-      "read": 1,
-      "write": 1,
-      "create": 1,
-      "delete": 1,
-      "submit": 0,
-      "cancel": 0,
-      "amend": 0
-    }
-  ],
-  "sort_field": "modified",
-  "sort_order": "DESC"
+ "actions": [],
+ "creation": "2024-01-01 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "run_number",
+  "farm",
+  "column_break_1",
+  "bird_type",
+  "current_status",
+  "section_break_2",
+  "capacity",
+  "current_flock_size",
+  "mortality_rate_percent",
+  "column_break_3",
+  "temperature_celsius",
+  "feeding_schedule"
+ ],
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "FR-.####"
+  },
+  {
+   "fieldname": "run_number",
+   "fieldtype": "Data",
+   "label": "Run Number",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "farm",
+   "fieldtype": "Link",
+   "label": "Farm",
+   "options": "Farm",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "bird_type",
+   "fieldtype": "Link",
+   "label": "Bird Type",
+   "options": "Farm Type"
+  },
+  {
+   "fieldname": "current_status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Active\nEmpty\nCleaning",
+   "default": "Active",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "section_break_2",
+   "fieldtype": "Section Break",
+   "label": "Flock Details"
+  },
+  {
+   "fieldname": "capacity",
+   "fieldtype": "Int",
+   "label": "Capacity"
+  },
+  {
+   "fieldname": "current_flock_size",
+   "fieldtype": "Int",
+   "label": "Current Flock Size"
+  },
+  {
+   "fieldname": "mortality_rate_percent",
+   "fieldtype": "Float",
+   "label": "Mortality Rate (%)"
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "temperature_celsius",
+   "fieldtype": "Float",
+   "label": "Temperature (\u00b0C)"
+  },
+  {
+   "fieldname": "feeding_schedule",
+   "fieldtype": "Select",
+   "label": "Feeding Schedule",
+   "options": "\nAd Lib\nRestricted\nTimed"
+  }
+ ],
+ "links": [],
+ "modified": "2024-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Farm Infrastructure",
+ "name": "Fowl Run",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Farm Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1,
+ "autoname": "naming_series:"
 }

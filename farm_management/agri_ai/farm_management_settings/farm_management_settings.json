@@ -1,84 +1,38 @@
 {
-  "doctype": "DocType",
-  "name": "Farm Management Settings",
-  "module": "Agri Ai",
-  "custom": 0,
-  "istable": 0,
-  "issingle": 1,
-  "is_submittable": 0,
-  "editable_grid": 1,
-  "engine": "InnoDB",
-  "field_order": [
-    "biological_asset_account",
-    "fair_value_gain_loss_account",
-    "default_cost_center",
-    "ai_api_key",
-    "ai_provider",
-    "enable_ai_assistant",
-    "enable_auto_activity_generation",
-    "enable_fair_value_scheduler"
-  ],
-  "fields": [
-    {
-      "fieldname": "biological_asset_account",
-      "label": "Biological Asset Account",
-      "fieldtype": "Link",
-      "options": "Account"
-    },
-    {
-      "fieldname": "fair_value_gain_loss_account",
-      "label": "Fair Value Gain Loss Account",
-      "fieldtype": "Link",
-      "options": "Account"
-    },
-    {
-      "fieldname": "default_cost_center",
-      "label": "Default Cost Center",
-      "fieldtype": "Link",
-      "options": "Cost Center"
-    },
-    {
-      "fieldname": "ai_api_key",
-      "label": "AI API Key",
-      "fieldtype": "Password"
-    },
-    {
-      "fieldname": "ai_provider",
-      "label": "AI Provider",
-      "fieldtype": "Select",
-      "options": "OpenAI\nAnthropic\nLocal"
-    },
-    {
-      "fieldname": "enable_ai_assistant",
-      "label": "Enable AI Assistant",
-      "fieldtype": "Check",
-      "default": 1
-    },
-    {
-      "fieldname": "enable_auto_activity_generation",
-      "label": "Enable Auto Activity Generation",
-      "fieldtype": "Check",
-      "default": 1
-    },
-    {
-      "fieldname": "enable_fair_value_scheduler",
-      "label": "Enable Fair Value Scheduler",
-      "fieldtype": "Check",
-      "default": 1
-    }
-  ],
-  "permissions": [
-    {
-      "role": "System Manager",
-      "read": 1,
-      "write": 1,
-      "create": 1,
-      "delete": 1,
-      "submit": 0,
-      "cancel": 0,
-      "amend": 0
-    }
-  ],
-  "sort_field": "modified",
-  "sort_order": "DESC"
+ "doctype": "DocType",
+ "name": "Agri AI Farm Management Settings Legacy",
+ "module": "Agri Ai",
+ "fields": [
+  {
+   "fieldname": "legacy_note",
+   "fieldtype": "Data",
+   "label": "Legacy Note"
+  }
+ ],
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Farm Manager",
+   "share": 1,
+   "write": 1
+  }
+ ]
 }

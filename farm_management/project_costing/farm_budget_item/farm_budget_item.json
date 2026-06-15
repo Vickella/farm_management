@@ -1,90 +1,90 @@
 {
-  "doctype": "DocType",
-  "name": "Farm Budget Item",
-  "module": "Project Costing",
-  "custom": 0,
-  "istable": 1,
-  "issingle": 0,
-  "is_submittable": 0,
-  "editable_grid": 1,
-  "engine": "InnoDB",
-  "field_order": [
-    "item_category",
-    "item_description",
-    "budgeted_quantity",
-    "budgeted_unit_cost",
-    "budgeted_amount",
-    "actual_amount",
-    "variance",
-    "variance_percent",
-    "variance_type"
-  ],
-  "fields": [
-    {
-      "fieldname": "item_category",
-      "label": "Item Category",
-      "fieldtype": "Select",
-      "options": "Feed\nMedication\nSeed\nFertilizer\nChemical\nLabor\nUtility\nEquipment\nOther"
-    },
-    {
-      "fieldname": "item_description",
-      "label": "Item Description",
-      "fieldtype": "Data",
-      "reqd": 1
-    },
-    {
-      "fieldname": "budgeted_quantity",
-      "label": "Budgeted Quantity",
-      "fieldtype": "Float"
-    },
-    {
-      "fieldname": "budgeted_unit_cost",
-      "label": "Budgeted Unit Cost",
-      "fieldtype": "Currency"
-    },
-    {
-      "fieldname": "budgeted_amount",
-      "label": "Budgeted Amount",
-      "fieldtype": "Currency",
-      "read_only": 1
-    },
-    {
-      "fieldname": "actual_amount",
-      "label": "Actual Amount",
-      "fieldtype": "Currency"
-    },
-    {
-      "fieldname": "variance",
-      "label": "Variance",
-      "fieldtype": "Currency",
-      "read_only": 1
-    },
-    {
-      "fieldname": "variance_percent",
-      "label": "Variance Percent",
-      "fieldtype": "Float",
-      "read_only": 1
-    },
-    {
-      "fieldname": "variance_type",
-      "label": "Variance Type",
-      "fieldtype": "Select",
-      "options": "Favourable\nAdverse",
-      "read_only": 1
-    }
-  ],
-  "permissions": [
-    {
-      "role": "System Manager",
-      "read": 1,
-      "write": 1,
-      "create": 1,
-      "delete": 1,
-      "submit": 0,
-      "cancel": 0,
-      "amend": 0
-    }
-  ],
-  "sort_field": "modified",
-  "sort_order": "DESC"
+ "actions": [],
+ "creation": "2024-01-01 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "item_category",
+  "item_description",
+  "budgeted_quantity",
+  "budgeted_unit_cost",
+  "budgeted_amount",
+  "actual_amount",
+  "variance",
+  "variance_percent",
+  "variance_type"
+ ],
+ "fields": [
+  {
+   "fieldname": "item_category",
+   "fieldtype": "Select",
+   "label": "Item Category",
+   "options": "Feed\nMedication\nSeed\nFertilizer\nChemical\nLabor\nUtility\nEquipment\nOther",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "item_description",
+   "fieldtype": "Data",
+   "label": "Item Description",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "budgeted_quantity",
+   "fieldtype": "Float",
+   "label": "Budgeted Quantity"
+  },
+  {
+   "fieldname": "budgeted_unit_cost",
+   "fieldtype": "Currency",
+   "label": "Budgeted Unit Cost"
+  },
+  {
+   "fieldname": "budgeted_amount",
+   "fieldtype": "Currency",
+   "label": "Budgeted Amount",
+   "read_only": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "actual_amount",
+   "fieldtype": "Currency",
+   "label": "Actual Amount",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "variance",
+   "fieldtype": "Currency",
+   "label": "Variance",
+   "read_only": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "variance_percent",
+   "fieldtype": "Float",
+   "label": "Variance Percent",
+   "read_only": 1
+  },
+  {
+   "fieldname": "variance_type",
+   "fieldtype": "Select",
+   "label": "Variance Type",
+   "options": "Favourable\nAdverse",
+   "read_only": 1,
+   "in_list_view": 1
+  }
+ ],
+ "links": [],
+ "modified": "2024-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Project Costing",
+ "name": "Farm Budget Item",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1,
+ "istable": 1
 }

@@ -1,110 +1,153 @@
 {
-  "doctype": "DocType",
-  "name": "Farm Budget",
-  "module": "Project Costing",
-  "custom": 0,
-  "istable": 0,
-  "issingle": 0,
-  "is_submittable": 0,
-  "editable_grid": 1,
-  "engine": "InnoDB",
-  "field_order": [
-    "budget_title",
-    "farm",
-    "project",
-    "farm_bom",
-    "budget_period_start",
-    "budget_period_end",
-    "budget_items",
-    "total_budget",
-    "total_actual",
-    "total_variance",
-    "status"
-  ],
-  "fields": [
-    {
-      "fieldname": "budget_title",
-      "label": "Budget Title",
-      "fieldtype": "Data",
-      "reqd": 1
-    },
-    {
-      "fieldname": "farm",
-      "label": "Farm",
-      "fieldtype": "Link",
-      "options": "Farm",
-      "reqd": 1
-    },
-    {
-      "fieldname": "project",
-      "label": "Project",
-      "fieldtype": "Link",
-      "options": "Project"
-    },
-    {
-      "fieldname": "farm_bom",
-      "label": "Farm BOM",
-      "fieldtype": "Link",
-      "options": "Farm BOM"
-    },
-    {
-      "fieldname": "budget_period_start",
-      "label": "Budget Period Start",
-      "fieldtype": "Date",
-      "reqd": 1
-    },
-    {
-      "fieldname": "budget_period_end",
-      "label": "Budget Period End",
-      "fieldtype": "Date",
-      "reqd": 1
-    },
-    {
-      "fieldname": "budget_items",
-      "label": "Budget Items",
-      "fieldtype": "Table",
-      "options": "Farm Budget Item"
-    },
-    {
-      "fieldname": "total_budget",
-      "label": "Total Budget",
-      "fieldtype": "Currency",
-      "read_only": 1
-    },
-    {
-      "fieldname": "total_actual",
-      "label": "Total Actual",
-      "fieldtype": "Currency",
-      "read_only": 1
-    },
-    {
-      "fieldname": "total_variance",
-      "label": "Total Variance",
-      "fieldtype": "Currency",
-      "read_only": 1
-    },
-    {
-      "fieldname": "status",
-      "label": "Status",
-      "fieldtype": "Select",
-      "options": "Draft\nApproved\nActive\nClosed",
-      "reqd": 1,
-      "default": "Draft"
-    }
-  ],
-  "permissions": [
-    {
-      "role": "System Manager",
-      "read": 1,
-      "write": 1,
-      "create": 1,
-      "delete": 1,
-      "submit": 0,
-      "cancel": 0,
-      "amend": 0
-    }
-  ],
-  "sort_field": "modified",
-  "sort_order": "DESC",
-  "autoname": "FBUDG-.####"
+ "actions": [],
+ "creation": "2024-01-01 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "budget_title",
+  "farm",
+  "project",
+  "farm_bom",
+  "column_break_1",
+  "budget_period_start",
+  "budget_period_end",
+  "status",
+  "section_break_items",
+  "budget_items",
+  "section_break_totals",
+  "total_budget",
+  "total_actual",
+  "total_variance"
+ ],
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "FBUDG-.####"
+  },
+  {
+   "fieldname": "budget_title",
+   "fieldtype": "Data",
+   "label": "Budget Title",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "farm",
+   "fieldtype": "Link",
+   "label": "Farm",
+   "options": "Farm",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "project",
+   "fieldtype": "Link",
+   "label": "Project",
+   "options": "Project"
+  },
+  {
+   "fieldname": "farm_bom",
+   "fieldtype": "Link",
+   "label": "Farm BOM",
+   "options": "Farm BOM"
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "budget_period_start",
+   "fieldtype": "Date",
+   "label": "Budget Period Start",
+   "reqd": 1
+  },
+  {
+   "fieldname": "budget_period_end",
+   "fieldtype": "Date",
+   "label": "Budget Period End",
+   "reqd": 1
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Draft\nApproved\nActive\nClosed",
+   "reqd": 1,
+   "default": "Draft",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "section_break_items",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "budget_items",
+   "fieldtype": "Table",
+   "label": "Budget Items",
+   "options": "Farm Budget Item"
+  },
+  {
+   "fieldname": "section_break_totals",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "total_budget",
+   "fieldtype": "Currency",
+   "label": "Total Budget",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_actual",
+   "fieldtype": "Currency",
+   "label": "Total Actual",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_variance",
+   "fieldtype": "Currency",
+   "label": "Total Variance",
+   "read_only": 1
+  }
+ ],
+ "links": [],
+ "modified": "2024-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Project Costing",
+ "name": "Farm Budget",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Farm Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1,
+ "autoname": "naming_series:"
 }
