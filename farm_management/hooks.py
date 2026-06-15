@@ -8,28 +8,24 @@ app_color = "green"
 app_email = "dev@veritycore.co.zw"
 app_license = "MIT"
 
+after_install = "farm_management.install.after_install"
+
 fixtures = [
     {"dt": "Custom Field", "filters": [["module", "=", "Farm Management"]]},
     {"dt": "Property Setter", "filters": [["module", "=", "Farm Management"]]},
-    "Farm Type",
-    "Crop Type",
-    "Animal Disease",
-    "Pest",
-    "Farm Activity Type",
+    {"dt": "Role", "filters": [["name", "in", ["Farm Manager", "Farm Worker", "Agronomist"]]]},
+    {"dt": "Workspace", "filters": [["name", "=", "Farm Management"]]},
 ]
 
 doc_events = {
     "Project": {
         "validate": "farm_management.farm_projects.agriculture_project.validate_agriculture_project",
-        "on_submit": "farm_management.farm_projects.agriculture_project.on_project_submit",
     }
 }
 
 scheduler_events = {
     "daily": [
-        "farm_management.biological_assets.biological_asset.update_fair_values",
-        "farm_management.farm_calendar.farm_activity.generate_scheduled_tasks",
+        "farm_management.biological_assets.biological_asset.biological_asset.update_fair_values",
+        "farm_management.farm_calendar.farm_activity.farm_activity.generate_scheduled_tasks",
     ]
 }
-
-after_install = "farm_management.install.after_install"

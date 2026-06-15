@@ -1,162 +1,209 @@
 {
-  "doctype": "DocType",
-  "name": "Biological Asset",
-  "module": "Biological Assets",
-  "custom": 0,
-  "istable": 0,
-  "issingle": 0,
-  "is_submittable": 0,
-  "editable_grid": 1,
-  "engine": "InnoDB",
-  "field_order": [
-    "asset_name",
-    "farm",
-    "asset_category",
-    "farm_type",
-    "acquisition_date",
-    "quantity",
-    "unit",
-    "initial_cost",
-    "current_fair_value",
-    "cost_to_sell",
-    "net_fair_value",
-    "accumulated_gain_loss",
-    "growth_stage",
-    "average_weight_kg",
-    "mortality_to_date",
-    "last_valuation_date",
-    "linked_project",
-    "status",
-    "notes"
-  ],
-  "fields": [
-    {
-      "fieldname": "asset_name",
-      "label": "Asset Name",
-      "fieldtype": "Data",
-      "reqd": 1
-    },
-    {
-      "fieldname": "farm",
-      "label": "Farm",
-      "fieldtype": "Link",
-      "options": "Farm",
-      "reqd": 1
-    },
-    {
-      "fieldname": "asset_category",
-      "label": "Asset Category",
-      "fieldtype": "Select",
-      "options": "Livestock\nPoultry\nCrops in Growth\nAquaculture",
-      "reqd": 1
-    },
-    {
-      "fieldname": "farm_type",
-      "label": "Species/Crop",
-      "fieldtype": "Link",
-      "options": "Farm Type",
-      "reqd": 1
-    },
-    {
-      "fieldname": "acquisition_date",
-      "label": "Acquisition Date",
-      "fieldtype": "Date",
-      "reqd": 1
-    },
-    {
-      "fieldname": "quantity",
-      "label": "Quantity",
-      "fieldtype": "Float",
-      "reqd": 1
-    },
-    {
-      "fieldname": "unit",
-      "label": "Unit",
-      "fieldtype": "Select",
-      "options": "Head\nBird\nKg\nHectare\nFingerling",
-      "reqd": 1
-    },
-    {
-      "fieldname": "initial_cost",
-      "label": "Initial Cost",
-      "fieldtype": "Currency",
-      "reqd": 1
-    },
-    {
-      "fieldname": "current_fair_value",
-      "label": "Current Fair Value",
-      "fieldtype": "Currency"
-    },
-    {
-      "fieldname": "cost_to_sell",
-      "label": "Estimated Cost to Sell",
-      "fieldtype": "Currency"
-    },
-    {
-      "fieldname": "net_fair_value",
-      "label": "Net Fair Value (IFRS 41)",
-      "fieldtype": "Currency",
-      "read_only": 1
-    },
-    {
-      "fieldname": "accumulated_gain_loss",
-      "label": "Accumulated Fair Value Gain/Loss",
-      "fieldtype": "Currency",
-      "read_only": 1
-    },
-    {
-      "fieldname": "growth_stage",
-      "label": "Growth Stage",
-      "fieldtype": "Select",
-      "options": "Immature\nMature\nProducing\nReady for Harvest",
-      "reqd": 1
-    },
-    {
-      "fieldname": "average_weight_kg",
-      "label": "Average Weight (kg)",
-      "fieldtype": "Float"
-    },
-    {
-      "fieldname": "mortality_to_date",
-      "label": "Mortality to Date",
-      "fieldtype": "Float"
-    },
-    {
-      "fieldname": "last_valuation_date",
-      "label": "Last Valuation Date",
-      "fieldtype": "Date"
-    },
-    {
-      "fieldname": "linked_project",
-      "label": "Linked Project",
-      "fieldtype": "Link",
-      "options": "Project"
-    },
-    {
-      "fieldname": "status",
-      "label": "Status",
-      "fieldtype": "Select",
-      "options": "Active\nHarvested\nSold\nDead Loss",
-      "reqd": 1
-    },
-    {
-      "fieldname": "notes",
-      "label": "Notes",
-      "fieldtype": "Small Text"
-    }
-  ],
-  "permissions": [
-    {
-      "role": "System Manager",
-      "read": 1,
-      "write": 1,
-      "create": 1,
-      "delete": 1,
-      "submit": 0,
-      "cancel": 0,
-      "amend": 0
-    }
-  ],
-  "sort_field": "modified",
-  "sort_order": "DESC"
+ "actions": [],
+ "creation": "2024-01-01 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "asset_name",
+  "farm",
+  "asset_category",
+  "farm_type",
+  "column_break_1",
+  "status",
+  "growth_stage",
+  "linked_project",
+  "section_break_quantity",
+  "acquisition_date",
+  "quantity",
+  "unit",
+  "average_weight_kg",
+  "mortality_to_date",
+  "column_break_2",
+  "initial_cost",
+  "current_fair_value",
+  "cost_to_sell",
+  "net_fair_value",
+  "accumulated_gain_loss",
+  "last_valuation_date",
+  "notes"
+ ],
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "BA-.####"
+  },
+  {
+   "fieldname": "asset_name",
+   "fieldtype": "Data",
+   "label": "Asset Name",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "farm",
+   "fieldtype": "Link",
+   "label": "Farm",
+   "options": "Farm",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "asset_category",
+   "fieldtype": "Select",
+   "label": "Asset Category",
+   "options": "Livestock\nPoultry\nCrops in Growth\nAquaculture",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "farm_type",
+   "fieldtype": "Link",
+   "label": "Species/Crop",
+   "options": "Farm Type",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Active\nHarvested\nSold\nDead Loss",
+   "reqd": 1,
+   "default": "Active",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "growth_stage",
+   "fieldtype": "Select",
+   "label": "Growth Stage",
+   "options": "Immature\nMature\nProducing\nReady for Harvest",
+   "reqd": 1
+  },
+  {
+   "fieldname": "linked_project",
+   "fieldtype": "Link",
+   "label": "Linked Project",
+   "options": "Project"
+  },
+  {
+   "fieldname": "section_break_quantity",
+   "fieldtype": "Section Break",
+   "label": "Quantity"
+  },
+  {
+   "fieldname": "acquisition_date",
+   "fieldtype": "Date",
+   "label": "Acquisition Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "quantity",
+   "fieldtype": "Float",
+   "label": "Quantity",
+   "reqd": 1
+  },
+  {
+   "fieldname": "unit",
+   "fieldtype": "Select",
+   "label": "Unit",
+   "options": "Head\nBird\nKg\nHectare\nFingerling",
+   "reqd": 1
+  },
+  {
+   "fieldname": "average_weight_kg",
+   "fieldtype": "Float",
+   "label": "Average Weight Kg"
+  },
+  {
+   "fieldname": "mortality_to_date",
+   "fieldtype": "Float",
+   "label": "Mortality To Date"
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "initial_cost",
+   "fieldtype": "Currency",
+   "label": "Initial Cost",
+   "reqd": 1
+  },
+  {
+   "fieldname": "current_fair_value",
+   "fieldtype": "Currency",
+   "label": "Current Fair Value"
+  },
+  {
+   "fieldname": "cost_to_sell",
+   "fieldtype": "Currency",
+   "label": "Estimated Cost to Sell"
+  },
+  {
+   "fieldname": "net_fair_value",
+   "fieldtype": "Currency",
+   "label": "Net Fair Value",
+   "read_only": 1
+  },
+  {
+   "fieldname": "accumulated_gain_loss",
+   "fieldtype": "Currency",
+   "label": "Accumulated Fair Value Gain/Loss",
+   "read_only": 1
+  },
+  {
+   "fieldname": "last_valuation_date",
+   "fieldtype": "Date",
+   "label": "Last Valuation Date"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Small Text",
+   "label": "Notes"
+  }
+ ],
+ "links": [],
+ "modified": "2024-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Biological Assets",
+ "name": "Biological Asset",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Farm Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1,
+ "autoname": "naming_series:"
 }

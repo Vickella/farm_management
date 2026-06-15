@@ -1,134 +1,174 @@
 {
-  "doctype": "DocType",
-  "name": "Farm",
-  "module": "Farm Setup",
-  "custom": 0,
-  "istable": 0,
-  "issingle": 0,
-  "is_submittable": 0,
-  "editable_grid": 1,
-  "engine": "InnoDB",
-  "field_order": [
-    "farm_name",
-    "owner",
-    "farm_registration_number",
-    "farm_type",
-    "location",
-    "gps_coordinates",
-    "total_land_size",
-    "irrigation_type",
-    "water_source",
-    "soil_type",
-    "climate_zone",
-    "farm_manager",
-    "operational_status",
-    "amended_from"
-  ],
-  "fields": [
-    {
-      "fieldname": "farm_name",
-      "label": "Farm Name",
-      "fieldtype": "Data",
-      "reqd": 1,
-      "in_list_view": 1
-    },
-    {
-      "fieldname": "owner",
-      "label": "Owner",
-      "fieldtype": "Link",
-      "options": "Customer",
-      "reqd": 1,
-      "in_list_view": 1
-    },
-    {
-      "fieldname": "farm_registration_number",
-      "label": "Farm Registration Number",
-      "fieldtype": "Data"
-    },
-    {
-      "fieldname": "farm_type",
-      "label": "Farm Type",
-      "fieldtype": "Table MultiSelect",
-      "options": "Farm Type",
-      "reqd": 1
-    },
-    {
-      "fieldname": "location",
-      "label": "Location",
-      "fieldtype": "Data",
-      "in_list_view": 1
-    },
-    {
-      "fieldname": "gps_coordinates",
-      "label": "GPS Coordinates",
-      "fieldtype": "Geolocation"
-    },
-    {
-      "fieldname": "total_land_size",
-      "label": "Total Land Size (Ha)",
-      "fieldtype": "Float",
-      "reqd": 1
-    },
-    {
-      "fieldname": "irrigation_type",
-      "label": "Irrigation Type",
-      "fieldtype": "Select",
-      "options": "None\nDrip\nSprinkler\nFlood\nCentre Pivot\nRainfed"
-    },
-    {
-      "fieldname": "water_source",
-      "label": "Water Source",
-      "fieldtype": "Select",
-      "options": "Borehole\nRiver\nDam\nMunicipal\nRainwater Harvesting"
-    },
-    {
-      "fieldname": "soil_type",
-      "label": "Soil Type",
-      "fieldtype": "Select",
-      "options": "Sandy\nClay\nLoam\nSandy Loam\nClay Loam\nSilt"
-    },
-    {
-      "fieldname": "climate_zone",
-      "label": "Climate Zone",
-      "fieldtype": "Select",
-      "options": "Region 1\nRegion 2\nRegion 3\nRegion 4\nRegion 5"
-    },
-    {
-      "fieldname": "farm_manager",
-      "label": "Farm Manager",
-      "fieldtype": "Link",
-      "options": "Employee"
-    },
-    {
-      "fieldname": "operational_status",
-      "label": "Operational Status",
-      "fieldtype": "Select",
-      "options": "Active\nDormant\nDecommissioned",
-      "reqd": 1,
-      "in_list_view": 1,
-      "default": "Active"
-    },
-    {
-      "fieldname": "amended_from",
-      "label": "Amended From",
-      "fieldtype": "Link",
-      "options": "Farm"
-    }
-  ],
-  "permissions": [
-    {
-      "role": "System Manager",
-      "read": 1,
-      "write": 1,
-      "create": 1,
-      "delete": 1,
-      "submit": 0,
-      "cancel": 0,
-      "amend": 0
-    }
-  ],
-  "sort_field": "modified",
-  "sort_order": "DESC",
-  "autoname": "FM-.####",
-  "title_field": "farm_name"
+ "actions": [],
+ "creation": "2024-01-01 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "farm_name",
+  "owner_name",
+  "farm_registration_number",
+  "column_break_1",
+  "operational_status",
+  "farm_manager",
+  "section_break_location",
+  "location",
+  "gps_coordinates",
+  "column_break_2",
+  "total_land_size",
+  "irrigation_type",
+  "water_source",
+  "section_break_soil",
+  "soil_type",
+  "climate_zone",
+  "section_break_type",
+  "farm_type"
+ ],
+ "fields": [
+  {
+   "fieldname": "farm_name",
+   "fieldtype": "Data",
+   "label": "Farm Name",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "owner_name",
+   "fieldtype": "Link",
+   "label": "Owner",
+   "options": "Customer",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "farm_registration_number",
+   "fieldtype": "Data",
+   "label": "Farm Registration Number"
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "operational_status",
+   "fieldtype": "Select",
+   "label": "Operational Status",
+   "options": "Active\nDormant\nDecommissioned",
+   "reqd": 1,
+   "default": "Active",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "farm_manager",
+   "fieldtype": "Link",
+   "label": "Farm Manager",
+   "options": "Employee"
+  },
+  {
+   "fieldname": "section_break_location",
+   "fieldtype": "Section Break",
+   "label": "Location"
+  },
+  {
+   "fieldname": "location",
+   "fieldtype": "Data",
+   "label": "Location",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "gps_coordinates",
+   "fieldtype": "Geolocation",
+   "label": "GPS Coordinates"
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_land_size",
+   "fieldtype": "Float",
+   "label": "Total Land Size (Ha)",
+   "reqd": 1
+  },
+  {
+   "fieldname": "irrigation_type",
+   "fieldtype": "Select",
+   "label": "Irrigation Type",
+   "options": "\nNone\nDrip\nSprinkler\nFlood\nCentre Pivot\nRainfed"
+  },
+  {
+   "fieldname": "water_source",
+   "fieldtype": "Select",
+   "label": "Water Source",
+   "options": "\nBorehole\nRiver\nDam\nMunicipal\nRainwater Harvesting"
+  },
+  {
+   "fieldname": "section_break_soil",
+   "fieldtype": "Section Break",
+   "label": "Soil & Climate"
+  },
+  {
+   "fieldname": "soil_type",
+   "fieldtype": "Select",
+   "label": "Soil Type",
+   "options": "\nSandy\nClay\nLoam\nSandy Loam\nClay Loam\nSilt"
+  },
+  {
+   "fieldname": "climate_zone",
+   "fieldtype": "Select",
+   "label": "Climate Zone",
+   "options": "\nRegion 1\nRegion 2\nRegion 3\nRegion 4\nRegion 5"
+  },
+  {
+   "fieldname": "section_break_type",
+   "fieldtype": "Section Break",
+   "label": "Farm Types"
+  },
+  {
+   "fieldname": "farm_type",
+   "fieldtype": "Table MultiSelect",
+   "label": "Farm Types",
+   "options": "Farm Type Multiselect",
+   "reqd": 1
+  }
+ ],
+ "links": [],
+ "modified": "2024-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Farm Setup",
+ "name": "Farm",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Farm Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1,
+ "autoname": "field:farm_name",
+ "title_field": "farm_name",
+ "naming_rule": "By fieldname"
 }

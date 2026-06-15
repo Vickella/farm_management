@@ -1,111 +1,146 @@
 {
-  "doctype": "DocType",
-  "name": "Input Loan Disbursement",
-  "module": "Contract Farming",
-  "custom": 0,
-  "istable": 0,
-  "issingle": 0,
-  "is_submittable": 0,
-  "editable_grid": 1,
-  "engine": "InnoDB",
-  "field_order": [
-    "agreement",
-    "farmer",
-    "disbursement_date",
-    "input_type",
-    "item",
-    "quantity",
-    "unit",
-    "value",
-    "recovered",
-    "recovery_date",
-    "recovery_reference",
-    "notes"
-  ],
-  "fields": [
-    {
-      "fieldname": "agreement",
-      "label": "Agreement",
-      "fieldtype": "Link",
-      "options": "Contract Farming Agreement",
-      "reqd": 1
-    },
-    {
-      "fieldname": "farmer",
-      "label": "Farmer",
-      "fieldtype": "Link",
-      "options": "Outgrower Farmer",
-      "reqd": 1
-    },
-    {
-      "fieldname": "disbursement_date",
-      "label": "Disbursement Date",
-      "fieldtype": "Date",
-      "reqd": 1
-    },
-    {
-      "fieldname": "input_type",
-      "label": "Input Type",
-      "fieldtype": "Select",
-      "options": "Seed\nFertilizer\nChemical\nCash",
-      "reqd": 1
-    },
-    {
-      "fieldname": "item",
-      "label": "Item",
-      "fieldtype": "Link",
-      "options": "Item"
-    },
-    {
-      "fieldname": "quantity",
-      "label": "Quantity",
-      "fieldtype": "Float"
-    },
-    {
-      "fieldname": "unit",
-      "label": "Unit",
-      "fieldtype": "Data"
-    },
-    {
-      "fieldname": "value",
-      "label": "Value",
-      "fieldtype": "Currency",
-      "reqd": 1
-    },
-    {
-      "fieldname": "recovered",
-      "label": "Recovered",
-      "fieldtype": "Check"
-    },
-    {
-      "fieldname": "recovery_date",
-      "label": "Recovery Date",
-      "fieldtype": "Date"
-    },
-    {
-      "fieldname": "recovery_reference",
-      "label": "Recovery Reference",
-      "fieldtype": "Data"
-    },
-    {
-      "fieldname": "notes",
-      "label": "Notes",
-      "fieldtype": "Small Text"
-    }
-  ],
-  "permissions": [
-    {
-      "role": "System Manager",
-      "read": 1,
-      "write": 1,
-      "create": 1,
-      "delete": 1,
-      "submit": 0,
-      "cancel": 0,
-      "amend": 0
-    }
-  ],
-  "sort_field": "modified",
-  "sort_order": "DESC",
-  "autoname": "ILD-.####"
+ "actions": [],
+ "creation": "2024-01-01 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "agreement",
+  "farmer",
+  "disbursement_date",
+  "input_type",
+  "item",
+  "quantity",
+  "unit",
+  "value",
+  "column_break_1",
+  "recovered",
+  "recovery_date",
+  "recovery_reference",
+  "notes"
+ ],
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "ILD-.####"
+  },
+  {
+   "fieldname": "agreement",
+   "fieldtype": "Link",
+   "label": "Agreement",
+   "options": "Contract Farming Agreement",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "farmer",
+   "fieldtype": "Link",
+   "label": "Farmer",
+   "options": "Outgrower Farmer",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "disbursement_date",
+   "fieldtype": "Date",
+   "label": "Disbursement Date",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "input_type",
+   "fieldtype": "Select",
+   "label": "Input Type",
+   "options": "Seed\nFertilizer\nChemical\nCash",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "item",
+   "fieldtype": "Link",
+   "label": "Item",
+   "options": "Item"
+  },
+  {
+   "fieldname": "quantity",
+   "fieldtype": "Float",
+   "label": "Quantity"
+  },
+  {
+   "fieldname": "unit",
+   "fieldtype": "Data",
+   "label": "Unit"
+  },
+  {
+   "fieldname": "value",
+   "fieldtype": "Currency",
+   "label": "Value",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "recovered",
+   "fieldtype": "Check",
+   "label": "Recovered"
+  },
+  {
+   "fieldname": "recovery_date",
+   "fieldtype": "Date",
+   "label": "Recovery Date"
+  },
+  {
+   "fieldname": "recovery_reference",
+   "fieldtype": "Data",
+   "label": "Recovery Reference"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Small Text",
+   "label": "Notes"
+  }
+ ],
+ "links": [],
+ "modified": "2024-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Contract Farming",
+ "name": "Input Loan Disbursement",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Farm Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1,
+ "autoname": "naming_series:"
 }

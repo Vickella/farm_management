@@ -1,104 +1,153 @@
 {
-  "doctype": "DocType",
-  "name": "Farm BOM",
-  "module": "Farm Bom",
-  "custom": 0,
-  "istable": 0,
-  "issingle": 0,
-  "is_submittable": 0,
-  "editable_grid": 1,
-  "engine": "InnoDB",
-  "field_order": [
-    "bom_title",
-    "project_type",
-    "farm",
-    "planned_quantity",
-    "planned_quantity_unit",
-    "production_cycle_days",
-    "planned_start_date",
-    "planned_end_date",
-    "bom_items",
-    "total_estimated_cost",
-    "notes"
-  ],
-  "fields": [
-    {
-      "fieldname": "bom_title",
-      "label": "BOM Title",
-      "fieldtype": "Data",
-      "reqd": 1
-    },
-    {
-      "fieldname": "project_type",
-      "label": "Project Type",
-      "fieldtype": "Select",
-      "options": "Crop Production\nPoultry Production\nFish Farming\nDairy Production\nGoat Farming\nPig Farming\nGreenhouse Farming",
-      "reqd": 1
-    },
-    {
-      "fieldname": "farm",
-      "label": "Farm",
-      "fieldtype": "Link",
-      "options": "Farm"
-    },
-    {
-      "fieldname": "planned_quantity",
-      "label": "Planned Quantity",
-      "fieldtype": "Float",
-      "reqd": 1
-    },
-    {
-      "fieldname": "planned_quantity_unit",
-      "label": "Planned Quantity Unit",
-      "fieldtype": "Select",
-      "options": "Birds\nHead\nHectare\nKg\nUnits"
-    },
-    {
-      "fieldname": "production_cycle_days",
-      "label": "Production Cycle Days",
-      "fieldtype": "Int"
-    },
-    {
-      "fieldname": "planned_start_date",
-      "label": "Planned Start Date",
-      "fieldtype": "Date"
-    },
-    {
-      "fieldname": "planned_end_date",
-      "label": "Planned End Date",
-      "fieldtype": "Date"
-    },
-    {
-      "fieldname": "bom_items",
-      "label": "BOM Items",
-      "fieldtype": "Table",
-      "options": "Farm BOM Item"
-    },
-    {
-      "fieldname": "total_estimated_cost",
-      "label": "Total Estimated Cost",
-      "fieldtype": "Currency",
-      "read_only": 1
-    },
-    {
-      "fieldname": "notes",
-      "label": "Notes",
-      "fieldtype": "Small Text"
-    }
-  ],
-  "permissions": [
-    {
-      "role": "System Manager",
-      "read": 1,
-      "write": 1,
-      "create": 1,
-      "delete": 1,
-      "submit": 0,
-      "cancel": 0,
-      "amend": 0
-    }
-  ],
-  "sort_field": "modified",
-  "sort_order": "DESC",
-  "autoname": "FBOM-.####"
+ "actions": [],
+ "creation": "2024-01-01 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "bom_title",
+  "project_type",
+  "farm",
+  "column_break_1",
+  "planned_quantity",
+  "planned_quantity_unit",
+  "production_cycle_days",
+  "section_break_dates",
+  "planned_start_date",
+  "planned_end_date",
+  "column_break_2",
+  "total_estimated_cost",
+  "section_break_items",
+  "bom_items",
+  "notes"
+ ],
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "FBOM-.####"
+  },
+  {
+   "fieldname": "bom_title",
+   "fieldtype": "Data",
+   "label": "BOM Title",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "project_type",
+   "fieldtype": "Select",
+   "label": "Project Type",
+   "options": "Crop Production\nPoultry Production\nFish Farming\nDairy Production\nGoat Farming\nPig Farming\nGreenhouse Farming",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "farm",
+   "fieldtype": "Link",
+   "label": "Farm",
+   "options": "Farm"
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "planned_quantity",
+   "fieldtype": "Float",
+   "label": "Planned Quantity",
+   "reqd": 1
+  },
+  {
+   "fieldname": "planned_quantity_unit",
+   "fieldtype": "Select",
+   "label": "Planned Quantity Unit",
+   "options": "Birds\nHead\nHectare\nKg\nUnits"
+  },
+  {
+   "fieldname": "production_cycle_days",
+   "fieldtype": "Int",
+   "label": "Production Cycle Days"
+  },
+  {
+   "fieldname": "section_break_dates",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "planned_start_date",
+   "fieldtype": "Date",
+   "label": "Planned Start Date"
+  },
+  {
+   "fieldname": "planned_end_date",
+   "fieldtype": "Date",
+   "label": "Planned End Date"
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_estimated_cost",
+   "fieldtype": "Currency",
+   "label": "Total Estimated Cost",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_items",
+   "fieldtype": "Section Break",
+   "label": "BOM Items"
+  },
+  {
+   "fieldname": "bom_items",
+   "fieldtype": "Table",
+   "label": "BOM Items",
+   "options": "Farm BOM Item",
+   "reqd": 1
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Small Text",
+   "label": "Notes"
+  }
+ ],
+ "links": [],
+ "modified": "2024-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Farm BOM",
+ "name": "Farm BOM",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Farm Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1,
+ "autoname": "naming_series:"
 }

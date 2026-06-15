@@ -1,100 +1,153 @@
 {
-  "doctype": "DocType",
-  "name": "Farm Pond",
-  "module": "Farm Infrastructure",
-  "custom": 0,
-  "istable": 0,
-  "issingle": 0,
-  "is_submittable": 0,
-  "editable_grid": 1,
-  "engine": "InnoDB",
-  "field_order": [
-    "pond_number",
-    "farm",
-    "depth_meters",
-    "water_capacity_litres",
-    "species",
-    "water_quality_ph",
-    "water_quality_temperature",
-    "water_quality_oxygen_ppm",
-    "stocking_date",
-    "harvest_projection_date",
-    "current_status"
-  ],
-  "fields": [
-    {
-      "fieldname": "pond_number",
-      "label": "Pond Number",
-      "fieldtype": "Data",
-      "reqd": 1
-    },
-    {
-      "fieldname": "farm",
-      "label": "Farm",
-      "fieldtype": "Link",
-      "options": "Farm",
-      "reqd": 1
-    },
-    {
-      "fieldname": "depth_meters",
-      "label": "Depth Meters",
-      "fieldtype": "Float"
-    },
-    {
-      "fieldname": "water_capacity_litres",
-      "label": "Water Capacity Litres",
-      "fieldtype": "Float"
-    },
-    {
-      "fieldname": "species",
-      "label": "Species",
-      "fieldtype": "Link",
-      "options": "Farm Type"
-    },
-    {
-      "fieldname": "water_quality_ph",
-      "label": "Water Quality Ph",
-      "fieldtype": "Float"
-    },
-    {
-      "fieldname": "water_quality_temperature",
-      "label": "Water Quality Temperature",
-      "fieldtype": "Float"
-    },
-    {
-      "fieldname": "water_quality_oxygen_ppm",
-      "label": "Water Quality Oxygen Ppm",
-      "fieldtype": "Float"
-    },
-    {
-      "fieldname": "stocking_date",
-      "label": "Stocking Date",
-      "fieldtype": "Date"
-    },
-    {
-      "fieldname": "harvest_projection_date",
-      "label": "Harvest Projection Date",
-      "fieldtype": "Date"
-    },
-    {
-      "fieldname": "current_status",
-      "label": "Current Status",
-      "fieldtype": "Select",
-      "options": "Active\nDry\nUnder Maintenance"
-    }
-  ],
-  "permissions": [
-    {
-      "role": "System Manager",
-      "read": 1,
-      "write": 1,
-      "create": 1,
-      "delete": 1,
-      "submit": 0,
-      "cancel": 0,
-      "amend": 0
-    }
-  ],
-  "sort_field": "modified",
-  "sort_order": "DESC"
+ "actions": [],
+ "creation": "2024-01-01 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "pond_number",
+  "farm",
+  "column_break_1",
+  "current_status",
+  "species",
+  "section_break_2",
+  "depth_meters",
+  "water_capacity_litres",
+  "column_break_3",
+  "stocking_date",
+  "harvest_projection_date",
+  "section_break_water",
+  "water_quality_ph",
+  "water_quality_temperature",
+  "water_quality_oxygen_ppm"
+ ],
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "FP-.####"
+  },
+  {
+   "fieldname": "pond_number",
+   "fieldtype": "Data",
+   "label": "Pond Number",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "farm",
+   "fieldtype": "Link",
+   "label": "Farm",
+   "options": "Farm",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "current_status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Active\nDry\nUnder Maintenance",
+   "reqd": 1,
+   "default": "Active",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "species",
+   "fieldtype": "Link",
+   "label": "Species",
+   "options": "Farm Type"
+  },
+  {
+   "fieldname": "section_break_2",
+   "fieldtype": "Section Break",
+   "label": "Dimensions"
+  },
+  {
+   "fieldname": "depth_meters",
+   "fieldtype": "Float",
+   "label": "Depth (m)"
+  },
+  {
+   "fieldname": "water_capacity_litres",
+   "fieldtype": "Float",
+   "label": "Water Capacity (L)"
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "stocking_date",
+   "fieldtype": "Date",
+   "label": "Stocking Date"
+  },
+  {
+   "fieldname": "harvest_projection_date",
+   "fieldtype": "Date",
+   "label": "Projected Harvest Date"
+  },
+  {
+   "fieldname": "section_break_water",
+   "fieldtype": "Section Break",
+   "label": "Water Quality"
+  },
+  {
+   "fieldname": "water_quality_ph",
+   "fieldtype": "Float",
+   "label": "pH"
+  },
+  {
+   "fieldname": "water_quality_temperature",
+   "fieldtype": "Float",
+   "label": "Temperature (\u00b0C)"
+  },
+  {
+   "fieldname": "water_quality_oxygen_ppm",
+   "fieldtype": "Float",
+   "label": "Oxygen (ppm)"
+  }
+ ],
+ "links": [],
+ "modified": "2024-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Farm Infrastructure",
+ "name": "Farm Pond",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Farm Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1,
+ "autoname": "naming_series:"
 }

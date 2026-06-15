@@ -1,135 +1,204 @@
 {
-  "doctype": "DocType",
-  "name": "Contract Farming Agreement",
-  "module": "Contract Farming",
-  "custom": 0,
-  "istable": 0,
-  "issingle": 0,
-  "is_submittable": 0,
-  "editable_grid": 1,
-  "engine": "InnoDB",
-  "field_order": [
-    "farmer",
-    "farm",
-    "contract_start_date",
-    "contract_end_date",
-    "crop_type",
-    "contracted_area_ha",
-    "production_target_kg",
-    "agreed_purchase_price_per_kg",
-    "seed_value",
-    "fertilizer_value",
-    "chemical_value",
-    "total_input_loan",
-    "total_expected_purchase",
-    "quality_standards",
-    "status"
-  ],
-  "fields": [
-    {
-      "fieldname": "farmer",
-      "label": "Farmer",
-      "fieldtype": "Link",
-      "options": "Outgrower Farmer",
-      "reqd": 1
-    },
-    {
-      "fieldname": "farm",
-      "label": "Farm",
-      "fieldtype": "Link",
-      "options": "Farm",
-      "reqd": 1
-    },
-    {
-      "fieldname": "contract_start_date",
-      "label": "Contract Start Date",
-      "fieldtype": "Date",
-      "reqd": 1
-    },
-    {
-      "fieldname": "contract_end_date",
-      "label": "Contract End Date",
-      "fieldtype": "Date",
-      "reqd": 1
-    },
-    {
-      "fieldname": "crop_type",
-      "label": "Crop Type",
-      "fieldtype": "Link",
-      "options": "Crop Type",
-      "reqd": 1
-    },
-    {
-      "fieldname": "contracted_area_ha",
-      "label": "Contracted Area Ha",
-      "fieldtype": "Float",
-      "reqd": 1
-    },
-    {
-      "fieldname": "production_target_kg",
-      "label": "Production Target Kg",
-      "fieldtype": "Float",
-      "reqd": 1
-    },
-    {
-      "fieldname": "agreed_purchase_price_per_kg",
-      "label": "Agreed Purchase Price Per Kg",
-      "fieldtype": "Currency",
-      "reqd": 1
-    },
-    {
-      "fieldname": "seed_value",
-      "label": "Seed Value",
-      "fieldtype": "Currency"
-    },
-    {
-      "fieldname": "fertilizer_value",
-      "label": "Fertilizer Value",
-      "fieldtype": "Currency"
-    },
-    {
-      "fieldname": "chemical_value",
-      "label": "Chemical Value",
-      "fieldtype": "Currency"
-    },
-    {
-      "fieldname": "total_input_loan",
-      "label": "Total Input Loan",
-      "fieldtype": "Currency",
-      "read_only": 1
-    },
-    {
-      "fieldname": "total_expected_purchase",
-      "label": "Total Expected Purchase",
-      "fieldtype": "Currency",
-      "read_only": 1
-    },
-    {
-      "fieldname": "quality_standards",
-      "label": "Quality Standards",
-      "fieldtype": "Text Editor"
-    },
-    {
-      "fieldname": "status",
-      "label": "Status",
-      "fieldtype": "Select",
-      "options": "Draft\nActive\nCompleted\nDefaulted\nCancelled",
-      "reqd": 1
-    }
-  ],
-  "permissions": [
-    {
-      "role": "System Manager",
-      "read": 1,
-      "write": 1,
-      "create": 1,
-      "delete": 1,
-      "submit": 0,
-      "cancel": 0,
-      "amend": 0
-    }
-  ],
-  "sort_field": "modified",
-  "sort_order": "DESC",
-  "autoname": "CFA-.####"
+ "actions": [],
+ "creation": "2024-01-01 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "farmer",
+  "farm",
+  "column_break_1",
+  "status",
+  "section_break_contract",
+  "contract_start_date",
+  "contract_end_date",
+  "crop_type",
+  "contracted_area_ha",
+  "production_target_kg",
+  "agreed_purchase_price_per_kg",
+  "column_break_2",
+  "total_expected_purchase",
+  "section_break_inputs",
+  "seed_provided",
+  "seed_value",
+  "fertilizer_provided",
+  "fertilizer_value",
+  "chemical_provided",
+  "chemical_value",
+  "total_input_loan",
+  "quality_standards"
+ ],
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "CFA-.####"
+  },
+  {
+   "fieldname": "farmer",
+   "fieldtype": "Link",
+   "label": "Farmer",
+   "options": "Outgrower Farmer",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "farm",
+   "fieldtype": "Link",
+   "label": "Farm",
+   "options": "Farm",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Draft\nActive\nCompleted\nDefaulted\nCancelled",
+   "reqd": 1,
+   "default": "Draft",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "section_break_contract",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "contract_start_date",
+   "fieldtype": "Date",
+   "label": "Contract Start Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "contract_end_date",
+   "fieldtype": "Date",
+   "label": "Contract End Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "crop_type",
+   "fieldtype": "Link",
+   "label": "Crop Type",
+   "options": "Crop Type",
+   "reqd": 1
+  },
+  {
+   "fieldname": "contracted_area_ha",
+   "fieldtype": "Float",
+   "label": "Contracted Area Ha",
+   "reqd": 1
+  },
+  {
+   "fieldname": "production_target_kg",
+   "fieldtype": "Float",
+   "label": "Production Target Kg",
+   "reqd": 1
+  },
+  {
+   "fieldname": "agreed_purchase_price_per_kg",
+   "fieldtype": "Currency",
+   "label": "Agreed Purchase Price Per Kg",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_expected_purchase",
+   "fieldtype": "Currency",
+   "label": "Total Expected Purchase",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_inputs",
+   "fieldtype": "Section Break",
+   "label": "Inputs Provided"
+  },
+  {
+   "fieldname": "seed_provided",
+   "fieldtype": "Check",
+   "label": "Seed Provided"
+  },
+  {
+   "fieldname": "seed_value",
+   "fieldtype": "Currency",
+   "label": "Seed Value"
+  },
+  {
+   "fieldname": "fertilizer_provided",
+   "fieldtype": "Check",
+   "label": "Fertilizer Provided"
+  },
+  {
+   "fieldname": "fertilizer_value",
+   "fieldtype": "Currency",
+   "label": "Fertilizer Value"
+  },
+  {
+   "fieldname": "chemical_provided",
+   "fieldtype": "Check",
+   "label": "Chemical Provided"
+  },
+  {
+   "fieldname": "chemical_value",
+   "fieldtype": "Currency",
+   "label": "Chemical Value"
+  },
+  {
+   "fieldname": "total_input_loan",
+   "fieldtype": "Currency",
+   "label": "Total Input Loan",
+   "read_only": 1
+  },
+  {
+   "fieldname": "quality_standards",
+   "fieldtype": "Text Editor",
+   "label": "Quality Standards"
+  }
+ ],
+ "links": [],
+ "modified": "2024-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Contract Farming",
+ "name": "Contract Farming Agreement",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Farm Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1,
+ "autoname": "naming_series:",
+ "is_submittable": 1
 }
