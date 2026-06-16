@@ -6,7 +6,18 @@ import frappe
 
 FIXTURE_UNIQUE_FIELDS = {
     "Farm BOM": "bom_title",
+    "Custom Field": ("dt", "fieldname"),
 }
+
+FIXTURE_LOAD_ORDER = [
+    "farm_type.json",
+    "crop_type.json",
+    "farm_activity_type.json",
+    "pest.json",
+    "animal_disease.json",
+    "farm_bom.json",
+    "custom_field.json",
+]
 
 LEGACY_DOCTYPES = [
     "Agri AI Farm Management Settings Legacy",
@@ -132,7 +143,8 @@ def seed_fixture_data():
     if not fixtures_dir.exists():
         return
 
-    for fixture_path in sorted(fixtures_dir.glob("*.json")):
+    fixture_paths = sorted(fixtures_dir.glob("*.json"), key=get_fixture_sort_key)
+    for fixture_path in fixture_paths:
         with fixture_path.open(encoding="utf-8") as fixture_file:
             records = json.load(fixture_file)
 
@@ -146,6 +158,13 @@ def seed_fixture_data():
                 continue
 
 
+def get_fixture_sort_key(fixture_path):
+    try:
+        return FIXTURE_LOAD_ORDER.index(fixture_path.name)
+    except ValueError:
+        return len(FIXTURE_LOAD_ORDER)
+
+
 def fixture_record_exists(record):
     doctype = record.get("doctype")
     if not doctype:
@@ -155,8 +174,14 @@ def fixture_record_exists(record):
         return True
 
     unique_field = FIXTURE_UNIQUE_FIELDS.get(doctype)
-    if unique_field and record.get(unique_field):
+    if isinstance(unique_field, str) and record.get(unique_field):
         return frappe.db.exists(doctype, {unique_field: record.get(unique_field)})
+
+    if isinstance(unique_field, tuple) and all(record.get(fieldname) for fieldname in unique_field):
+        return frappe.db.exists(
+            doctype,
+            {fieldname: record.get(fieldname) for fieldname in unique_field},
+        )
 
     meta = frappe.get_meta(doctype)
     if meta.autoname and meta.autoname.startswith("field:"):
