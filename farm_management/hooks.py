@@ -9,7 +9,6 @@ app_email = "dev@veritycore.co.zw"
 app_license = "MIT"
 
 after_install = "farm_management.install.after_install"
-after_migrate = ["farm_management.install.create_farm_workspace"]
 
 fixtures = [
     {"dt": "Custom Field", "filters": [["module", "=", "Farm Management"]]},
@@ -26,7 +25,7 @@ doc_events = {
 
 scheduler_events = {
     "daily": [
-        "farm_management.biological_assets.biological_asset.biological_asset.update_fair_values",
-        "farm_management.farm_calendar.farm_activity.farm_activity.generate_scheduled_tasks",
+        "farm_management.biological_assets.doctype.biological_asset.biological_asset.update_fair_values",
+        "farm_management.farm_calendar.doctype.farm_activity.farm_activity.generate_scheduled_tasks",
     ]
 }
