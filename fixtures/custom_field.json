@@ -7,7 +7,7 @@
     "fieldtype": "Select",
     "options": "\nCrop Production\nPoultry Production\nFish Farming\nDairy Production\nGoat Farming\nPig Farming\nGreenhouse Farming",
     "insert_after": "project_name",
-    "module": "Farm Management"
+    "module": "Farm Projects"
   },
   {
     "doctype": "Custom Field",
@@ -17,7 +17,7 @@
     "fieldtype": "Link",
     "options": "Farm",
     "insert_after": "agriculture_project_type",
-    "module": "Farm Management"
+    "module": "Farm Projects"
   },
   {
     "doctype": "Custom Field",
@@ -27,7 +27,7 @@
     "fieldtype": "Link",
     "options": "Crop Type",
     "insert_after": "farm",
-    "module": "Farm Management"
+    "module": "Farm Projects"
   },
   {
     "doctype": "Custom Field",
@@ -37,7 +37,7 @@
     "fieldtype": "Date",
     "options": null,
     "insert_after": "crop_variety",
-    "module": "Farm Management"
+    "module": "Farm Projects"
   },
   {
     "doctype": "Custom Field",
@@ -47,7 +47,7 @@
     "fieldtype": "Float",
     "options": null,
     "insert_after": "planting_date",
-    "module": "Farm Management"
+    "module": "Farm Projects"
   },
   {
     "doctype": "Custom Field",
@@ -57,7 +57,7 @@
     "fieldtype": "Date",
     "options": null,
     "insert_after": "expected_yield",
-    "module": "Farm Management"
+    "module": "Farm Projects"
   },
   {
     "doctype": "Custom Field",
@@ -67,7 +67,7 @@
     "fieldtype": "Link",
     "options": "Farm Field",
     "insert_after": "harvest_date",
-    "module": "Farm Management"
+    "module": "Farm Projects"
   },
   {
     "doctype": "Custom Field",
@@ -77,7 +77,7 @@
     "fieldtype": "Data",
     "options": null,
     "insert_after": "farm",
-    "module": "Farm Management"
+    "module": "Farm Projects"
   },
   {
     "doctype": "Custom Field",
@@ -87,7 +87,7 @@
     "fieldtype": "Int",
     "options": null,
     "insert_after": "breed",
-    "module": "Farm Management"
+    "module": "Farm Projects"
   },
   {
     "doctype": "Custom Field",
@@ -97,7 +97,7 @@
     "fieldtype": "Int",
     "options": null,
     "insert_after": "initial_quantity",
-    "module": "Farm Management"
+    "module": "Farm Projects"
   },
   {
     "doctype": "Custom Field",
@@ -107,7 +107,7 @@
     "fieldtype": "Float",
     "options": null,
     "insert_after": "growth_period_days",
-    "module": "Farm Management"
+    "module": "Farm Projects"
   },
   {
     "doctype": "Custom Field",
@@ -117,7 +117,7 @@
     "fieldtype": "Link",
     "options": "Farm Type",
     "insert_after": "farm",
-    "module": "Farm Management"
+    "module": "Farm Projects"
   },
   {
     "doctype": "Custom Field",
@@ -127,7 +127,7 @@
     "fieldtype": "Int",
     "options": null,
     "insert_after": "fish_species",
-    "module": "Farm Management"
+    "module": "Farm Projects"
   },
   {
     "doctype": "Custom Field",
@@ -137,6 +137,6 @@
     "fieldtype": "Link",
     "options": "Farm Pond",
     "insert_after": "fingerling_quantity",
-    "module": "Farm Management"
+    "module": "Farm Projects"
   }
 ]

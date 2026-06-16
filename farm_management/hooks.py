@@ -11,8 +11,8 @@ app_license = "MIT"
 after_install = "farm_management.install.after_install"
 
 fixtures = [
-    {"dt": "Custom Field", "filters": [["module", "=", "Farm Management"]]},
-    {"dt": "Property Setter", "filters": [["module", "=", "Farm Management"]]},
+    {"dt": "Custom Field", "filters": [["module", "=", "Farm Projects"]]},
+    {"dt": "Property Setter", "filters": [["module", "=", "Farm Projects"]]},
     {"dt": "Role", "filters": [["name", "in", ["Farm Manager", "Farm Worker", "Agronomist"]]]},
     {"dt": "Workspace", "filters": [["name", "=", "Farm Management"]]},
 ]
