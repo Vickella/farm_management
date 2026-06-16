@@ -9,6 +9,7 @@ app_email = "dev@veritycore.co.zw"
 app_license = "MIT"
 
 after_install = "farm_management.install.after_install"
+after_migrate = ["farm_management.install.create_farm_workspace"]
 
 fixtures = [
     {"dt": "Custom Field", "filters": [["module", "=", "Farm Management"]]},

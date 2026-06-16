@@ -60,6 +60,42 @@ WORKSPACE_SHORTCUTS = [
 ]
 
 
+def get_workspace_content():
+    content = [{"id": "farm-shortcuts-header", "type": "header", "data": {"text": "Shortcuts", "col": 12}}]
+
+    content.extend(
+        {
+            "id": f"shortcut-{shortcut.lower().replace(' ', '-')}",
+            "type": "shortcut",
+            "data": {"shortcut_name": shortcut, "col": 3},
+        }
+        for shortcut in WORKSPACE_SHORTCUTS
+    )
+
+    content.extend(
+        [
+            {"id": "farm-spacer", "type": "spacer", "data": {"col": 12}},
+            {
+                "id": "farm-management-header",
+                "type": "header",
+                "data": {"text": "Farm Management", "col": 12},
+            },
+        ]
+    )
+
+    content.extend(
+        {
+            "id": f"card-{group.lower().replace(' ', '-').replace('&', 'and')}",
+            "type": "card",
+            "data": {"card_name": group, "col": 4},
+        }
+        for group, links in WORKSPACE_GROUPS
+        if links
+    )
+
+    return content
+
+
 def after_install():
     create_roles()
     remove_legacy_doctypes()
@@ -140,6 +176,7 @@ def create_farm_workspace():
 
     ws.name = "Farm Management"
     ws.label = "Farm Management"
+    ws.title = "Farm Management"
     ws.category = "Modules"
     ws.icon = "agriculture"
     ws.is_standard = 1
@@ -147,6 +184,10 @@ def create_farm_workspace():
     ws.public = 1
     ws.is_hidden = 0
     ws.sequence_id = 99
+    ws.for_user = ""
+    ws.parent_page = ""
+    ws.restrict_to_domain = ""
+    ws.indicator_color = ""
 
     ws.links = []
     ws.shortcuts = []
@@ -154,32 +195,45 @@ def create_farm_workspace():
     ws.number_cards = []
     ws.quick_lists = []
     ws.roles = []
+    ws.custom_blocks = []
 
-    ws.content = json.dumps(
-        [
-            {
-                "id": group.lower().replace(" ", "-").replace("&", "and"),
-                "type": "card",
-                "data": {"card_name": group, "col": 4},
-            }
-            for group, links in WORKSPACE_GROUPS
-            if links
-        ]
-    )
+    ws.content = json.dumps(get_workspace_content())
 
     for doctype in WORKSPACE_SHORTCUTS:
-        ws.append("shortcuts", {"label": doctype, "type": "DocType", "link_to": doctype})
+        ws.append(
+            "shortcuts",
+            {
+                "label": doctype,
+                "type": "DocType",
+                "link_to": doctype,
+                "doc_view": "List",
+                "color": "Grey",
+            },
+        )
 
     for label, links in WORKSPACE_GROUPS:
-        ws.append("links", {"type": "Card Break", "label": label})
+        ws.append(
+            "links",
+            {
+                "type": "Card Break",
+                "label": label,
+                "link_count": len(links),
+                "link_type": "DocType",
+                "is_query_report": 0,
+                "hidden": 0,
+                "onboard": 0,
+            },
+        )
         for link, link_type in links:
             ws.append(
                 "links",
                 {
+                    "dependencies": "" if link_type == "DocType" else link,
                     "type": "Link",
                     "label": link,
                     "link_type": link_type,
                     "link_to": link,
+                    "link_count": 0,
                     "is_query_report": 1 if link_type == "Report" else 0,
                     "hidden": 0,
                     "onboard": 0,
