@@ -1,7 +1,7 @@
 {
  "category": "Modules",
  "charts": [],
- "content": "[]",
+ "content": "[{\"id\":\"farm-setup\",\"type\":\"card\",\"data\":{\"card_name\":\"Farm Setup\",\"col\":4}},{\"id\":\"farm-infrastructure\",\"type\":\"card\",\"data\":{\"card_name\":\"Farm Infrastructure\",\"col\":4}},{\"id\":\"biological-assets\",\"type\":\"card\",\"data\":{\"card_name\":\"Biological Assets\",\"col\":4}},{\"id\":\"disease-and-pest-intelligence\",\"type\":\"card\",\"data\":{\"card_name\":\"Disease and Pest Intelligence\",\"col\":4}},{\"id\":\"farm-bom-and-budgeting\",\"type\":\"card\",\"data\":{\"card_name\":\"Farm BOM and Budgeting\",\"col\":4}},{\"id\":\"contract-farming\",\"type\":\"card\",\"data\":{\"card_name\":\"Contract Farming\",\"col\":4}},{\"id\":\"farm-calendar\",\"type\":\"card\",\"data\":{\"card_name\":\"Farm Calendar\",\"col\":4}},{\"id\":\"reports\",\"type\":\"card\",\"data\":{\"card_name\":\"Reports\",\"col\":4}}]",
  "doctype": "Workspace",
  "extends_another_page": 0,
  "hide_custom": 0,
@@ -10,207 +10,267 @@
  "label": "Farm Management",
  "links": [
   {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Farm Setup",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
    "label": "Farm",
    "link_to": "Farm",
    "link_type": "DocType",
-   "type": "Link",
-   "hidden": 0,
-   "is_query_report": 0,
-   "onboard": 0
+   "onboard": 0,
+   "type": "Link"
   },
   {
+   "hidden": 0,
+   "is_query_report": 0,
    "label": "Farm Type",
    "link_to": "Farm Type",
    "link_type": "DocType",
-   "type": "Link",
-   "hidden": 0,
-   "is_query_report": 0,
-   "onboard": 0
+   "onboard": 0,
+   "type": "Link"
   },
   {
+   "hidden": 0,
+   "is_query_report": 0,
    "label": "Crop Type",
    "link_to": "Crop Type",
    "link_type": "DocType",
-   "type": "Link",
-   "hidden": 0,
-   "is_query_report": 0,
-   "onboard": 0
+   "onboard": 0,
+   "type": "Link"
   },
   {
+   "hidden": 0,
+   "is_query_report": 0,
    "label": "Farm Management Settings",
    "link_to": "Farm Management Settings",
    "link_type": "DocType",
-   "type": "Link",
-   "hidden": 0,
-   "is_query_report": 0,
-   "onboard": 0
+   "onboard": 0,
+   "type": "Link"
   },
   {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Farm Infrastructure",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
    "label": "Farm Field",
    "link_to": "Farm Field",
    "link_type": "DocType",
-   "type": "Link",
-   "hidden": 0,
-   "is_query_report": 0,
-   "onboard": 0
+   "onboard": 0,
+   "type": "Link"
   },
   {
+   "hidden": 0,
+   "is_query_report": 0,
    "label": "Farm Pond",
    "link_to": "Farm Pond",
    "link_type": "DocType",
-   "type": "Link",
-   "hidden": 0,
-   "is_query_report": 0,
-   "onboard": 0
+   "onboard": 0,
+   "type": "Link"
   },
   {
+   "hidden": 0,
+   "is_query_report": 0,
    "label": "Farm Pen",
    "link_to": "Farm Pen",
    "link_type": "DocType",
-   "type": "Link",
-   "hidden": 0,
-   "is_query_report": 0,
-   "onboard": 0
+   "onboard": 0,
+   "type": "Link"
   },
   {
+   "hidden": 0,
+   "is_query_report": 0,
    "label": "Fowl Run",
    "link_to": "Fowl Run",
    "link_type": "DocType",
-   "type": "Link",
-   "hidden": 0,
-   "is_query_report": 0,
-   "onboard": 0
+   "onboard": 0,
+   "type": "Link"
   },
   {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Biological Assets",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
    "label": "Biological Asset",
    "link_to": "Biological Asset",
    "link_type": "DocType",
-   "type": "Link",
-   "hidden": 0,
-   "is_query_report": 0,
-   "onboard": 0
+   "onboard": 0,
+   "type": "Link"
   },
   {
+   "hidden": 0,
+   "is_query_report": 0,
    "label": "Harvest Transaction",
    "link_to": "Harvest Transaction",
    "link_type": "DocType",
-   "type": "Link",
-   "hidden": 0,
-   "is_query_report": 0,
-   "onboard": 0
+   "onboard": 0,
+   "type": "Link"
   },
   {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Disease and Pest Intelligence",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
    "label": "Disease Incident",
    "link_to": "Disease Incident",
    "link_type": "DocType",
-   "type": "Link",
-   "hidden": 0,
-   "is_query_report": 0,
-   "onboard": 0
+   "onboard": 0,
+   "type": "Link"
   },
   {
+   "hidden": 0,
+   "is_query_report": 0,
    "label": "Pest",
    "link_to": "Pest",
    "link_type": "DocType",
-   "type": "Link",
-   "hidden": 0,
-   "is_query_report": 0,
-   "onboard": 0
+   "onboard": 0,
+   "type": "Link"
   },
   {
+   "hidden": 0,
+   "is_query_report": 0,
    "label": "Animal Disease",
    "link_to": "Animal Disease",
    "link_type": "DocType",
-   "type": "Link",
-   "hidden": 0,
-   "is_query_report": 0,
-   "onboard": 0
+   "onboard": 0,
+   "type": "Link"
   },
   {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Farm BOM and Budgeting",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
    "label": "Farm BOM",
    "link_to": "Farm BOM",
    "link_type": "DocType",
-   "type": "Link",
-   "hidden": 0,
-   "is_query_report": 0,
-   "onboard": 0
+   "onboard": 0,
+   "type": "Link"
   },
   {
+   "hidden": 0,
+   "is_query_report": 0,
    "label": "Farm Budget",
    "link_to": "Farm Budget",
    "link_type": "DocType",
-   "type": "Link",
-   "hidden": 0,
-   "is_query_report": 0,
-   "onboard": 0
+   "onboard": 0,
+   "type": "Link"
   },
   {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Contract Farming",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
    "label": "Outgrower Farmer",
    "link_to": "Outgrower Farmer",
    "link_type": "DocType",
-   "type": "Link",
-   "hidden": 0,
-   "is_query_report": 0,
-   "onboard": 0
+   "onboard": 0,
+   "type": "Link"
   },
   {
+   "hidden": 0,
+   "is_query_report": 0,
    "label": "Contract Farming Agreement",
    "link_to": "Contract Farming Agreement",
    "link_type": "DocType",
-   "type": "Link",
-   "hidden": 0,
-   "is_query_report": 0,
-   "onboard": 0
+   "onboard": 0,
+   "type": "Link"
   },
   {
+   "hidden": 0,
+   "is_query_report": 0,
    "label": "Input Loan Disbursement",
    "link_to": "Input Loan Disbursement",
    "link_type": "DocType",
-   "type": "Link",
-   "hidden": 0,
-   "is_query_report": 0,
-   "onboard": 0
+   "onboard": 0,
+   "type": "Link"
   },
   {
+   "hidden": 0,
+   "is_query_report": 0,
    "label": "Harvest Recovery",
    "link_to": "Harvest Recovery",
    "link_type": "DocType",
-   "type": "Link",
-   "hidden": 0,
-   "is_query_report": 0,
-   "onboard": 0
+   "onboard": 0,
+   "type": "Link"
   },
   {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Farm Calendar",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
    "label": "Farm Activity",
    "link_to": "Farm Activity",
    "link_type": "DocType",
-   "type": "Link",
-   "hidden": 0,
-   "is_query_report": 0,
-   "onboard": 0
+   "onboard": 0,
+   "type": "Link"
   },
   {
+   "hidden": 0,
+   "is_query_report": 0,
    "label": "Farm Activity Type",
    "link_to": "Farm Activity Type",
    "link_type": "DocType",
-   "type": "Link",
-   "hidden": 0,
-   "is_query_report": 0,
-   "onboard": 0
+   "onboard": 0,
+   "type": "Link"
   },
   {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Reports",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
    "label": "Farm KPI Summary",
    "link_to": "Farm KPI Summary",
    "link_type": "Report",
-   "type": "Link",
-   "is_query_report": 1
+   "onboard": 0,
+   "type": "Link"
   },
   {
+   "hidden": 0,
+   "is_query_report": 1,
    "label": "Farm Budget Variance Analysis",
    "link_to": "Farm Budget Variance Analysis",
    "link_type": "Report",
-   "type": "Link",
-   "is_query_report": 1
+   "onboard": 0,
+   "type": "Link"
   }
  ],
  "modified": "2024-01-01 00:00:00.000000",
@@ -245,13 +305,13 @@
    "type": "DocType"
   },
   {
-   "label": "Contract Farming Agreement",
-   "link_to": "Contract Farming Agreement",
+   "label": "Farm Budget",
+   "link_to": "Farm Budget",
    "type": "DocType"
   },
   {
-   "label": "Farm Activity",
-   "link_to": "Farm Activity",
+   "label": "Contract Farming Agreement",
+   "link_to": "Contract Farming Agreement",
    "type": "DocType"
   }
  ]

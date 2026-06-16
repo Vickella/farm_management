@@ -1,8 +1,69 @@
+import json
+from pathlib import Path
+
 import frappe
+
+
+FIXTURE_UNIQUE_FIELDS = {
+    "Farm BOM": "bom_title",
+}
+
+LEGACY_DOCTYPES = [
+    "Agri AI Farm Management Settings Legacy",
+]
+
+WORKSPACE_GROUPS = [
+    (
+        "Farm Setup",
+        [
+            ("Farm", "DocType"),
+            ("Farm Type", "DocType"),
+            ("Crop Type", "DocType"),
+            ("Farm Management Settings", "DocType"),
+        ],
+    ),
+    (
+        "Farm Infrastructure",
+        [
+            ("Farm Field", "DocType"),
+            ("Farm Pond", "DocType"),
+            ("Farm Pen", "DocType"),
+            ("Fowl Run", "DocType"),
+        ],
+    ),
+    ("Biological Assets", [("Biological Asset", "DocType"), ("Harvest Transaction", "DocType")]),
+    (
+        "Disease and Pest Intelligence",
+        [("Disease Incident", "DocType"), ("Pest", "DocType"), ("Animal Disease", "DocType")],
+    ),
+    ("Farm BOM and Budgeting", [("Farm BOM", "DocType"), ("Farm Budget", "DocType")]),
+    (
+        "Contract Farming",
+        [
+            ("Outgrower Farmer", "DocType"),
+            ("Contract Farming Agreement", "DocType"),
+            ("Input Loan Disbursement", "DocType"),
+            ("Harvest Recovery", "DocType"),
+        ],
+    ),
+    ("Farm Calendar", [("Farm Activity", "DocType"), ("Farm Activity Type", "DocType")]),
+    ("Reports", [("Farm KPI Summary", "Report"), ("Farm Budget Variance Analysis", "Report")]),
+]
+
+WORKSPACE_SHORTCUTS = [
+    "Farm",
+    "Biological Asset",
+    "Disease Incident",
+    "Farm BOM",
+    "Farm Budget",
+    "Contract Farming Agreement",
+]
 
 
 def after_install():
     create_roles()
+    remove_legacy_doctypes()
+    seed_fixture_data()
     create_farm_workspace()
     setup_farm_management_settings()
     frappe.db.commit()
@@ -15,6 +76,12 @@ def create_roles():
             frappe.get_doc({"doctype": "Role", "role_name": role}).insert(ignore_permissions=True)
 
 
+def remove_legacy_doctypes():
+    for doctype in LEGACY_DOCTYPES:
+        if frappe.db.exists("DocType", doctype):
+            frappe.delete_doc("DocType", doctype, force=True, ignore_permissions=True)
+
+
 def setup_farm_management_settings():
     if not frappe.db.exists("Farm Management Settings", "Farm Management Settings"):
         doc = frappe.new_doc("Farm Management Settings")
@@ -24,11 +91,53 @@ def setup_farm_management_settings():
         doc.insert(ignore_permissions=True)
 
 
-def create_farm_workspace():
-    if frappe.db.exists("Workspace", "Farm Management"):
+def seed_fixture_data():
+    fixtures_dir = Path(frappe.get_app_path("farm_management")).parent / "fixtures"
+    if not fixtures_dir.exists():
         return
 
-    ws = frappe.new_doc("Workspace")
+    for fixture_path in sorted(fixtures_dir.glob("*.json")):
+        with fixture_path.open(encoding="utf-8") as fixture_file:
+            records = json.load(fixture_file)
+
+        for record in records:
+            if fixture_record_exists(record):
+                continue
+
+            try:
+                frappe.get_doc(record).insert(ignore_permissions=True, ignore_if_duplicate=True)
+            except frappe.DuplicateEntryError:
+                continue
+
+
+def fixture_record_exists(record):
+    doctype = record.get("doctype")
+    if not doctype:
+        return False
+
+    if record.get("name") and frappe.db.exists(doctype, record.get("name")):
+        return True
+
+    unique_field = FIXTURE_UNIQUE_FIELDS.get(doctype)
+    if unique_field and record.get(unique_field):
+        return frappe.db.exists(doctype, {unique_field: record.get(unique_field)})
+
+    meta = frappe.get_meta(doctype)
+    if meta.autoname and meta.autoname.startswith("field:"):
+        fieldname = meta.autoname.split(":", 1)[1]
+        if record.get(fieldname):
+            return frappe.db.exists(doctype, record.get(fieldname))
+
+    return False
+
+
+def create_farm_workspace():
+    if frappe.db.exists("Workspace", "Farm Management"):
+        ws = frappe.get_doc("Workspace", "Farm Management")
+    else:
+        ws = frappe.new_doc("Workspace")
+        ws.name = "Farm Management"
+
     ws.name = "Farm Management"
     ws.label = "Farm Management"
     ws.category = "Modules"
@@ -36,23 +145,48 @@ def create_farm_workspace():
     ws.is_standard = 1
     ws.module = "Farm Setup"
     ws.public = 1
+    ws.is_hidden = 0
+    ws.sequence_id = 99
 
-    shortcuts = ["Farm", "Farm Field", "Farm Pond", "Farm Pen", "Fowl Run", "Biological Asset", "Harvest Transaction", "Farm BOM", "Farm Budget", "Disease Incident", "Pest", "Animal Disease", "Farm Activity", "Outgrower Farmer", "Contract Farming Agreement", "Input Loan Disbursement", "Harvest Recovery", "Farm Management Settings"]
-    for doctype in shortcuts:
+    ws.links = []
+    ws.shortcuts = []
+    ws.charts = []
+    ws.number_cards = []
+    ws.quick_lists = []
+    ws.roles = []
+
+    ws.content = json.dumps(
+        [
+            {
+                "id": group.lower().replace(" ", "-").replace("&", "and"),
+                "type": "card",
+                "data": {"card_name": group, "col": 4},
+            }
+            for group, links in WORKSPACE_GROUPS
+            if links
+        ]
+    )
+
+    for doctype in WORKSPACE_SHORTCUTS:
         ws.append("shortcuts", {"label": doctype, "type": "DocType", "link_to": doctype})
 
-    cards = [
-        ("Farm Setup", ["Farm", "Farm Type", "Crop Type", "Farm Management Settings"]),
-        ("Farm Infrastructure", ["Farm Field", "Farm Pond", "Farm Pen", "Fowl Run"]),
-        ("Farm Projects & Calendar", ["Farm Activity", "Farm Activity Type"]),
-        ("Biological Assets (IFRS 41)", ["Biological Asset", "Harvest Transaction"]),
-        ("Disease & Pest Intelligence", ["Disease Incident", "Pest", "Animal Disease"]),
-        ("Farm BOM & Budgeting", ["Farm BOM", "Farm Budget"]),
-        ("Contract Farming", ["Outgrower Farmer", "Contract Farming Agreement", "Input Loan Disbursement", "Harvest Recovery"]),
-        ("Reports", ["Farm KPI Summary", "Farm Budget Variance Analysis"]),
-    ]
-    for label, links in cards:
-        ws.append("content", {"type": "Card Break", "label": label})
-        for link in links:
-            ws.append("content", {"type": "Link", "label": link, "link_type": "DocType", "link_to": link})
-    ws.insert(ignore_permissions=True)
+    for label, links in WORKSPACE_GROUPS:
+        ws.append("links", {"type": "Card Break", "label": label})
+        for link, link_type in links:
+            ws.append(
+                "links",
+                {
+                    "type": "Link",
+                    "label": link,
+                    "link_type": link_type,
+                    "link_to": link,
+                    "is_query_report": 1 if link_type == "Report" else 0,
+                    "hidden": 0,
+                    "onboard": 0,
+                },
+            )
+
+    if ws.is_new():
+        ws.insert(ignore_permissions=True)
+    else:
+        ws.save(ignore_permissions=True)
