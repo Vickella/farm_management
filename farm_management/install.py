@@ -139,6 +139,7 @@ def after_install():
 
 
 def apply_phase2_updates():
+    ensure_module_defs()
     remove_legacy_project_custom_fields()
     seed_fixture_data()
     seed_livestock_breeds()
@@ -147,6 +148,17 @@ def apply_phase2_updates():
     create_farm_workspace()
     setup_farm_management_settings()
 
+
+def ensure_module_defs():
+    for module_name in ("Farm Management", "Livestock"):
+        if not frappe.db.exists("Module Def", module_name):
+            frappe.get_doc(
+                {
+                    "doctype": "Module Def",
+                    "module_name": module_name,
+                    "app_name": "farm_management",
+                }
+            ).insert(ignore_permissions=True)
 
 def create_roles():
     for role in ["Farm Manager", "Farm Worker", "Agronomist"]:
