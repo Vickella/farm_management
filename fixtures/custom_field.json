@@ -2,141 +2,401 @@
   {
     "doctype": "Custom Field",
     "dt": "Project",
+    "module": "Farm Management",
     "fieldname": "agriculture_project_type",
-    "label": "Agriculture Project Type",
     "fieldtype": "Select",
-    "options": "\nCrop Production\nPoultry Production\nFish Farming\nDairy Production\nGoat Farming\nPig Farming\nGreenhouse Farming",
+    "label": "Agriculture Project Type",
     "insert_after": "project_name",
-    "module": "Farm Projects"
+    "options": "\nCrop Production\nPoultry Production\nFish Farming\nDairy Production\nGoat Farming\nPig Farming\nGreenhouse Farming"
   },
   {
     "doctype": "Custom Field",
     "dt": "Project",
+    "module": "Farm Management",
     "fieldname": "farm",
+    "fieldtype": "Link",
     "label": "Farm",
-    "fieldtype": "Link",
-    "options": "Farm",
     "insert_after": "agriculture_project_type",
-    "module": "Farm Projects"
+    "options": "Farm",
+    "depends_on": "eval:doc.agriculture_project_type"
   },
   {
     "doctype": "Custom Field",
     "dt": "Project",
+    "module": "Farm Management",
+    "fieldname": "section_break_agriculture_details",
+    "fieldtype": "Section Break",
+    "label": "Agriculture Details",
+    "insert_after": "farm",
+    "depends_on": "eval:doc.agriculture_project_type"
+  },
+  {
+    "doctype": "Custom Field",
+    "dt": "Project",
+    "module": "Farm Management",
     "fieldname": "crop_variety",
+    "fieldtype": "Link",
     "label": "Crop Variety",
-    "fieldtype": "Link",
+    "insert_after": "section_break_agriculture_details",
     "options": "Crop Type",
-    "insert_after": "farm",
-    "module": "Farm Projects"
+    "depends_on": "eval:doc.agriculture_project_type == 'Crop Production'"
   },
   {
     "doctype": "Custom Field",
     "dt": "Project",
+    "module": "Farm Management",
     "fieldname": "planting_date",
+    "fieldtype": "Date",
     "label": "Planting Date",
-    "fieldtype": "Date",
-    "options": null,
     "insert_after": "crop_variety",
-    "module": "Farm Projects"
+    "depends_on": "eval:doc.agriculture_project_type == 'Crop Production'"
   },
   {
     "doctype": "Custom Field",
     "dt": "Project",
+    "module": "Farm Management",
     "fieldname": "expected_yield",
-    "label": "Expected Yield",
     "fieldtype": "Float",
-    "options": null,
+    "label": "Expected Yield (kg/Ha)",
     "insert_after": "planting_date",
-    "module": "Farm Projects"
+    "depends_on": "eval:doc.agriculture_project_type == 'Crop Production'"
   },
   {
     "doctype": "Custom Field",
     "dt": "Project",
+    "module": "Farm Management",
     "fieldname": "harvest_date",
-    "label": "Expected Harvest Date",
     "fieldtype": "Date",
-    "options": null,
+    "label": "Expected Harvest Date",
     "insert_after": "expected_yield",
-    "module": "Farm Projects"
+    "depends_on": "eval:doc.agriculture_project_type == 'Crop Production'"
   },
   {
     "doctype": "Custom Field",
     "dt": "Project",
+    "module": "Farm Management",
     "fieldname": "field_allocation",
+    "fieldtype": "Link",
     "label": "Field Allocation",
-    "fieldtype": "Link",
-    "options": "Farm Field",
     "insert_after": "harvest_date",
-    "module": "Farm Projects"
+    "options": "Farm Field",
+    "depends_on": "eval:doc.agriculture_project_type == 'Crop Production'"
   },
   {
     "doctype": "Custom Field",
     "dt": "Project",
-    "fieldname": "breed",
-    "label": "Breed / Strain",
+    "module": "Farm Management",
+    "fieldname": "fertilizer_schedule",
+    "fieldtype": "Small Text",
+    "label": "Fertilizer Schedule",
+    "insert_after": "field_allocation",
+    "depends_on": "eval:doc.agriculture_project_type == 'Crop Production'"
+  },
+  {
+    "doctype": "Custom Field",
+    "dt": "Project",
+    "module": "Farm Management",
+    "fieldname": "poultry_breed",
     "fieldtype": "Data",
-    "options": null,
-    "insert_after": "farm",
-    "module": "Farm Projects"
+    "label": "Breed / Strain",
+    "insert_after": "fertilizer_schedule",
+    "depends_on": "eval:doc.agriculture_project_type == 'Poultry Production'"
   },
   {
     "doctype": "Custom Field",
     "dt": "Project",
-    "fieldname": "initial_quantity",
-    "label": "Initial Quantity (Birds/Head)",
+    "module": "Farm Management",
+    "fieldname": "chick_quantity",
     "fieldtype": "Int",
-    "options": null,
-    "insert_after": "breed",
-    "module": "Farm Projects"
+    "label": "Chick Quantity",
+    "insert_after": "poultry_breed",
+    "depends_on": "eval:doc.agriculture_project_type == 'Poultry Production'"
   },
   {
     "doctype": "Custom Field",
     "dt": "Project",
+    "module": "Farm Management",
     "fieldname": "growth_period_days",
+    "fieldtype": "Int",
     "label": "Growth Period (Days)",
-    "fieldtype": "Int",
-    "options": null,
-    "insert_after": "initial_quantity",
-    "module": "Farm Projects"
+    "insert_after": "chick_quantity",
+    "depends_on": "eval:doc.agriculture_project_type == 'Poultry Production'"
   },
   {
     "doctype": "Custom Field",
     "dt": "Project",
+    "module": "Farm Management",
     "fieldname": "mortality_target_percent",
-    "label": "Mortality Target (%)",
     "fieldtype": "Float",
-    "options": null,
+    "label": "Target Mortality (%)",
     "insert_after": "growth_period_days",
-    "module": "Farm Projects"
+    "depends_on": "eval:doc.agriculture_project_type == 'Poultry Production'"
   },
   {
     "doctype": "Custom Field",
     "dt": "Project",
+    "module": "Farm Management",
+    "fieldname": "vaccination_schedule",
+    "fieldtype": "Small Text",
+    "label": "Vaccination Schedule",
+    "insert_after": "mortality_target_percent",
+    "depends_on": "eval:doc.agriculture_project_type == 'Poultry Production'"
+  },
+  {
+    "doctype": "Custom Field",
+    "dt": "Project",
+    "module": "Farm Management",
+    "fieldname": "feed_program",
+    "fieldtype": "Small Text",
+    "label": "Feed Program",
+    "insert_after": "vaccination_schedule",
+    "depends_on": "eval:doc.agriculture_project_type == 'Poultry Production'"
+  },
+  {
+    "doctype": "Custom Field",
+    "dt": "Project",
+    "module": "Farm Management",
+    "fieldname": "fowl_run_allocation",
+    "fieldtype": "Link",
+    "label": "Fowl Run Allocation",
+    "insert_after": "feed_program",
+    "options": "Fowl Run",
+    "depends_on": "eval:doc.agriculture_project_type == 'Poultry Production'"
+  },
+  {
+    "doctype": "Custom Field",
+    "dt": "Project",
+    "module": "Farm Management",
     "fieldname": "fish_species",
+    "fieldtype": "Link",
     "label": "Fish Species",
-    "fieldtype": "Link",
+    "insert_after": "fowl_run_allocation",
     "options": "Farm Type",
-    "insert_after": "farm",
-    "module": "Farm Projects"
+    "depends_on": "eval:doc.agriculture_project_type == 'Fish Farming'"
   },
   {
     "doctype": "Custom Field",
     "dt": "Project",
+    "module": "Farm Management",
     "fieldname": "fingerling_quantity",
-    "label": "Fingerling Quantity",
     "fieldtype": "Int",
-    "options": null,
+    "label": "Fingerling Quantity",
     "insert_after": "fish_species",
-    "module": "Farm Projects"
+    "depends_on": "eval:doc.agriculture_project_type == 'Fish Farming'"
   },
   {
     "doctype": "Custom Field",
     "dt": "Project",
-    "fieldname": "pond_allocation",
-    "label": "Pond Allocation",
-    "fieldtype": "Link",
-    "options": "Farm Pond",
+    "module": "Farm Management",
+    "fieldname": "stocking_date",
+    "fieldtype": "Date",
+    "label": "Stocking Date",
     "insert_after": "fingerling_quantity",
-    "module": "Farm Projects"
+    "depends_on": "eval:doc.agriculture_project_type == 'Fish Farming'"
+  },
+  {
+    "doctype": "Custom Field",
+    "dt": "Project",
+    "module": "Farm Management",
+    "fieldname": "feed_type",
+    "fieldtype": "Data",
+    "label": "Feed Type",
+    "insert_after": "stocking_date",
+    "depends_on": "eval:doc.agriculture_project_type == 'Fish Farming'"
+  },
+  {
+    "doctype": "Custom Field",
+    "dt": "Project",
+    "module": "Farm Management",
+    "fieldname": "water_monitoring_schedule",
+    "fieldtype": "Small Text",
+    "label": "Water Monitoring Schedule",
+    "insert_after": "feed_type",
+    "depends_on": "eval:doc.agriculture_project_type == 'Fish Farming'"
+  },
+  {
+    "doctype": "Custom Field",
+    "dt": "Project",
+    "module": "Farm Management",
+    "fieldname": "pond_allocation",
+    "fieldtype": "Link",
+    "label": "Pond Allocation",
+    "insert_after": "water_monitoring_schedule",
+    "options": "Farm Pond",
+    "depends_on": "eval:doc.agriculture_project_type == 'Fish Farming'"
+  },
+  {
+    "doctype": "Custom Field",
+    "dt": "Project",
+    "module": "Farm Management",
+    "fieldname": "fish_harvest_date",
+    "fieldtype": "Date",
+    "label": "Harvest Date",
+    "insert_after": "pond_allocation",
+    "depends_on": "eval:doc.agriculture_project_type == 'Fish Farming'"
+  },
+  {
+    "doctype": "Custom Field",
+    "dt": "Project",
+    "module": "Farm Management",
+    "fieldname": "dairy_breed",
+    "fieldtype": "Data",
+    "label": "Breed",
+    "insert_after": "fish_harvest_date",
+    "depends_on": "eval:doc.agriculture_project_type == 'Dairy Production'"
+  },
+  {
+    "doctype": "Custom Field",
+    "dt": "Project",
+    "module": "Farm Management",
+    "fieldname": "herd_size",
+    "fieldtype": "Int",
+    "label": "Herd Size",
+    "insert_after": "dairy_breed",
+    "depends_on": "eval:doc.agriculture_project_type == 'Dairy Production'"
+  },
+  {
+    "doctype": "Custom Field",
+    "dt": "Project",
+    "module": "Farm Management",
+    "fieldname": "daily_yield_target_litres",
+    "fieldtype": "Float",
+    "label": "Daily Yield Target (L)",
+    "insert_after": "herd_size",
+    "depends_on": "eval:doc.agriculture_project_type == 'Dairy Production'"
+  },
+  {
+    "doctype": "Custom Field",
+    "dt": "Project",
+    "module": "Farm Management",
+    "fieldname": "pen_allocation_dairy",
+    "fieldtype": "Link",
+    "label": "Pen Allocation",
+    "insert_after": "daily_yield_target_litres",
+    "options": "Farm Pen",
+    "depends_on": "eval:doc.agriculture_project_type == 'Dairy Production'"
+  },
+  {
+    "doctype": "Custom Field",
+    "dt": "Project",
+    "module": "Farm Management",
+    "fieldname": "goat_breed",
+    "fieldtype": "Data",
+    "label": "Breed",
+    "insert_after": "pen_allocation_dairy",
+    "depends_on": "eval:doc.agriculture_project_type == 'Goat Farming'"
+  },
+  {
+    "doctype": "Custom Field",
+    "dt": "Project",
+    "module": "Farm Management",
+    "fieldname": "goat_herd_size",
+    "fieldtype": "Int",
+    "label": "Herd Size",
+    "insert_after": "goat_breed",
+    "depends_on": "eval:doc.agriculture_project_type == 'Goat Farming'"
+  },
+  {
+    "doctype": "Custom Field",
+    "dt": "Project",
+    "module": "Farm Management",
+    "fieldname": "kidding_season",
+    "fieldtype": "Data",
+    "label": "Kidding Season",
+    "insert_after": "goat_herd_size",
+    "depends_on": "eval:doc.agriculture_project_type == 'Goat Farming'"
+  },
+  {
+    "doctype": "Custom Field",
+    "dt": "Project",
+    "module": "Farm Management",
+    "fieldname": "pen_allocation_goats",
+    "fieldtype": "Link",
+    "label": "Pen Allocation",
+    "insert_after": "kidding_season",
+    "options": "Farm Pen",
+    "depends_on": "eval:doc.agriculture_project_type == 'Goat Farming'"
+  },
+  {
+    "doctype": "Custom Field",
+    "dt": "Project",
+    "module": "Farm Management",
+    "fieldname": "pig_breed",
+    "fieldtype": "Data",
+    "label": "Breed",
+    "insert_after": "pen_allocation_goats",
+    "depends_on": "eval:doc.agriculture_project_type == 'Pig Farming'"
+  },
+  {
+    "doctype": "Custom Field",
+    "dt": "Project",
+    "module": "Farm Management",
+    "fieldname": "pig_herd_size",
+    "fieldtype": "Int",
+    "label": "Herd Size",
+    "insert_after": "pig_breed",
+    "depends_on": "eval:doc.agriculture_project_type == 'Pig Farming'"
+  },
+  {
+    "doctype": "Custom Field",
+    "dt": "Project",
+    "module": "Farm Management",
+    "fieldname": "farrowing_date",
+    "fieldtype": "Date",
+    "label": "Expected Farrowing Date",
+    "insert_after": "pig_herd_size",
+    "depends_on": "eval:doc.agriculture_project_type == 'Pig Farming'"
+  },
+  {
+    "doctype": "Custom Field",
+    "dt": "Project",
+    "module": "Farm Management",
+    "fieldname": "pen_allocation_pigs",
+    "fieldtype": "Link",
+    "label": "Pen Allocation",
+    "insert_after": "farrowing_date",
+    "options": "Farm Pen",
+    "depends_on": "eval:doc.agriculture_project_type == 'Pig Farming'"
+  },
+  {
+    "doctype": "Custom Field",
+    "dt": "Project",
+    "module": "Farm Management",
+    "fieldname": "greenhouse_crop",
+    "fieldtype": "Link",
+    "label": "Crop",
+    "insert_after": "pen_allocation_pigs",
+    "options": "Crop Type",
+    "depends_on": "eval:doc.agriculture_project_type == 'Greenhouse Farming'"
+  },
+  {
+    "doctype": "Custom Field",
+    "dt": "Project",
+    "module": "Farm Management",
+    "fieldname": "greenhouse_area_sqm",
+    "fieldtype": "Float",
+    "label": "Greenhouse Area (sqm)",
+    "insert_after": "greenhouse_crop",
+    "depends_on": "eval:doc.agriculture_project_type == 'Greenhouse Farming'"
+  },
+  {
+    "doctype": "Custom Field",
+    "dt": "Project",
+    "module": "Farm Management",
+    "fieldname": "planting_date_gh",
+    "fieldtype": "Date",
+    "label": "Planting Date",
+    "insert_after": "greenhouse_area_sqm",
+    "depends_on": "eval:doc.agriculture_project_type == 'Greenhouse Farming'"
+  },
+  {
+    "doctype": "Custom Field",
+    "dt": "Project",
+    "module": "Farm Management",
+    "fieldname": "harvest_date_gh",
+    "fieldtype": "Date",
+    "label": "Expected Harvest Date",
+    "insert_after": "planting_date_gh",
+    "depends_on": "eval:doc.agriculture_project_type == 'Greenhouse Farming'"
   }
 ]

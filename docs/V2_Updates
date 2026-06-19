@@ -1,0 +1,1141 @@
+# Codex Master Prompt — farm_management Phase 2 Feature Expansion
+
+## Environment
+- Bench: `/home/frappe/frappe-bench`
+- App: `/home/frappe/frappe-bench/apps/farm_management`
+- Site: `test.local`
+- Frappe/ERPNext: version-15
+- OpenWeather API Key: `bfd7d15e4d142c6c9e49e6d317bbca00`
+
+---
+
+## CRITICAL RULES
+
+1. Read every existing file before touching anything. Run `find /home/frappe/frappe-bench/apps/farm_management -type f | grep -v __pycache__ | sort` and read relevant files first.
+2. Add on top of what exists. Do not delete or rewrite existing DocTypes, controllers, or fixtures unless a specific task below explicitly says to refactor that file.
+3. After every phase run `bench --site test.local migrate` and fix all errors before moving to the next phase.
+4. Every new DocType must have a `.json`, a `.py` controller with the correct PascalCase class name, and an `__init__.py` in its folder.
+5. Every new module folder must be listed in `modules.txt` and have an `__init__.py`.
+6. Seed data goes into `install.py` functions called from `after_install`, not into fixtures JSON unless explicitly stated.
+7. Only commit to git after all four phases migrate cleanly and the verification at the end passes.
+
+---
+
+## PHASE 1 — AGRICULTURE PROJECT DYNAMIC FIELDS
+
+### Context
+
+The ERPNext `Project` doctype has been extended with custom fields via fixtures. Currently all custom fields show at once regardless of project type, which clutters the form. The fix is to use `depends_on` expressions on each field so only the fields relevant to the selected Agriculture Project Type are visible.
+
+### Task 1.1 — Read current custom field fixture
+
+Read the file at:
+`/home/frappe/frappe-bench/apps/farm_management/fixtures/custom_field.json`
+
+If it does not exist, read:
+`/home/frappe/frappe-bench/apps/farm_management/farm_management/farm_projects/`
+
+Identify every custom field currently added to the Project doctype by this app.
+
+### Task 1.2 — Rebuild the custom fields fixture with strict depends_on
+
+Create or replace `fixtures/custom_field.json` with the following complete set of custom fields on the `Project` doctype. Every field must have a `depends_on` expression that hides it when not relevant. The field `agriculture_project_type` is the master switch — it must always be visible when it has a value.
+
+The complete field list and their visibility rules:
+
+**Always visible (no depends_on):**
+- `agriculture_project_type` — Select, options: blank/Crop Production/Poultry Production/Fish Farming/Dairy Production/Goat Farming/Pig Farming/Greenhouse Farming. Insert after `project_name`. Label: Agriculture Project Type.
+- `farm` — Link to Farm. Insert after `agriculture_project_type`. depends_on: `eval:doc.agriculture_project_type`. Label: Farm.
+
+**Crop Production only** — depends_on: `eval:doc.agriculture_project_type == 'Crop Production'`
+- `crop_variety` — Link to Crop Type. Label: Crop Variety.
+- `planting_date` — Date. Label: Planting Date.
+- `expected_yield` — Float. Label: Expected Yield (kg/Ha).
+- `harvest_date` — Date. Label: Expected Harvest Date.
+- `field_allocation` — Link to Farm Field. Label: Field Allocation.
+- `fertilizer_schedule` — Small Text. Label: Fertilizer Schedule.
+
+**Poultry Production only** — depends_on: `eval:doc.agriculture_project_type == 'Poultry Production'`
+- `poultry_breed` — Data. Label: Breed / Strain.
+- `chick_quantity` — Int. Label: Chick Quantity.
+- `growth_period_days` — Int. Label: Growth Period (Days).
+- `mortality_target_percent` — Float. Label: Target Mortality (%).
+- `vaccination_schedule` — Small Text. Label: Vaccination Schedule.
+- `feed_program` — Small Text. Label: Feed Program.
+- `fowl_run_allocation` — Link to Fowl Run. Label: Fowl Run Allocation.
+
+**Fish Farming only** — depends_on: `eval:doc.agriculture_project_type == 'Fish Farming'`
+- `fish_species` — Link to Farm Type. Label: Fish Species.
+- `fingerling_quantity` — Int. Label: Fingerling Quantity.
+- `stocking_date` — Date. Label: Stocking Date.
+- `feed_type` — Data. Label: Feed Type.
+- `water_monitoring_schedule` — Small Text. Label: Water Monitoring Schedule.
+- `pond_allocation` — Link to Farm Pond. Label: Pond Allocation.
+- `fish_harvest_date` — Date. Label: Harvest Date.
+
+**Dairy Production only** — depends_on: `eval:doc.agriculture_project_type == 'Dairy Production'`
+- `dairy_breed` — Data. Label: Breed.
+- `herd_size` — Int. Label: Herd Size.
+- `daily_yield_target_litres` — Float. Label: Daily Yield Target (L).
+- `pen_allocation_dairy` — Link to Farm Pen. Label: Pen Allocation.
+
+**Goat Farming only** — depends_on: `eval:doc.agriculture_project_type == 'Goat Farming'`
+- `goat_breed` — Data. Label: Breed.
+- `goat_herd_size` — Int. Label: Herd Size.
+- `kidding_season` — Data. Label: Kidding Season.
+- `pen_allocation_goats` — Link to Farm Pen. Label: Pen Allocation.
+
+**Pig Farming only** — depends_on: `eval:doc.agriculture_project_type == 'Pig Farming'`
+- `pig_breed` — Data. Label: Breed.
+- `pig_herd_size` — Int. Label: Herd Size.
+- `farrowing_date` — Date. Label: Expected Farrowing Date.
+- `pen_allocation_pigs` — Link to Farm Pen. Label: Pen Allocation.
+
+**Greenhouse Farming only** — depends_on: `eval:doc.agriculture_project_type == 'Greenhouse Farming'`
+- `greenhouse_crop` — Link to Crop Type. Label: Crop.
+- `greenhouse_area_sqm` — Float. Label: Greenhouse Area (sqm).
+- `planting_date_gh` — Date. Label: Planting Date.
+- `harvest_date_gh` — Date. Label: Expected Harvest Date.
+
+**Section breaks** — add these to visually separate the farm fields from native ERPNext fields:
+- A Section Break with label "Agriculture Details" after the `farm` field, with depends_on: `eval:doc.agriculture_project_type`
+
+Build the full `fixtures/custom_field.json` array with all fields above. Every field must include:
+- `dt`: `"Project"`
+- `module`: `"Farm Management"`
+- `fieldname`, `fieldtype`, `label`, `insert_after`, `depends_on` (where applicable)
+- `options` for Link and Select fields
+
+### Task 1.3 — Update hooks.py fixtures entry
+
+Ensure `hooks.py` has this in fixtures:
+
+```python
+fixtures = [
+    {"dt": "Custom Field", "filters": [["module", "=", "Farm Management"]]},
+    {"dt": "Workspace", "filters": [["name", "=", "Farm Management"]]},
+]
+```
+
+### Task 1.4 — Update agriculture_project.py controller
+
+Update `farm_management/farm_projects/agriculture_project.py` to validate required fields per project type:
+
+```python
+import frappe
+
+
+def validate_agriculture_project(doc, method):
+    ptype = doc.get("agriculture_project_type")
+    if not ptype:
+        return
+
+    if ptype == "Crop Production":
+        if not doc.get("crop_variety"):
+            frappe.throw("Crop Variety is required for Crop Production projects.")
+        if not doc.get("planting_date"):
+            frappe.throw("Planting Date is required for Crop Production projects.")
+        if doc.get("harvest_date") and doc.get("planting_date"):
+            if doc.harvest_date <= doc.planting_date:
+                frappe.throw("Harvest Date must be after Planting Date.")
+
+    elif ptype == "Poultry Production":
+        if not doc.get("poultry_breed"):
+            frappe.throw("Breed is required for Poultry Production projects.")
+        if not doc.get("chick_quantity") or int(doc.get("chick_quantity", 0)) <= 0:
+            frappe.throw("Chick Quantity must be greater than zero.")
+
+    elif ptype == "Fish Farming":
+        if not doc.get("fish_species"):
+            frappe.throw("Fish Species is required for Fish Farming projects.")
+        if not doc.get("fingerling_quantity") or int(doc.get("fingerling_quantity", 0)) <= 0:
+            frappe.throw("Fingerling Quantity must be greater than zero.")
+
+    elif ptype == "Dairy Production":
+        if not doc.get("dairy_breed"):
+            frappe.throw("Breed is required for Dairy Production projects.")
+
+    elif ptype == "Goat Farming":
+        if not doc.get("goat_breed"):
+            frappe.throw("Breed is required for Goat Farming projects.")
+
+    elif ptype == "Pig Farming":
+        if not doc.get("pig_breed"):
+            frappe.throw("Breed is required for Pig Farming projects.")
+```
+
+### Task 1.5 — Migrate and verify
+
+```bash
+cd /home/frappe/frappe-bench
+bench --site test.local migrate
+bench clear-cache
+```
+
+Open a Project in the browser, set Agriculture Project Type to Crop Production and confirm only Crop Production fields appear. Change it to Poultry Production and confirm only Poultry fields appear. All other field groups must be hidden.
+
+---
+
+## PHASE 2 — LIVESTOCK INDIVIDUAL TRACKING
+
+### Context
+
+The current app tracks livestock at the herd/flock level via Biological Asset. Farmers managing goats, pigs, cattle, and sheep need to track individual animals by tag, breed, sex, birth date, dam, sire, and health events. This is a new module added to Farm Infrastructure.
+
+### Task 2.1 — Add new module to modules.txt
+
+Add `Livestock` to `modules.txt`. Create `farm_management/livestock/__init__.py`.
+
+### Task 2.2 — Create Livestock Individual DocType
+
+Path: `farm_management/livestock/livestock_individual/`
+
+`livestock_individual.json`:
+
+Fields:
+- `naming_series` — Select, options: `LI-.####`
+- `animal_name` — Data, label: Animal Name / Tag ID, reqd: 1, in_list_view: 1
+- `tag_number` — Data, label: Ear Tag Number, unique: 1, in_list_view: 1
+- `species` — Select, label: Species, options: Cattle/Goat/Sheep/Pig/Rabbit, reqd: 1, in_list_view: 1
+- `breed` — Data, label: Breed, reqd: 1, in_list_view: 1
+- `sex` — Select, label: Sex, options: Male/Female/Castrated, reqd: 1, in_list_view: 1
+- `date_of_birth` — Date, label: Date of Birth
+- `age_months` — Float, label: Age (Months), read_only: 1
+- `birth_weight_kg` — Float, label: Birth Weight (kg)
+- `current_weight_kg` — Float, label: Current Weight (kg)
+- `column_break_1` — Column Break
+- `farm` — Link to Farm, reqd: 1, in_list_view: 1
+- `pen` — Link to Farm Pen, label: Current Pen/Kraal
+- `status` — Select, options: Active/Sold/Dead/Culled/Transferred, reqd: 1, default: Active, in_list_view: 1
+- `acquisition_type` — Select, options: Born on Farm/Purchased/Transferred In
+- `acquisition_date` — Date, label: Acquisition Date
+- `purchase_price` — Currency, label: Purchase Price
+- `section_break_parentage` — Section Break, label: Parentage
+- `dam` — Link to Livestock Individual, label: Dam (Mother)
+- `sire` — Link to Livestock Individual, label: Sire (Father)
+- `dam_tag` — Data, label: Dam Tag (if not on system)
+- `sire_tag` — Data, label: Sire Tag (if not on system)
+- `siblings` — Table MultiSelect, options: Livestock Sibling, label: Siblings
+- `litter_size` — Int, label: Litter Size (if born here)
+- `section_break_physical` — Section Break, label: Physical Description
+- `color_markings` — Data, label: Color / Markings
+- `horn_status` — Select, options: Horned/Polled/Dehorned/Disbudded, label: Horn Status
+- `microchip_number` — Data, label: Microchip Number
+- `section_break_notes` — Section Break
+- `notes` — Small Text, label: Notes
+
+Autoname: `naming_series:`
+Module: `Livestock`
+Is Submittable: 0
+Track Changes: 1
+
+Permissions: System Manager (full), Farm Manager (create/read/write), Farm Worker (read only)
+
+`livestock_individual.py`:
+
+```python
+import frappe
+from frappe.model.document import Document
+from frappe.utils import date_diff, today, flt
+
+
+class LivestockIndividual(Document):
+    def validate(self):
+        self.calculate_age()
+        self.validate_parentage()
+
+    def calculate_age(self):
+        if self.date_of_birth:
+            days = date_diff(today(), self.date_of_birth)
+            self.age_months = flt(days / 30.44, 1)
+
+    def validate_parentage(self):
+        if self.dam and self.dam == self.name:
+            frappe.throw("An animal cannot be its own dam.")
+        if self.sire and self.sire == self.name:
+            frappe.throw("An animal cannot be its own sire.")
+        if self.dam:
+            dam_doc = frappe.get_value("Livestock Individual", self.dam, "sex")
+            if dam_doc and dam_doc != "Female":
+                frappe.throw("Dam must be a Female animal.")
+        if self.sire:
+            sire_doc = frappe.get_value("Livestock Individual", self.sire, "sex")
+            if sire_doc and sire_doc not in ("Male", "Castrated"):
+                frappe.throw("Sire must be a Male or Castrated animal.")
+```
+
+### Task 2.3 — Create Livestock Sibling child DocType
+
+Path: `farm_management/livestock/livestock_sibling/`
+
+`livestock_sibling.json`:
+- istable: 1
+- Module: Livestock
+- Fields: `sibling` — Link to Livestock Individual, reqd: 1, in_list_view: 1; `tag_number` — Data, label: Tag Number, read_only: 1
+
+`livestock_sibling.py`:
+```python
+from frappe.model.document import Document
+
+class LivestockSibling(Document):
+    pass
+```
+
+### Task 2.4 — Create Livestock Health Event DocType
+
+Path: `farm_management/livestock/livestock_health_event/`
+
+This tracks vaccinations, treatments, dewormings, weight checks, and other events per individual animal.
+
+`livestock_health_event.json`:
+
+Fields:
+- `naming_series` — Select, options: `LHE-.####`
+- `animal` — Link to Livestock Individual, reqd: 1, in_list_view: 1
+- `farm` — Link to Farm, reqd: 1, in_list_view: 1
+- `event_date` — Date, reqd: 1, in_list_view: 1
+- `event_type` — Select, options: Vaccination/Deworming/Treatment/Weight Check/Dipping/AI/Pregnancy Check/Weaning/Castration/Dehorning/Other, reqd: 1, in_list_view: 1
+- `column_break_1` — Column Break
+- `performed_by` — Link to Employee, label: Performed By
+- `veterinarian` — Data, label: Veterinarian Name
+- `status` — Select, options: Completed/Scheduled/Missed, default: Completed, reqd: 1, in_list_view: 1
+- `section_break_details` — Section Break, label: Event Details
+- `product_used` — Data, label: Product / Vaccine / Drug Used
+- `dosage` — Data, label: Dosage
+- `batch_number` — Data, label: Batch Number
+- `weight_kg` — Float, label: Weight Recorded (kg)
+- `next_due_date` — Date, label: Next Due Date
+- `column_break_2` — Column Break
+- `cost` — Currency, label: Cost
+- `outcome` — Select, options: Normal/Positive Response/Adverse Reaction/No Change, label: Outcome
+- `notes` — Small Text
+
+Autoname: `naming_series:`
+Module: `Livestock`
+Track Changes: 1
+
+`livestock_health_event.py`:
+```python
+import frappe
+from frappe.model.document import Document
+
+
+class LivestockHealthEvent(Document):
+    def validate(self):
+        if self.weight_kg and self.animal:
+            frappe.db.set_value(
+                "Livestock Individual", self.animal,
+                "current_weight_kg", self.weight_kg,
+                update_modified=False
+            )
+```
+
+### Task 2.5 — Create Livestock Breeding Record DocType
+
+Path: `farm_management/livestock/livestock_breeding_record/`
+
+Tracks mating events and pregnancy outcomes.
+
+Fields:
+- `naming_series` — Select, options: `LBR-.####`
+- `dam` — Link to Livestock Individual, reqd: 1, in_list_view: 1
+- `sire` — Link to Livestock Individual, reqd: 1, in_list_view: 1
+- `farm` — Link to Farm, reqd: 1
+- `mating_date` — Date, reqd: 1, in_list_view: 1
+- `mating_method` — Select, options: Natural/Artificial Insemination, reqd: 1
+- `column_break_1` — Column Break
+- `expected_birth_date` — Date, label: Expected Birth Date
+- `actual_birth_date` — Date, label: Actual Birth Date
+- `outcome` — Select, options: Pending/Confirmed Pregnant/Not Pregnant/Aborted/Delivered, default: Pending, in_list_view: 1
+- `litter_size` — Int, label: Litter Size
+- `offspring_born_alive` — Int, label: Born Alive
+- `offspring_stillborn` — Int, label: Stillborn
+- `notes` — Small Text
+
+Autoname: `naming_series:`
+Module: `Livestock`
+
+`livestock_breeding_record.py`:
+```python
+from frappe.model.document import Document
+
+class LivestockBreedingRecord(Document):
+    pass
+```
+
+### Task 2.6 — Add Livestock module to workspace
+
+Update `install.py` `create_farm_workspace` function. In the links section, add a new card break for Livestock after the Farm Infrastructure card:
+
+```python
+("Card Break", "Livestock Tracking", None, None),
+("Link", "Livestock Individual", "DocType", "Livestock Individual"),
+("Link", "Livestock Health Event", "DocType", "Livestock Health Event"),
+("Link", "Livestock Breeding Record", "DocType", "Livestock Breeding Record"),
+```
+
+Also add shortcuts for `Livestock Individual` and `Livestock Health Event`.
+
+### Task 2.7 — Seed common livestock breeds in install.py
+
+Add a function `seed_livestock_breeds` called from `after_install` that creates Farm Type records for common breeds:
+
+Cattle breeds: Brahman, Hereford, Angus, Simmental, Mashona, Tuli, Nguni, Charolais, Limousin
+Goat breeds: Boer, Kalahari Red, Savanna, Indigenous Mashona Goat, Toggenburg, Saanen
+Sheep breeds: Merino, Dorper, Suffolk, Damara, Meatmaster
+Pig breeds: Large White, Landrace, Duroc, Pietrain, Indigenous (Mukota)
+
+Each as a Farm Type record with the appropriate category (Animal Husbandry) and a description field noting the breed origin.
+
+### Task 2.8 — Migrate and verify
+
+```bash
+bench --site test.local migrate
+bench clear-cache
+```
+
+Verify by opening ERPNext and confirming Livestock Individual, Livestock Health Event, and Livestock Breeding Record all appear in search and can be created with forms loading correctly.
+
+---
+
+## PHASE 3 — DISEASE AND PEST INTELLIGENCE ENRICHMENT
+
+### Context
+
+The current Pest and Animal Disease records have empty or minimal content in signs_and_symptoms, causes, and treatment fields. This phase seeds detailed, accurate content for every seeded record and adds additional doctypes for a Disease Alert system.
+
+### Task 3.1 — Enrich seed data in install.py
+
+Replace the `seed_pests` and `seed_animal_diseases` functions in `install.py` with fully detailed versions below.
+
+**New seed_pests function:**
+
+For each pest, populate: `pest_name`, `scientific_name`, `pest_type`, `affects`, `severity_level`, `signs_and_symptoms`, `causes`, `recommended_treatment`, `chemical_treatment`, `organic_treatment`.
+
+Use `frappe.db.set_value` to update existing records if they already exist, or insert new ones:
+
+```python
+def seed_pests():
+    pests = [
+        {
+            "pest_name": "Fall Armyworm",
+            "scientific_name": "Spodoptera frugiperda",
+            "pest_type": "Insect",
+            "affects": "Crops",
+            "severity_level": "High",
+            "signs_and_symptoms": "Ragged feeding damage on leaves, window pane effect on young plants, frass (sawdust-like excrement) in leaf whorls, irregular holes in leaves, wilting growing points, larvae visible in whorls and under leaves at night. In maize, severe whorl damage causes dead heart symptoms in young plants.",
+            "causes": "Infestation by Spodoptera frugiperda moth larvae. Moths are highly migratory, arriving in large numbers during warm humid conditions. Eggs are laid in masses on lower leaf surfaces. Larvae feed aggressively for 14-30 days before pupating in soil.",
+            "recommended_treatment": "Scout fields twice weekly. Apply insecticides at whorl stage when more than 20% of plants are infested. Apply into whorl, not onto leaves. Rotate chemical classes to prevent resistance. Use pheromone traps for early detection.",
+            "chemical_treatment": "Emamectin benzoate 1.9% EC (Proclaim) at 200ml/ha, Chlorpyrifos 48% EC at 1L/ha, Spinetoram (Radiant) at 125ml/ha. Apply early morning or evening.",
+            "organic_treatment": "Bacillus thuringiensis var. kurstaki (Bt) applied into whorls, neem-based products at 5L/ha, apply sand mixed with ash into whorls, encourage natural predators (parasitic wasps, ground beetles)."
+        },
+        {
+            "pest_name": "Aphids",
+            "scientific_name": "Aphis spp., Myzus persicae",
+            "pest_type": "Insect",
+            "affects": "Crops",
+            "severity_level": "Medium",
+            "signs_and_symptoms": "Clusters of small soft-bodied insects on undersides of leaves and growing tips, curling or distorted leaves, sticky honeydew secretion on leaf surfaces causing black sooty mold, yellowing and wilting of leaves, stunted plant growth. Virus transmission causes mosaic patterns and leaf distortion.",
+            "causes": "Rapid reproduction under warm dry conditions. Wingless females reproduce asexually producing live young. Population explosions occur in 1-2 weeks. Spread by wind, water, and movement of plant material.",
+            "recommended_treatment": "Use reflective mulches to deter aphids. Introduce natural predators. Apply insecticides only when populations exceed economic threshold of 50 or more aphids per leaf on 10% of plants.",
+            "chemical_treatment": "Imidacloprid 200 SL at 0.5ml/L, Dimethoate 40 EC at 1.5ml/L, Acetamiprid 20 SP at 0.4g/L. Avoid broad spectrum insecticides that kill beneficial insects.",
+            "organic_treatment": "Neem oil at 5ml/L water, insecticidal soap spray, pyrethrin extract, strong water spray to dislodge colonies, planting companion plants (basil, marigold, garlic)."
+        },
+        {
+            "pest_name": "Bollworm",
+            "scientific_name": "Helicoverpa armigera",
+            "pest_type": "Insect",
+            "affects": "Crops",
+            "severity_level": "High",
+            "signs_and_symptoms": "Circular holes bored into cotton bolls, maize cobs, or tomato fruit. Frass visible at entry points. Wilting of fruiting structures. Caterpillars found inside damaged fruit. In cotton, squares and bolls may drop prematurely. Damaged bolls stain and rot.",
+            "causes": "Helicoverpa armigera moths lay single eggs on young plant parts. Larvae bore into reproductive structures within days of hatching. One generation completes in 30-40 days. Multiple overlapping generations per season.",
+            "recommended_treatment": "Monitor using pheromone traps. Apply insecticides at egg hatch, targeting young larvae before they enter bolls. In maize apply at silk stage. Rotate chemical groups each generation.",
+            "chemical_treatment": "Lambda-cyhalothrin 5 EC at 300ml/ha, Chlorantraniliprole (Coragen) at 150ml/ha, Thiodicarb 80 WP at 1.5kg/ha.",
+            "organic_treatment": "Bacillus thuringiensis (Bt) applied at egg hatch, nuclear polyhedrosis virus (NPV), neem extract at silk stage, pheromone mating disruption traps."
+        },
+        {
+            "pest_name": "Stem Borer",
+            "scientific_name": "Busseola fusca, Chilo partellus",
+            "pest_type": "Insect",
+            "affects": "Crops",
+            "severity_level": "High",
+            "signs_and_symptoms": "Row of holes across leaves caused by young larvae feeding on whorl leaves (window pane damage), dead heart in young plants, dried central shoot (dead heart), tunnels visible when stalk is split, sawdust frass at stem base, premature ripening and lodging, empty cobs in maize.",
+            "causes": "Moths lay egg masses on leaves. Hatching larvae migrate to whorl, feed briefly then bore into stem. Busseola fusca mainly attacks sorghum and maize. Chilo partellus prefers younger plants. Peak infestation coincides with early season rains.",
+            "recommended_treatment": "Plant early to avoid peak moth emergence. Apply granular insecticides into whorl at 2-3 weeks after emergence. Remove crop debris after harvest to destroy pupae.",
+            "chemical_treatment": "Carbofuran 5G granules at 10kg/ha into whorls, Chlorpyrifos granules at 10kg/ha, Deltamethrin EC at 250ml/ha.",
+            "organic_treatment": "Trichogramma egg parasitoids, Cotesia flavipes larval parasitoid, Bt applied into whorl, crop rotation to reduce carryover populations."
+        },
+        {
+            "pest_name": "Whitefly",
+            "scientific_name": "Bemisia tabaci, Trialeurodes vaporariorum",
+            "pest_type": "Insect",
+            "affects": "Crops",
+            "severity_level": "Medium",
+            "signs_and_symptoms": "Tiny white winged insects on undersides of leaves, yellowing and leaf curl, honeydew deposits causing sooty mold, silvering of leaves in some crops, plant stunting, virus transmission causing leaf curl and mosaic virus symptoms in tomatoes and tobacco.",
+            "causes": "Year-round population under warm conditions and inside greenhouses. Bemisia tabaci is primary vector of over 100 plant viruses. Spreads rapidly on contaminated planting material and by wind.",
+            "recommended_treatment": "Use yellow sticky traps for monitoring and mass trapping. Avoid planting near infected fields. Remove and destroy infested plant material. Use virus-resistant varieties where available.",
+            "chemical_treatment": "Imidacloprid 200 SL at 0.5ml/L, Spiromesifen (Oberon) at 0.6ml/L, Pyriproxyfen (Admiral) at 0.5ml/L. Rotate modes of action.",
+            "organic_treatment": "Neem oil at 5ml/L, insecticidal soap, reflective mulches, release of Encarsia formosa parasitoid in greenhouses."
+        },
+        {
+            "pest_name": "Red Spider Mite",
+            "scientific_name": "Tetranychus urticae",
+            "pest_type": "Insect",
+            "affects": "Crops",
+            "severity_level": "Medium",
+            "signs_and_symptoms": "Fine stippling or bronzing on upper leaf surface, fine silk webbing on undersides of leaves and between leaves, leaves turn yellow then brown and drop, severe infestations cause premature defoliation and plant death. Mites visible as tiny red or yellow-green dots on leaf undersides.",
+            "causes": "Hot dry conditions favor rapid population explosions. One generation completes in 5-7 days in summer. Broad-spectrum insecticide use destroys natural predators and triggers outbreaks. Spreads by wind, farm equipment, and workers.",
+            "recommended_treatment": "Maintain adequate crop irrigation. Avoid broad-spectrum pesticides. Introduce predatory mites (Phytoseiidae). Apply miticides when 5 or more mites per leaf are observed.",
+            "chemical_treatment": "Abamectin 1.8 EC at 0.5ml/L, Bifenazate (Floramite) at 0.6ml/L, Spiromesifen 240 SC at 0.6ml/L. Rotate miticide classes.",
+            "organic_treatment": "Predatory mites (Phytoseiulus persimilis, Neoseiulus californicus), wettable sulfur at 3g/L, neem oil, strong water spray on leaf undersides."
+        },
+        {
+            "pest_name": "Cutworm",
+            "scientific_name": "Agrotis spp.",
+            "pest_type": "Insect",
+            "affects": "Crops",
+            "severity_level": "High",
+            "signs_and_symptoms": "Seedlings cut off at soil level overnight, wilted seedlings lying on soil surface, C-shaped grey or brown larvae found in soil near damaged plants when digging, irregular gaps in plant stands, damage typically appears in patches and spreads outward.",
+            "causes": "Agrotis moths lay eggs in soil or on plant debris at night. Larvae feed at soil surface at night and hide in soil by day. Sandy soils and fields with high weed pressure or previous grass crop are high risk. Infestation worsens in dry seasons.",
+            "recommended_treatment": "Apply poisoned bait in early evening. Cultivate and expose larvae to birds before planting. Remove weeds around field margins. Apply soil insecticides at planting.",
+            "chemical_treatment": "Poisoned bran bait (chlorpyrifos mixed with bran and water) applied at dusk, Chlorpyrifos 48 EC as soil drench at base of plants, Lambda-cyhalothrin at 300ml/ha evening spray.",
+            "organic_treatment": "Diatomaceous earth around plant bases, Steinernema carpocapsae nematodes applied to moist soil, Bt var. kurstaki in evening bait, cultivate fields to expose and desiccate larvae."
+        },
+        {
+            "pest_name": "Thrips",
+            "scientific_name": "Frankliniella occidentalis, Thrips tabaci",
+            "pest_type": "Insect",
+            "affects": "Crops",
+            "severity_level": "Low",
+            "signs_and_symptoms": "Silver or bronze scarring on leaves and petals, distorted growing tips and flower buds, black fecal spots on leaf surfaces, flowers abort prematurely, in onions causes tip dieback and silvery streaking, virus transmission (Tospoviruses) causes ring spot and necrosis.",
+            "causes": "Thrips are tiny (1-2mm) insects that rasp plant cells and feed on sap. Populations peak in dry season. TSWV and INSV viruses spread by thrips feeding. Spreads rapidly in greenhouses and tunnels.",
+            "recommended_treatment": "Use blue and yellow sticky traps for monitoring. Remove and destroy infected plant material. Maintain field hygiene. Avoid planting near heavily infested fields.",
+            "chemical_treatment": "Spinosad (Success) at 0.5ml/L, Abamectin 1.8 EC at 0.5ml/L, Imidacloprid 200 SL at 0.5ml/L applied as soil drench.",
+            "organic_treatment": "Neem oil at 5ml/L, insecticidal soap, blue sticky traps for mass capture, reflective mulch."
+        },
+    ]
+
+    for pest in pests:
+        name = pest.get("pest_name")
+        if frappe.db.exists("Pest", name):
+            doc = frappe.get_doc("Pest", name)
+            for key, val in pest.items():
+                doc.set(key, val)
+            doc.save(ignore_permissions=True)
+        else:
+            frappe.get_doc({"doctype": "Pest", **pest}).insert(ignore_permissions=True)
+```
+
+**New seed_animal_diseases function:**
+
+```python
+def seed_animal_diseases():
+    diseases = [
+        {
+            "disease_name": "Newcastle Disease",
+            "affects": "Poultry",
+            "mortality_risk": "Very High",
+            "is_notifiable": 1,
+            "zoonotic_risk": 0,
+            "vaccination_available": 1,
+            "symptoms": "Sudden death in unvaccinated flocks, respiratory distress with gasping and coughing, nasal discharge, greenish watery diarrhea, swollen head and face, nervous signs including twisted neck (torticollis), drooping wings, circling, blindness. Egg production drops sharply. Mortality can reach 100% in susceptible flocks within days.",
+            "prevention_method": "Strict biosecurity. Vaccinate all chicks at day 1 with La Sota eye drop or spray, boost at 3-4 weeks, continue 6-8 weekly boosters in layers. Avoid introducing unvaccinated birds. Quarantine new birds for 21 days. Disinfect all equipment and housing.",
+            "vaccination_schedule": "Day 1: La Sota (eye drop/spray). Week 3-4: La Sota boost. Week 10-12: Inactivated oil-emulsion vaccine. Layers: 6-weekly La Sota boosters throughout production.",
+            "treatment": "No specific antiviral treatment available. Supportive care: ensure water and feed access, reduce stress, apply vitamins and electrolytes in water. Antibiotics to control secondary bacterial infections. Cull severely affected birds humanely. Report to veterinary authorities immediately."
+        },
+        {
+            "disease_name": "Foot and Mouth Disease",
+            "affects": "Cattle",
+            "mortality_risk": "Medium",
+            "is_notifiable": 1,
+            "zoonotic_risk": 0,
+            "vaccination_available": 1,
+            "symptoms": "Fever (40-41°C), excessive salivation with stringy saliva hanging from mouth, blisters (vesicles) on tongue, gums, lips, and dental pad, blisters on feet especially coronary band and between toes causing severe lameness, blisters on teats in milking cows causing sharp drop in milk production, loss of appetite, weight loss, reluctance to move. Young animals may die from heart muscle damage (tiger heart) without vesicular signs.",
+            "prevention_method": "Regular vaccination of all susceptible livestock. Strict quarantine of new and returning animals. Control movement of animals during outbreaks. Disinfect vehicles, equipment and footwear. No contact between wildlife and livestock. Report immediately to authorities.",
+            "vaccination_schedule": "Primary: 2 doses 4 weeks apart. Boosters every 6 months in endemic areas. Use strain-specific vaccine matching local circulating serotype (O, A, SAT1, SAT2, SAT3 in southern Africa).",
+            "treatment": "Notifiable disease — report to veterinary authorities immediately. Supportive treatment: antiseptic mouth washes, soft feed and water, foot bathing in zinc sulfate, antibiotics for secondary infections, pain relief. Strict quarantine and movement controls."
+        },
+        {
+            "disease_name": "Anthrax",
+            "affects": "All Livestock",
+            "mortality_risk": "Very High",
+            "is_notifiable": 1,
+            "zoonotic_risk": 1,
+            "vaccination_available": 1,
+            "symptoms": "Sudden death is most common presentation. Animals found dead without prior illness. In subacute cases: high fever (41-42°C), severe depression, muscle tremors, convulsions before death. Bloody discharge from body orifices after death. Carcass bloats rapidly. Blood fails to clot and appears dark. Do not open carcass — releases infectious spores.",
+            "prevention_method": "Annual vaccination in endemic areas before rainy season. Do not open or move carcasses of suddenly dead animals. Burn and bury carcasses deeply with lime. Control vultures and scavengers. Never graze animals in areas with history of anthrax within the same year.",
+            "vaccination_schedule": "Annual vaccination with Sterne spore vaccine before onset of rainy season. Do not vaccinate within 1 week of antibiotic treatment.",
+            "treatment": "NOTIFIABLE — report to veterinary authorities immediately. Do NOT open carcass. High doses of penicillin or oxytetracycline in early cases. Hyperimmune serum if available. Mass antibiotic prophylaxis of exposed in-contact animals. Vaccinate survivors 7-10 days after antibiotic course ends. Decontaminate premises."
+        },
+        {
+            "disease_name": "Mastitis",
+            "affects": "Cattle",
+            "mortality_risk": "Low",
+            "is_notifiable": 0,
+            "zoonotic_risk": 0,
+            "vaccination_available": 0,
+            "symptoms": "Swelling, heat, redness and pain of one or more quarters of the udder, abnormal milk with flakes, clots, watery appearance or blood-staining, reduced or absent milk production from affected quarters, cow resists milking, in severe (peracute) mastitis: systemic signs including high fever (41°C), complete loss of appetite, depression, cold blue udder (gangrenous mastitis), dehydration and shock.",
+            "prevention_method": "Excellent milking hygiene: pre-dip teats with iodophor, use individual towels, post-dip all teats immediately after milking. Milk infected cows last. Treat all cows with antibiotic dry cow therapy at end of lactation. Cull chronic cases. Maintain clean dry bedding. Teat dipping reduces new infection rate by 50-70%.",
+            "vaccination_schedule": "No licensed vaccine available. J5 (core antigen) vaccine used experimentally in some herds for coliform mastitis prevention.",
+            "treatment": "Identify causative organism by milk culture. Intramammary antibiotic infusions (penicillin, cloxacillin, cephalosporin) for 3-5 days according to sensitivity. Strip quarter frequently to remove infected milk. NSAIDs for pain and inflammation. Systemic antibiotics and IV fluids for severe cases. Oxytocin to promote let-down. Mark and monitor treated animals. Dry cow therapy with long-acting antibiotic at drying off."
+        },
+        {
+            "disease_name": "Coccidiosis",
+            "affects": "Poultry",
+            "mortality_risk": "High",
+            "is_notifiable": 0,
+            "zoonotic_risk": 0,
+            "vaccination_available": 1,
+            "symptoms": "Bloody diarrhea (bright red) or mucoid diarrhea in broilers 3-6 weeks old, acute mortality in unvaccinated or unmedicated chicks, huddling near heat source, ruffled feathers, pale combs and wattles, loss of appetite and weight, dehydration, blindness in cecal coccidiosis (Eimeria tenella). Layers and breeders show pale yolks, reduced production, weight loss from intestinal forms.",
+            "prevention_method": "Use coccidiostat in starter and grower feeds (amprolium or salinomycin or maduramicin). Vaccination at day 1 with live coccidial vaccine for cage-free and broiler breeder programs. Maintain dry litter — wet litter accelerates oocyst sporulation. Clean and disinfect houses between flocks using ammonium compounds.",
+            "vaccination_schedule": "Coccivac or Paracox vaccine at day 1 by coarse spray onto chicks or in drinking water.",
+            "treatment": "Amprolium (Amprol) in drinking water at 240mg/L for 5-7 days, toltrazuril (Baycox) single dose treatment at 7mg/kg, sulfonamides (sulfaclozine) for 3 days. Provide vitamins K and A to support recovery. Improve litter management and reduce stocking density. Remove and treat all birds in affected house simultaneously."
+        },
+        {
+            "disease_name": "African Swine Fever",
+            "affects": "Pigs",
+            "mortality_risk": "Very High",
+            "is_notifiable": 1,
+            "zoonotic_risk": 0,
+            "vaccination_available": 0,
+            "symptoms": "Acute form: sudden death with no prior signs. Subacute: high fever (40-42°C), complete loss of appetite, extreme lethargy and weakness, pigs lie down and refuse to rise, purple-blue discoloration of skin on ears, snout, belly, and legs (cyanosis), hemorrhages visible as red-purple blotching under skin, vomiting, bloody diarrhea, abortions in pregnant sows, coughing and respiratory distress. Mortality approaches 100% in naive populations.",
+            "prevention_method": "NO VACCINE AVAILABLE. Strict biosecurity is the only prevention. Never feed catering waste or raw pig meat products. Control tick vectors (Ornithodoros). No contact with wild boar or warthog. Quarantine all incoming pigs for 30 days minimum. Biosecure all feed storage. Immediately report suspicion to veterinary authorities.",
+            "vaccination_schedule": "No licensed vaccine currently available. Under development.",
+            "treatment": "NO TREATMENT. NOTIFIABLE DISEASE. Report immediately to veterinary authorities. Stamping out (depopulation) of all pigs on infected premises is required by law. Strict quarantine zones around outbreak. Thorough cleaning and disinfection with formaldehyde or sodium hydroxide. Movement controls. Do NOT move pigs, pork products, or pig equipment out of outbreak area."
+        },
+        {
+            "disease_name": "Avian Influenza",
+            "affects": "Poultry",
+            "mortality_risk": "Very High",
+            "is_notifiable": 1,
+            "zoonotic_risk": 1,
+            "vaccination_available": 1,
+            "symptoms": "HPAI (Highly Pathogenic): sudden mass mortality with little prior illness, swollen heads, cyanotic (purple-blue) combs and wattles, hemorrhages on shanks, green watery diarrhea, nervous signs including tremors and loss of coordination, complete cessation of egg production, nasal and ocular discharge. LPAI: milder respiratory signs, reduced production, increased mortality only with secondary infections.",
+            "prevention_method": "Biosecurity: restrict wild bird access to housing, cover water sources, no free range during outbreak alerts. Vaccinate in endemic areas. Worker hygiene and PPE when handling birds. Report unusual mortality immediately. Avoid live bird markets.",
+            "vaccination_schedule": "Inactivated H5 or H7 vaccines used in endemic countries. Two-dose primary course 3-4 weeks apart, boosters every 6 months. Vaccination strategy determined by national veterinary authority.",
+            "treatment": "NOTIFIABLE. Report immediately. HPAI requires stamping out — no treatment authorized. Workers handling affected birds must wear full PPE including respirator. Antiviral oseltamivir (Tamiflu) used in humans exposed. Full decontamination of premises required before restocking."
+        },
+        {
+            "disease_name": "Lumpy Skin Disease",
+            "affects": "Cattle",
+            "mortality_risk": "Medium",
+            "is_notifiable": 1,
+            "zoonotic_risk": 0,
+            "vaccination_available": 1,
+            "symptoms": "Fever (40-41°C), reduced milk production, firm painful nodules 2-5cm diameter covering entire body especially on head, neck, limbs, udder, and perineum, swollen lymph nodes, nasal and eye discharge, nodules may ulcerate and become infected, lameness due to leg lesions, weight loss, secondary pneumonia common. Bulls may become temporarily or permanently infertile. Mortality low but economic losses severe.",
+            "prevention_method": "Annual vaccination before insect season. Control biting insects (flies, mosquitoes, ticks) as mechanical vectors. Isolate new animals. Movement controls during outbreaks. Disinfect vehicles. Report to veterinary authorities.",
+            "vaccination_schedule": "Annual vaccination with Neethling strain LSD vaccine or Sheep pox/Goat pox vaccine (off-label use shown to be protective). Single dose sufficient. Vaccinate 4-6 weeks before insect season.",
+            "treatment": "No specific antiviral treatment. Antibiotics (oxytetracycline, penicillin) to control secondary bacterial infections in nodules and respiratory tract. NSAIDs (flunixin meglumine) for fever and pain. Vitamin supplements. Wound care for ulcerated nodules with antiseptic spray. Supportive feeding for animals off feed. Notify authorities."
+        },
+        {
+            "disease_name": "East Coast Fever",
+            "affects": "Cattle",
+            "mortality_risk": "High",
+            "is_notifiable": 0,
+            "zoonotic_risk": 0,
+            "vaccination_available": 1,
+            "symptoms": "High fever (40-42°C) appearing 2-3 weeks after tick attachment, swollen lymph nodes (especially parotid lymph node behind ear), respiratory distress with frothy nasal discharge as disease progresses, tearing and nasal discharge, loss of appetite and rapid weight loss, animal stands with legs apart and neck extended to breathe, edema of the lungs causing death by suffocation, pale mucous membranes, emaciation, brown watery diarrhea in some cases. Death occurs 18-30 days after infection without treatment.",
+            "prevention_method": "Regular tick control with acaricides (dipping or spraying). Immunization using infection and treatment method (ITM). Select tick-resistant cattle breeds. Rotational grazing to reduce tick burden. Inspect cattle regularly for ticks especially around ears, groin, and tail.",
+            "vaccination_schedule": "Infection and treatment method (ITM): inoculate with live Theileria parva sporozoites followed immediately by long-acting oxytetracycline at 20mg/kg. Immunity develops in 4-6 weeks. Annual booster in high-risk areas.",
+            "treatment": "Parvaquone (Clexon) at 20mg/kg IM — most effective if given early in fever. Buparvaquone (Butalex) at 2.5mg/kg IM — more effective in later stages. Oxytetracycline at 20mg/kg early in infection. Supportive: NSAIDs for fever, fluids, good nutrition, shade, and reduced stress. Tick removal and dipping to prevent re-infection. Treatment must begin at first sign of fever for best outcome."
+        },
+    ]
+
+    for disease in diseases:
+        name = disease.get("disease_name")
+        if frappe.db.exists("Animal Disease", name):
+            doc = frappe.get_doc("Animal Disease", name)
+            for key, val in disease.items():
+                doc.set(key, val)
+            doc.save(ignore_permissions=True)
+        else:
+            frappe.get_doc({"doctype": "Animal Disease", **disease}).insert(ignore_permissions=True)
+```
+
+### Task 3.2 — Run seed update
+
+After updating install.py:
+
+```bash
+cd /home/frappe/frappe-bench
+bench --site test.local execute farm_management.install.after_install
+bench clear-cache
+```
+
+Verify by opening any Animal Disease record and confirming detailed symptoms and treatment content is present.
+
+---
+
+## PHASE 4 — WEATHER FORECAST INTEGRATION
+
+### Context
+
+Farmers need weather forecasts for planning planting, spraying, harvesting, and disease management decisions. This phase integrates OpenWeather One Call API 4.0 to provide current weather and 7-day forecast per farm location, displayed as a Frappe Page with a clean dashboard.
+
+API Key: `bfd7d15e4d142c6c9e49e6d317bbca00`
+API Base: `https://api.openweathermap.org/data/4.0/onecall`
+
+### Task 4.1 — Add Weather page to Farm Management Settings
+
+Add two new fields to the `Farm Management Settings` DocType JSON:
+
+- `weather_api_key` — Password, label: OpenWeather API Key, section: Weather Integration
+- `weather_units` — Select, options: metric/imperial/standard, label: Temperature Units, default: metric
+
+Update the `farm_management/farm_setup/farm_management_settings/farm_management_settings.json` to include these fields. Add a Section Break before them with label "Weather Integration".
+
+### Task 4.2 — Create weather API backend
+
+Create `farm_management/farm_management/api/weather.py`:
+
+```python
+import frappe
+from frappe import _
+import requests
+
+
+@frappe.whitelist()
+def get_farm_weather(farm_name):
+    """
+    Fetch current weather and daily forecast for a farm using its GPS coordinates
+    or by geocoding its location string.
+    Returns current conditions and 7-day daily forecast.
+    """
+    farm = frappe.get_doc("Farm", farm_name)
+
+    lat, lon = _resolve_coordinates(farm)
+    if not lat or not lon:
+        frappe.throw(_(
+            f"Farm '{farm_name}' has no GPS coordinates or location set. "
+            "Please add GPS coordinates or a location name to the Farm record."
+        ))
+
+    api_key = _get_api_key()
+    units = frappe.db.get_single_value("Farm Management Settings", "weather_units") or "metric"
+
+    current = _fetch_current(lat, lon, api_key, units)
+    forecast = _fetch_daily_forecast(lat, lon, api_key, units)
+
+    return {
+        "farm": farm_name,
+        "location": farm.location or f"{lat}, {lon}",
+        "lat": lat,
+        "lon": lon,
+        "units": units,
+        "current": current,
+        "forecast": forecast,
+    }
+
+
+def _resolve_coordinates(farm):
+    """Extract lat/lon from farm GPS field or geocode the location string."""
+    if farm.gps_coordinates:
+        import json
+        try:
+            geo = json.loads(farm.gps_coordinates)
+            features = geo.get("features", [])
+            if features:
+                coords = features[0].get("geometry", {}).get("coordinates", [])
+                if len(coords) >= 2:
+                    return coords[1], coords[0]
+        except Exception:
+            pass
+
+    if farm.location:
+        return _geocode_location(farm.location)
+
+    return None, None
+
+
+def _geocode_location(location_string):
+    """Use OpenWeather Geocoding API to resolve location string to coordinates."""
+    api_key = _get_api_key()
+    try:
+        response = requests.get(
+            "https://api.openweathermap.org/geo/1.0/direct",
+            params={"q": location_string, "limit": 1, "appid": api_key},
+            timeout=10
+        )
+        response.raise_for_status()
+        data = response.json()
+        if data:
+            return data[0].get("lat"), data[0].get("lon")
+    except Exception as e:
+        frappe.log_error(str(e), "Weather Geocoding Error")
+    return None, None
+
+
+def _get_api_key():
+    api_key = frappe.db.get_single_value("Farm Management Settings", "weather_api_key")
+    if not api_key:
+        api_key = "bfd7d15e4d142c6c9e49e6d317bbca00"
+    return api_key
+
+
+def _fetch_current(lat, lon, api_key, units):
+    try:
+        response = requests.get(
+            "https://api.openweathermap.org/data/4.0/onecall/current",
+            params={"lat": lat, "lon": lon, "appid": api_key, "units": units},
+            timeout=15
+        )
+        response.raise_for_status()
+        data = response.json()
+        record = data.get("data", [{}])[0]
+        weather = record.get("weather", [{}])[0]
+        unit_symbol = "°C" if units == "metric" else ("°F" if units == "imperial" else "K")
+        wind_unit = "m/s" if units != "imperial" else "mph"
+        return {
+            "temperature": record.get("temp"),
+            "feels_like": record.get("feels_like"),
+            "humidity": record.get("humidity"),
+            "pressure": record.get("pressure"),
+            "wind_speed": record.get("wind_speed"),
+            "wind_deg": record.get("wind_deg"),
+            "clouds": record.get("clouds"),
+            "visibility": record.get("visibility"),
+            "uvi": record.get("uvi"),
+            "dew_point": record.get("dew_point"),
+            "description": weather.get("description", "").title(),
+            "icon": weather.get("icon"),
+            "icon_url": f"https://openweathermap.org/img/wn/{weather.get('icon', '01d')}@2x.png",
+            "sunrise": record.get("sunrise"),
+            "sunset": record.get("sunset"),
+            "unit_symbol": unit_symbol,
+            "wind_unit": wind_unit,
+        }
+    except Exception as e:
+        frappe.log_error(str(e), "Weather Current Fetch Error")
+        return {}
+
+
+def _fetch_daily_forecast(lat, lon, api_key, units):
+    try:
+        response = requests.get(
+            "https://api.openweathermap.org/data/4.0/onecall/timeline/1day",
+            params={"lat": lat, "lon": lon, "appid": api_key, "units": units, "cnt": 7},
+            timeout=15
+        )
+        response.raise_for_status()
+        data = response.json()
+        days = []
+        unit_symbol = "°C" if units == "metric" else ("°F" if units == "imperial" else "K")
+        for record in data.get("data", []):
+            weather = record.get("weather", [{}])[0]
+            temp = record.get("temp", {})
+            days.append({
+                "dt": record.get("dt"),
+                "temp_day": temp.get("day"),
+                "temp_min": temp.get("min"),
+                "temp_max": temp.get("max"),
+                "temp_night": temp.get("night"),
+                "humidity": record.get("humidity"),
+                "wind_speed": record.get("wind_speed"),
+                "pop": round(record.get("pop", 0) * 100),
+                "clouds": record.get("clouds"),
+                "uvi": record.get("uvi"),
+                "description": weather.get("description", "").title(),
+                "icon": weather.get("icon"),
+                "icon_url": f"https://openweathermap.org/img/wn/{weather.get('icon', '01d')}@2x.png",
+                "unit_symbol": unit_symbol,
+            })
+        return days
+    except Exception as e:
+        frappe.log_error(str(e), "Weather Forecast Fetch Error")
+        return []
+
+
+@frappe.whitelist()
+def get_farm_list_for_weather():
+    """Return list of farms with location data for weather dashboard."""
+    farms = frappe.get_all(
+        "Farm",
+        filters={"operational_status": "Active"},
+        fields=["name", "farm_name", "location", "gps_coordinates"]
+    )
+    return farms
+```
+
+### Task 4.3 — Create Farm Weather Frappe Page
+
+Create the page directory: `farm_management/farm_management/page/farm_weather/`
+
+Create `farm_weather.json`:
+```json
+{
+  "doctype": "Page",
+  "module": "Farm Setup",
+  "name": "farm-weather",
+  "page_name": "farm-weather",
+  "standard": "Yes",
+  "title": "Farm Weather"
+}
+```
+
+Create `farm_weather.js`:
+
+```javascript
+frappe.pages['farm-weather'].on_page_load = function(wrapper) {
+    var page = frappe.ui.make_app_page({
+        parent: wrapper,
+        title: 'Farm Weather Forecast',
+        single_column: true
+    });
+
+    frappe.farm_weather_page = new FarmWeatherPage(page, wrapper);
+};
+
+class FarmWeatherPage {
+    constructor(page, wrapper) {
+        this.page = page;
+        this.wrapper = wrapper;
+        this.selected_farm = null;
+        this.setup();
+    }
+
+    setup() {
+        this.add_farm_selector();
+        this.render_empty_state();
+    }
+
+    add_farm_selector() {
+        let me = this;
+        this.page.add_field({
+            fieldtype: 'Link',
+            fieldname: 'farm',
+            options: 'Farm',
+            label: 'Select Farm',
+            change() {
+                let farm = this.get_value();
+                if (farm) {
+                    me.selected_farm = farm;
+                    me.load_weather(farm);
+                }
+            }
+        });
+
+        this.page.add_button('Refresh', () => {
+            if (me.selected_farm) me.load_weather(me.selected_farm);
+        }, { icon: 'refresh' });
+    }
+
+    load_weather(farm_name) {
+        let me = this;
+        $(this.wrapper).find('.weather-content').remove();
+        let loading = $(`
+            <div class="weather-content text-center" style="padding:60px">
+                <div class="spinner-border text-primary" role="status"></div>
+                <p class="mt-3 text-muted">Fetching weather data...</p>
+            </div>
+        `).appendTo($(this.wrapper).find('.page-content'));
+
+        frappe.call({
+            method: 'farm_management.farm_management.api.weather.get_farm_weather',
+            args: { farm_name: farm_name },
+            callback(r) {
+                loading.remove();
+                if (r.message) {
+                    me.render_weather(r.message);
+                } else {
+                    me.render_error('No weather data received.');
+                }
+            },
+            error(e) {
+                loading.remove();
+                me.render_error('Failed to fetch weather. Check Farm location and API key in Farm Management Settings.');
+            }
+        });
+    }
+
+    render_weather(data) {
+        let me = this;
+        $(this.wrapper).find('.weather-content').remove();
+        let current = data.current || {};
+        let forecast = data.forecast || [];
+
+        let wind_dir = this.wind_direction(current.wind_deg);
+        let sunrise = current.sunrise ? frappe.datetime.obj_to_str(new Date(current.sunrise * 1000)) : '--';
+        let sunset = current.sunset ? frappe.datetime.obj_to_str(new Date(current.sunset * 1000)) : '--';
+
+        let current_html = `
+        <div style="background:linear-gradient(135deg,#001f33,#0d6efd);border-radius:16px;padding:28px;color:#fff;margin-bottom:20px">
+            <div class="row align-items-center">
+                <div class="col-md-4 text-center">
+                    <img src="${current.icon_url || ''}" style="width:80px">
+                    <div style="font-size:48px;font-weight:800">${current.temperature !== undefined ? current.temperature.toFixed(1) : '--'}${current.unit_symbol || ''}</div>
+                    <div style="font-size:18px;opacity:0.9">${current.description || ''}</div>
+                    <div style="opacity:0.7;margin-top:6px">Feels like ${current.feels_like !== undefined ? current.feels_like.toFixed(1) : '--'}${current.unit_symbol || ''}</div>
+                </div>
+                <div class="col-md-4 text-center">
+                    <div style="font-size:22px;font-weight:700;margin-bottom:10px">${data.location || ''}</div>
+                    <table style="width:100%;color:rgba(255,255,255,0.9);font-size:15px">
+                        <tr><td>Humidity</td><td><b>${current.humidity || '--'}%</b></td></tr>
+                        <tr><td>Wind</td><td><b>${current.wind_speed || '--'} ${current.wind_unit || 'm/s'} ${wind_dir}</b></td></tr>
+                        <tr><td>Pressure</td><td><b>${current.pressure || '--'} hPa</b></td></tr>
+                        <tr><td>UV Index</td><td><b>${current.uvi !== undefined ? current.uvi.toFixed(1) : '--'}</b></td></tr>
+                        <tr><td>Cloud Cover</td><td><b>${current.clouds || '--'}%</b></td></tr>
+                        <tr><td>Visibility</td><td><b>${current.visibility ? (current.visibility/1000).toFixed(1) + ' km' : '--'}</b></td></tr>
+                    </table>
+                </div>
+                <div class="col-md-4 text-center">
+                    <div style="font-size:14px;opacity:0.8;margin-bottom:16px">AGRICULTURAL ADVISORY</div>
+                    ${me.get_advisory_html(current)}
+                </div>
+            </div>
+        </div>`;
+
+        let forecast_cards = forecast.map(day => {
+            let date = new Date(day.dt * 1000);
+            let day_name = date.toLocaleDateString('en', { weekday: 'short', month: 'short', day: 'numeric' });
+            let rain_risk = day.pop > 60 ? '🌧️ High Rain Risk' : (day.pop > 30 ? '🌦️ Possible Rain' : '☀️ Low Rain Risk');
+            return `
+            <div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:16px;text-align:center;min-width:140px;flex:0 0 auto">
+                <div style="font-weight:700;color:#031a33;margin-bottom:8px;font-size:13px">${day_name}</div>
+                <img src="${day.icon_url}" style="width:44px">
+                <div style="font-size:14px;color:#64748b;margin:6px 0">${day.description || ''}</div>
+                <div style="font-size:18px;font-weight:800;color:#031a33">${day.temp_max !== undefined ? day.temp_max.toFixed(0) : '--'}${day.unit_symbol || ''}</div>
+                <div style="font-size:13px;color:#94a3b8">Low: ${day.temp_min !== undefined ? day.temp_min.toFixed(0) : '--'}${day.unit_symbol || ''}</div>
+                <div style="font-size:12px;color:#0d6efd;margin-top:6px">💧 ${day.pop || 0}% rain</div>
+                <div style="font-size:11px;color:#64748b;margin-top:4px">${rain_risk}</div>
+                <div style="font-size:11px;color:#64748b">💨 ${day.wind_speed || '--'} m/s</div>
+                <div style="font-size:11px;color:#64748b">☁️ ${day.clouds || '--'}%</div>
+            </div>`;
+        }).join('');
+
+        let html = `
+        <div class="weather-content" style="padding:20px">
+            ${current_html}
+            <h6 style="color:#031a33;font-weight:700;margin-bottom:14px">7-Day Forecast</h6>
+            <div style="display:flex;gap:12px;overflow-x:auto;padding-bottom:10px">
+                ${forecast_cards || '<p class="text-muted">No forecast data available.</p>'}
+            </div>
+        </div>`;
+
+        $(html).appendTo($(this.wrapper).find('.page-content'));
+    }
+
+    get_advisory_html(current) {
+        let tips = [];
+        if (current.uvi > 8) tips.push('⚠️ Extreme UV — avoid midday fieldwork');
+        else if (current.uvi > 5) tips.push('🌡️ High UV — protect workers');
+        if (current.wind_speed > 7) tips.push('💨 High wind — avoid spraying');
+        else if (current.wind_speed < 3) tips.push('✅ Low wind — good for spraying');
+        if (current.humidity > 85) tips.push('🍄 High humidity — watch for fungal disease');
+        if (current.humidity < 35) tips.push('🌵 Low humidity — monitor crops for stress');
+        if (current.clouds > 80) tips.push('☁️ Overcast — low evapotranspiration');
+        if (!tips.length) tips.push('✅ Conditions normal for fieldwork');
+        return tips.map(t => `<div style="background:rgba(255,255,255,0.15);border-radius:8px;padding:8px 12px;margin:6px 0;font-size:13px;text-align:left">${t}</div>`).join('');
+    }
+
+    wind_direction(deg) {
+        if (deg === undefined) return '';
+        const dirs = ['N','NE','E','SE','S','SW','W','NW'];
+        return dirs[Math.round(deg / 45) % 8];
+    }
+
+    render_empty_state() {
+        $(`<div class="weather-content text-center" style="padding:80px">
+            <i class="bi bi-cloud-sun" style="font-size:64px;color:#cbd5e1"></i>
+            <p class="mt-3 text-muted">Select a farm above to view weather forecast</p>
+        </div>`).appendTo($(this.wrapper).find('.page-content'));
+    }
+
+    render_error(msg) {
+        $(`<div class="weather-content text-center" style="padding:60px">
+            <i class="bi bi-exclamation-triangle" style="font-size:48px;color:#ef4444"></i>
+            <p class="mt-3 text-muted">${msg}</p>
+        </div>`).appendTo($(this.wrapper).find('.page-content'));
+    }
+}
+```
+
+Create empty `farm_weather.py`:
+```python
+import frappe
+
+def get_context(context):
+    pass
+```
+
+### Task 4.4 — Add Weather to Workspace
+
+Update `install.py` `create_farm_workspace` to add a weather shortcut and link:
+
+In the shortcuts section add:
+```python
+{"label": "Farm Weather", "link_to": "farm-weather", "type": "URL"},
+```
+
+In the links section add a Weather card at the end before Reports:
+```python
+("Card Break", "Weather", None, None),
+("Link", "Farm Weather Forecast", "Page", "farm-weather"),
+```
+
+### Task 4.5 — Register the page in hooks.py
+
+Ensure `hooks.py` has nothing blocking page discovery. Frappe pages auto-register from the app directory. Verify the page folder exists and the JSON is valid.
+
+### Task 4.6 — Migrate and verify
+
+```bash
+cd /home/frappe/frappe-bench
+bench --site test.local migrate
+bench clear-cache
+bench build --app farm_management
+```
+
+Navigate to `http://127.0.0.1:8000/app/farm-weather` and confirm the weather page loads. Select a farm with a location set and confirm weather data loads.
+
+---
+
+## PHASE 5 — FINAL VERIFICATION AND COMMIT
+
+### Task 5.1 — Full migration check
+
+```bash
+cd /home/frappe/frappe-bench
+bench --site test.local migrate 2>&1 | tail -10
+```
+
+Must show zero errors.
+
+### Task 5.2 — Module check
+
+```bash
+bench --site test.local console << 'PYEOF'
+import frappe
+frappe.connect()
+
+new_doctypes = [
+    "Livestock Individual", "Livestock Health Event",
+    "Livestock Breeding Record", "Livestock Sibling"
+]
+for dt in new_doctypes:
+    exists = frappe.db.exists("DocType", dt)
+    print(f"{'OK' if exists else 'MISSING'}: {dt}")
+
+pest_count = frappe.db.count("Pest")
+disease_count = frappe.db.count("Animal Disease")
+print(f"Pest records: {pest_count} (expected 8)")
+print(f"Animal Disease records: {disease_count} (expected 9)")
+
+page_exists = frappe.db.exists("Page", "farm-weather")
+print(f"Weather page: {'OK' if page_exists else 'MISSING'}")
+
+frappe.destroy()
+PYEOF
+```
+
+All items must show OK or expected counts.
+
+### Task 5.3 — Commit
+
+Only after all checks pass:
+
+```bash
+cd /home/frappe/frappe-bench/apps/farm_management
+git add -A
+git commit -m "feat: dynamic project fields, livestock tracking, enriched disease data, weather forecast integration"
+git push origin main
+```

@@ -1,6 +1,8 @@
 Farm Setup
 Farm Infrastructure
+Livestock
 Farm Projects
+Farm Management
 Farm Calendar
 Disease Intelligence
 Biological Assets

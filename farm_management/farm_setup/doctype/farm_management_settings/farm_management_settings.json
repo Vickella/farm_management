@@ -14,7 +14,10 @@
   "section_break_flags",
   "enable_ai_assistant",
   "enable_auto_activity_generation",
-  "enable_fair_value_scheduler"
+  "enable_fair_value_scheduler",
+  "section_break_weather",
+  "weather_api_key",
+  "weather_units"
  ],
  "fields": [
   {
@@ -73,6 +76,23 @@
    "fieldtype": "Check",
    "label": "Enable Fair Value Scheduler",
    "default": "1"
+  },
+  {
+   "fieldname": "section_break_weather",
+   "fieldtype": "Section Break",
+   "label": "Weather Integration"
+  },
+  {
+   "fieldname": "weather_api_key",
+   "fieldtype": "Password",
+   "label": "OpenWeather API Key"
+  },
+  {
+   "fieldname": "weather_units",
+   "fieldtype": "Select",
+   "label": "Temperature Units",
+   "options": "metric\nimperial\nstandard",
+   "default": "metric"
   }
  ],
  "links": [],
