@@ -133,6 +133,12 @@ def get_shortcut_label(shortcut):
 def after_install():
     create_roles()
     remove_legacy_doctypes()
+    apply_phase2_updates()
+    frappe.db.commit()
+    print("farm_management: installation complete.")
+
+
+def apply_phase2_updates():
     remove_legacy_project_custom_fields()
     seed_fixture_data()
     seed_livestock_breeds()
@@ -140,8 +146,6 @@ def after_install():
     seed_animal_diseases()
     create_farm_workspace()
     setup_farm_management_settings()
-    frappe.db.commit()
-    print("farm_management: installation complete.")
 
 
 def create_roles():
