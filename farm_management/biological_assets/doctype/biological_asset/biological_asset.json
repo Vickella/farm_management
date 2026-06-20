@@ -26,6 +26,11 @@
   "cost_to_sell",
   "net_fair_value",
   "accumulated_gain_loss",
+  "valuation_method",
+  "capitalized_cost",
+  "previous_quantity",
+  "last_posted_net_fair_value",
+  "last_journal_entry",
   "last_valuation_date",
   "notes"
  ],
@@ -156,6 +161,39 @@
    "fieldname": "accumulated_gain_loss",
    "fieldtype": "Currency",
    "label": "Accumulated Fair Value Gain/Loss",
+   "read_only": 1
+  },
+  {
+   "fieldname": "valuation_method",
+   "fieldtype": "Select",
+   "label": "Valuation Method",
+   "options": "Cost Accumulation\nManual Fair Value",
+   "default": "Cost Accumulation"
+  },
+  {
+   "fieldname": "capitalized_cost",
+   "fieldtype": "Currency",
+   "label": "Capitalized Cost Additions",
+   "read_only": 1
+  },
+  {
+   "fieldname": "previous_quantity",
+   "fieldtype": "Float",
+   "label": "Previous Quantity",
+   "hidden": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "last_posted_net_fair_value",
+   "fieldtype": "Currency",
+   "label": "Last Posted Net Fair Value",
+   "read_only": 1
+  },
+  {
+   "fieldname": "last_journal_entry",
+   "fieldtype": "Link",
+   "label": "Last Journal Entry",
+   "options": "Journal Entry",
    "read_only": 1
   },
   {

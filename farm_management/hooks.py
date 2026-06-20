@@ -19,6 +19,9 @@ fixtures = [
 doc_events = {
     "Project": {
         "validate": "farm_management.farm_projects.agriculture_project.validate_agriculture_project",
+    },
+    "Stock Entry": {
+        "on_submit": "farm_management.biological_assets.valuation.sync_project_material_issue",
     }
 }
 
