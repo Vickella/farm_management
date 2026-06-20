@@ -58,7 +58,11 @@ class FarmWeatherPage {
 			callback(r) {
 				loading.remove();
 				if (r.message) {
-					me.render_weather(r.message);
+					try {
+						me.render_weather(r.message);
+					} catch (e) {
+						me.render_error(`Unable to render weather data: ${e.message || e}`);
+					}
 				} else {
 					me.render_error('No weather data received.');
 				}
@@ -89,6 +93,18 @@ class FarmWeatherPage {
 		return message;
 	}
 
+	format_number(value, decimals = 0, suffix = '') {
+		const number = Number(value);
+		if (!Number.isFinite(number)) return '--';
+		return `${number.toFixed(decimals)}${suffix}`;
+	}
+
+	format_percent(value) {
+		const number = Number(value);
+		if (!Number.isFinite(number)) return '--';
+		return `${number.toFixed(0)}%`;
+	}
+
 	render_weather(data) {
 		$(this.wrapper).find('.weather-content').remove();
 		const current = data.current || {};
@@ -100,19 +116,19 @@ class FarmWeatherPage {
 			<div class="row align-items-center">
 				<div class="col-md-4 text-center">
 					<img src="${current.icon_url || ''}" style="width:80px">
-					<div style="font-size:48px;font-weight:800">${current.temperature !== undefined ? current.temperature.toFixed(1) : '--'}${current.unit_symbol || ''}</div>
+					<div style="font-size:48px;font-weight:800">${this.format_number(current.temperature, 1, current.unit_symbol || '')}</div>
 					<div style="font-size:18px;opacity:0.9">${current.description || ''}</div>
-					<div style="opacity:0.7;margin-top:6px">Feels like ${current.feels_like !== undefined ? current.feels_like.toFixed(1) : '--'}${current.unit_symbol || ''}</div>
+					<div style="opacity:0.7;margin-top:6px">Feels like ${this.format_number(current.feels_like, 1, current.unit_symbol || '')}</div>
 				</div>
 				<div class="col-md-4 text-center">
 					<div style="font-size:22px;font-weight:700;margin-bottom:10px">${data.location || ''}</div>
 					<table style="width:100%;color:rgba(255,255,255,0.9);font-size:15px">
-						<tr><td>Humidity</td><td><b>${current.humidity || '--'}%</b></td></tr>
-						<tr><td>Wind</td><td><b>${current.wind_speed || '--'} ${current.wind_unit || 'm/s'} ${wind_dir}</b></td></tr>
-						<tr><td>Pressure</td><td><b>${current.pressure || '--'} hPa</b></td></tr>
-						<tr><td>UV Index</td><td><b>${current.uvi !== undefined ? current.uvi.toFixed(1) : '--'}</b></td></tr>
-						<tr><td>Cloud Cover</td><td><b>${current.clouds || '--'}%</b></td></tr>
-						<tr><td>Visibility</td><td><b>${current.visibility ? (current.visibility / 1000).toFixed(1) + ' km' : '--'}</b></td></tr>
+						<tr><td>Humidity</td><td><b>${this.format_percent(current.humidity)}</b></td></tr>
+						<tr><td>Wind</td><td><b>${this.format_number(current.wind_speed, 1)} ${current.wind_unit || 'm/s'} ${wind_dir}</b></td></tr>
+						<tr><td>Pressure</td><td><b>${this.format_number(current.pressure, 0, ' hPa')}</b></td></tr>
+						<tr><td>UV Index</td><td><b>${this.format_number(current.uvi, 1)}</b></td></tr>
+						<tr><td>Cloud Cover</td><td><b>${this.format_percent(current.clouds)}</b></td></tr>
+						<tr><td>Visibility</td><td><b>${this.format_number(Number(current.visibility) / 1000, 1, ' km')}</b></td></tr>
 					</table>
 				</div>
 				<div class="col-md-4 text-center">
@@ -131,12 +147,12 @@ class FarmWeatherPage {
 				<div style="font-weight:700;color:#031a33;margin-bottom:8px;font-size:13px">${day_name}</div>
 				<img src="${day.icon_url}" style="width:44px">
 				<div style="font-size:14px;color:#64748b;margin:6px 0">${day.description || ''}</div>
-				<div style="font-size:18px;font-weight:800;color:#031a33">${day.temp_max !== undefined ? day.temp_max.toFixed(0) : '--'}${day.unit_symbol || ''}</div>
-				<div style="font-size:13px;color:#94a3b8">Low: ${day.temp_min !== undefined ? day.temp_min.toFixed(0) : '--'}${day.unit_symbol || ''}</div>
-				<div style="font-size:12px;color:#0d6efd;margin-top:6px">${day.pop || 0}% rain</div>
+				<div style="font-size:18px;font-weight:800;color:#031a33">${this.format_number(day.temp_max, 0, day.unit_symbol || '')}</div>
+				<div style="font-size:13px;color:#94a3b8">Low: ${this.format_number(day.temp_min, 0, day.unit_symbol || '')}</div>
+				<div style="font-size:12px;color:#0d6efd;margin-top:6px">${this.format_percent(day.pop || 0)} rain</div>
 				<div style="font-size:11px;color:#64748b;margin-top:4px">${rain_risk}</div>
-				<div style="font-size:11px;color:#64748b">Wind ${day.wind_speed || '--'} m/s</div>
-				<div style="font-size:11px;color:#64748b">Clouds ${day.clouds || '--'}%</div>
+				<div style="font-size:11px;color:#64748b">Wind ${this.format_number(day.wind_speed, 1)} m/s</div>
+				<div style="font-size:11px;color:#64748b">Clouds ${this.format_percent(day.clouds)}</div>
 			</div>`;
 		}).join('');
 
@@ -166,7 +182,7 @@ class FarmWeatherPage {
 	}
 
 	wind_direction(deg) {
-		if (deg === undefined) return '';
+		if (!Number.isFinite(Number(deg))) return '';
 		const dirs = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
 		return dirs[Math.round(deg / 45) % 8];
 	}

@@ -32,7 +32,7 @@ def get_farm_weather(farm_name):
         )
 
     api_key = _get_api_key()
-    units = frappe.db.get_single_value("Farm Management Settings", "weather_units") or "metric"
+    units = _get_weather_units()
 
     current = _fetch_current(lat, lon, api_key, units)
     forecast = _fetch_daily_forecast(lat, lon, api_key, units)
@@ -122,6 +122,12 @@ def _get_api_key():
         _log_weather_error("Weather Settings Error", e)
 
     return api_key or DEFAULT_OPENWEATHER_API_KEY
+
+
+def _get_weather_units():
+    units = frappe.db.get_single_value("Farm Management Settings", "weather_units") or "metric"
+    units = units.lower()
+    return units if units in {"metric", "imperial"} else "metric"
 
 
 def _get_units(units):
@@ -236,7 +242,7 @@ def test_weather_location(location="Rusape, Zimbabwe"):
         frappe.throw(_(f"Could not geocode location '{location}'."))
 
     api_key = _get_api_key()
-    units = frappe.db.get_single_value("Farm Management Settings", "weather_units") or "metric"
+    units = _get_weather_units()
     current = _fetch_current(lat, lon, api_key, units)
     forecast = _fetch_daily_forecast(lat, lon, api_key, units)
     if not current:
