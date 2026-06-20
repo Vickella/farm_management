@@ -1,8 +1,14 @@
 import json
+from collections import defaultdict
 
 import frappe
 from frappe import _
 import requests
+
+CURRENT_WEATHER_URL = "https://api.openweathermap.org/data/2.5/weather"
+FORECAST_URL = "https://api.openweathermap.org/data/2.5/forecast"
+GEOCODING_URL = "https://api.openweathermap.org/geo/1.0/direct"
+DEFAULT_OPENWEATHER_API_KEY = "bfd7d15e4d142c6c9e49e6d317bbca00"
 
 
 @frappe.whitelist()
@@ -10,7 +16,7 @@ def get_farm_weather(farm_name):
     """
     Fetch current weather and daily forecast for a farm using its GPS coordinates
     or by geocoding its location string.
-    Returns current conditions and 7-day daily forecast.
+    Returns current conditions and a 5-day forecast.
     """
     farm = frappe.get_doc("Farm", farm_name)
 
@@ -28,6 +34,14 @@ def get_farm_weather(farm_name):
 
     current = _fetch_current(lat, lon, api_key, units)
     forecast = _fetch_daily_forecast(lat, lon, api_key, units)
+
+    if not current:
+        frappe.throw(
+            _(
+                "Could not fetch weather data. Check the OpenWeather API key in "
+                "Farm Management Settings."
+            )
+        )
 
     return {
         "farm": farm_name,
@@ -64,7 +78,7 @@ def _geocode_location(location_string):
     api_key = _get_api_key()
     try:
         response = requests.get(
-            "https://api.openweathermap.org/geo/1.0/direct",
+            GEOCODING_URL,
             params={"q": location_string, "limit": 1, "appid": api_key},
             timeout=10,
         )
@@ -73,14 +87,14 @@ def _geocode_location(location_string):
         if data:
             return data[0].get("lat"), data[0].get("lon")
     except Exception as e:
-        frappe.log_error(str(e), "Weather Geocoding Error")
+        _log_weather_error("Weather Geocoding Error", e)
     return None, None
 
 
 def _get_api_key():
     api_key = frappe.db.get_single_value("Farm Management Settings", "weather_api_key")
     if not api_key:
-        api_key = "bfd7d15e4d142c6c9e49e6d317bbca00"
+        api_key = DEFAULT_OPENWEATHER_API_KEY
     return api_key
 
 
@@ -90,68 +104,92 @@ def _get_units(units):
     return unit_symbol, wind_unit
 
 
+def _log_weather_error(title, exc):
+    message = frappe.get_traceback() or str(exc)
+    frappe.log_error(title=title[:140], message=message)
+
+
 def _fetch_current(lat, lon, api_key, units):
     try:
         response = requests.get(
-            "https://api.openweathermap.org/data/4.0/onecall/current",
+            CURRENT_WEATHER_URL,
             params={"lat": lat, "lon": lon, "appid": api_key, "units": units},
             timeout=15,
         )
         response.raise_for_status()
         data = response.json()
-        record = data.get("data", [{}])[0]
-        weather = record.get("weather", [{}])[0]
+        weather = (data.get("weather") or [{}])[0]
+        main = data.get("main") or {}
+        wind = data.get("wind") or {}
+        clouds = data.get("clouds") or {}
+        sys = data.get("sys") or {}
         unit_symbol, wind_unit = _get_units(units)
         return {
-            "temperature": record.get("temp"),
-            "feels_like": record.get("feels_like"),
-            "humidity": record.get("humidity"),
-            "pressure": record.get("pressure"),
-            "wind_speed": record.get("wind_speed"),
-            "wind_deg": record.get("wind_deg"),
-            "clouds": record.get("clouds"),
-            "visibility": record.get("visibility"),
-            "uvi": record.get("uvi"),
-            "dew_point": record.get("dew_point"),
+            "temperature": main.get("temp"),
+            "feels_like": main.get("feels_like"),
+            "humidity": main.get("humidity"),
+            "pressure": main.get("pressure"),
+            "wind_speed": wind.get("speed"),
+            "wind_deg": wind.get("deg"),
+            "clouds": clouds.get("all"),
+            "visibility": data.get("visibility"),
+            "uvi": None,
+            "dew_point": None,
             "description": weather.get("description", "").title(),
             "icon": weather.get("icon"),
             "icon_url": f"https://openweathermap.org/img/wn/{weather.get('icon', '01d')}@2x.png",
-            "sunrise": record.get("sunrise"),
-            "sunset": record.get("sunset"),
+            "sunrise": sys.get("sunrise"),
+            "sunset": sys.get("sunset"),
             "unit_symbol": unit_symbol,
             "wind_unit": wind_unit,
         }
     except Exception as e:
-        frappe.log_error(str(e), "Weather Current Fetch Error")
+        _log_weather_error("Weather Current Fetch Error", e)
         return {}
 
 
 def _fetch_daily_forecast(lat, lon, api_key, units):
     try:
         response = requests.get(
-            "https://api.openweathermap.org/data/4.0/onecall/timeline/1day",
-            params={"lat": lat, "lon": lon, "appid": api_key, "units": units, "cnt": 7},
+            FORECAST_URL,
+            params={"lat": lat, "lon": lon, "appid": api_key, "units": units},
             timeout=15,
         )
         response.raise_for_status()
         data = response.json()
+        grouped = defaultdict(list)
+        for record in data.get("list", []):
+            dt_txt = record.get("dt_txt") or ""
+            if dt_txt:
+                grouped[dt_txt.split(" ")[0]].append(record)
+
         days = []
         unit_symbol, _wind_unit = _get_units(units)
-        for record in data.get("data", []):
-            weather = record.get("weather", [{}])[0]
-            temp = record.get("temp", {})
+        for _date_key in sorted(grouped)[:5]:
+            records = grouped[_date_key]
+            representative = records[len(records) // 2]
+            weather = (representative.get("weather") or [{}])[0]
+            temps = [
+                record.get("main", {}).get("temp")
+                for record in records
+                if record.get("main", {}).get("temp") is not None
+            ]
+            pops = [record.get("pop", 0) for record in records]
+            main = representative.get("main") or {}
+            wind = representative.get("wind") or {}
+            clouds = representative.get("clouds") or {}
             days.append(
                 {
-                    "dt": record.get("dt"),
-                    "temp_day": temp.get("day"),
-                    "temp_min": temp.get("min"),
-                    "temp_max": temp.get("max"),
-                    "temp_night": temp.get("night"),
-                    "humidity": record.get("humidity"),
-                    "wind_speed": record.get("wind_speed"),
-                    "pop": round(record.get("pop", 0) * 100),
-                    "clouds": record.get("clouds"),
-                    "uvi": record.get("uvi"),
+                    "dt": representative.get("dt"),
+                    "temp_day": main.get("temp"),
+                    "temp_min": min(temps) if temps else None,
+                    "temp_max": max(temps) if temps else None,
+                    "temp_night": records[-1].get("main", {}).get("temp"),
+                    "humidity": main.get("humidity"),
+                    "wind_speed": wind.get("speed"),
+                    "pop": round(max(pops or [0]) * 100),
+                    "clouds": clouds.get("all"),
+                    "uvi": None,
                     "description": weather.get("description", "").title(),
                     "icon": weather.get("icon"),
                     "icon_url": f"https://openweathermap.org/img/wn/{weather.get('icon', '01d')}@2x.png",
@@ -160,7 +198,7 @@ def _fetch_daily_forecast(lat, lon, api_key, units):
             )
         return days
     except Exception as e:
-        frappe.log_error(str(e), "Weather Forecast Fetch Error")
+        _log_weather_error("Weather Forecast Fetch Error", e)
         return []
 
 
@@ -173,4 +211,3 @@ def get_farm_list_for_weather():
         fields=["name", "farm_name", "location", "gps_coordinates"],
     )
     return farms
-

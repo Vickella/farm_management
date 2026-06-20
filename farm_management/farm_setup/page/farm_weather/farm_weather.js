@@ -124,7 +124,7 @@ class FarmWeatherPage {
 		const html = `
 		<div class="weather-content" style="padding:20px">
 			${current_html}
-			<h6 style="color:#031a33;font-weight:700;margin-bottom:14px">7-Day Forecast</h6>
+			<h6 style="color:#031a33;font-weight:700;margin-bottom:14px">5-Day Forecast</h6>
 			<div style="display:flex;gap:12px;overflow-x:auto;padding-bottom:10px">
 				${forecast_cards || '<p class="text-muted">No forecast data available.</p>'}
 			</div>
