@@ -9,6 +9,7 @@ CURRENT_WEATHER_URL = "https://api.openweathermap.org/data/2.5/weather"
 FORECAST_URL = "https://api.openweathermap.org/data/2.5/forecast"
 GEOCODING_URL = "https://api.openweathermap.org/geo/1.0/direct"
 DEFAULT_OPENWEATHER_API_KEY = "bfd7d15e4d142c6c9e49e6d317bbca00"
+DEFAULT_COUNTRY_CODES = ("ZW", "Zimbabwe")
 
 
 @frappe.whitelist()
@@ -24,8 +25,9 @@ def get_farm_weather(farm_name):
     if not lat or not lon:
         frappe.throw(
             _(
-                f"Farm '{farm_name}' has no GPS coordinates or location set. "
-                "Please add GPS coordinates or a location name to the Farm record."
+                f"Could not resolve a weather location for Farm '{farm_name}'. "
+                "Set the Farm Location to a recognizable place such as 'Rusape, Zimbabwe' "
+                "or add GPS coordinates to the Farm record."
             )
         )
 
@@ -38,8 +40,9 @@ def get_farm_weather(farm_name):
     if not current:
         frappe.throw(
             _(
-                "Could not fetch weather data. Check the OpenWeather API key in "
-                "Farm Management Settings."
+                "Could not fetch current weather from OpenWeather. Confirm the server can "
+                "reach api.openweathermap.org and that the API key in Farm Management "
+                "Settings is valid."
             )
         )
 
@@ -76,26 +79,49 @@ def _resolve_coordinates(farm):
 def _geocode_location(location_string):
     """Use OpenWeather Geocoding API to resolve location string to coordinates."""
     api_key = _get_api_key()
-    try:
-        response = requests.get(
-            GEOCODING_URL,
-            params={"q": location_string, "limit": 1, "appid": api_key},
-            timeout=10,
-        )
-        response.raise_for_status()
-        data = response.json()
-        if data:
-            return data[0].get("lat"), data[0].get("lon")
-    except Exception as e:
-        _log_weather_error("Weather Geocoding Error", e)
+    for query in _get_location_queries(location_string):
+        try:
+            response = requests.get(
+                GEOCODING_URL,
+                params={"q": query, "limit": 1, "appid": api_key},
+                timeout=10,
+            )
+            response.raise_for_status()
+            data = response.json()
+            if data:
+                return data[0].get("lat"), data[0].get("lon")
+        except Exception as e:
+            _log_weather_error(f"Weather Geocoding Error: {query}", e)
     return None, None
 
 
+def _get_location_queries(location_string):
+    location = (location_string or "").strip()
+    if not location:
+        return []
+
+    queries = [location]
+    has_country_hint = "," in location or any(
+        country.lower() in location.lower() for country in DEFAULT_COUNTRY_CODES
+    )
+    if not has_country_hint:
+        queries.extend(f"{location},{country}" for country in DEFAULT_COUNTRY_CODES)
+    return list(dict.fromkeys(queries))
+
+
 def _get_api_key():
-    api_key = frappe.db.get_single_value("Farm Management Settings", "weather_api_key")
-    if not api_key:
-        api_key = DEFAULT_OPENWEATHER_API_KEY
-    return api_key
+    api_key = frappe.conf.get("openweather_api_key")
+    if api_key:
+        return api_key
+
+    try:
+        settings = frappe.get_single("Farm Management Settings")
+        if getattr(settings, "weather_api_key", None):
+            api_key = settings.get_password("weather_api_key")
+    except Exception as e:
+        _log_weather_error("Weather Settings Error", e)
+
+    return api_key or DEFAULT_OPENWEATHER_API_KEY
 
 
 def _get_units(units):
@@ -200,6 +226,31 @@ def _fetch_daily_forecast(lat, lon, api_key, units):
     except Exception as e:
         _log_weather_error("Weather Forecast Fetch Error", e)
         return []
+
+
+@frappe.whitelist()
+def test_weather_location(location="Rusape, Zimbabwe"):
+    """Test OpenWeather lookup without needing a Farm document."""
+    lat, lon = _geocode_location(location)
+    if not lat or not lon:
+        frappe.throw(_(f"Could not geocode location '{location}'."))
+
+    api_key = _get_api_key()
+    units = frappe.db.get_single_value("Farm Management Settings", "weather_units") or "metric"
+    current = _fetch_current(lat, lon, api_key, units)
+    forecast = _fetch_daily_forecast(lat, lon, api_key, units)
+    if not current:
+        frappe.throw(_(f"OpenWeather did not return current weather for '{location}'."))
+
+    return {
+        "location": location,
+        "lat": lat,
+        "lon": lon,
+        "units": units,
+        "current": current,
+        "forecast_count": len(forecast),
+        "forecast": forecast,
+    }
 
 
 @frappe.whitelist()

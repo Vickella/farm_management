@@ -63,11 +63,30 @@ class FarmWeatherPage {
 					me.render_error('No weather data received.');
 				}
 			},
-			error() {
+			error(r) {
 				loading.remove();
-				me.render_error('Failed to fetch weather. Check Farm location and API key in Farm Management Settings.');
+				me.render_error(me.get_error_message(r));
 			}
 		});
+	}
+
+	get_error_message(r) {
+		const fallback = 'Failed to fetch weather. Check Farm location and API key in Farm Management Settings.';
+		const response = (r && r.responseJSON) || {};
+		let message = response.message || response.exception || fallback;
+
+		if (response._server_messages) {
+			try {
+				const server_messages = JSON.parse(response._server_messages);
+				if (server_messages.length) {
+					message = JSON.parse(server_messages[0]).message || message;
+				}
+			} catch (e) {
+				// Keep the fallback message if Frappe returns an unexpected error shape.
+			}
+		}
+
+		return message;
 	}
 
 	render_weather(data) {
