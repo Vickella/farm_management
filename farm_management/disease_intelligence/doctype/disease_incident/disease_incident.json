@@ -7,6 +7,9 @@
  "field_order": [
   "naming_series",
   "farm",
+  "biological_asset",
+  "livestock_individual",
+  "farm_field",
   "incident_date",
   "incident_type",
   "pest",
@@ -35,6 +38,26 @@
    "options": "Farm",
    "reqd": 1,
    "in_list_view": 1
+  },
+  {
+   "fieldname": "biological_asset",
+   "fieldtype": "Link",
+   "label": "Biological Asset",
+   "options": "Biological Asset"
+  },
+  {
+   "fieldname": "livestock_individual",
+   "fieldtype": "Link",
+   "label": "Livestock Individual",
+   "options": "Livestock Individual",
+   "depends_on": "eval:doc.incident_type == 'Animal Disease'"
+  },
+  {
+   "fieldname": "farm_field",
+   "fieldtype": "Link",
+   "label": "Farm Field",
+   "options": "Farm Field",
+   "depends_on": "eval:doc.incident_type == 'Pest'"
   },
   {
    "fieldname": "incident_date",

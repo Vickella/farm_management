@@ -30,28 +30,135 @@
   "notes"
  ],
  "fields": [
-  {"fieldname": "naming_series", "fieldtype": "Select", "label": "Series", "options": "LHE-.####"},
-  {"fieldname": "animal", "fieldtype": "Link", "label": "Animal", "options": "Livestock Individual", "reqd": 1, "in_list_view": 1},
-  {"fieldname": "farm", "fieldtype": "Link", "label": "Farm", "options": "Farm", "reqd": 1, "in_list_view": 1},
-  {"fieldname": "event_date", "fieldtype": "Date", "label": "Event Date", "reqd": 1, "in_list_view": 1},
-  {"fieldname": "event_type", "fieldtype": "Select", "label": "Event Type", "options": "Vaccination\nDeworming\nTreatment\nWeight Check\nDipping\nAI\nPregnancy Check\nWeaning\nCastration\nDehorning\nOther", "reqd": 1, "in_list_view": 1},
-  {"fieldname": "column_break_1", "fieldtype": "Column Break"},
-  {"fieldname": "performed_by", "fieldtype": "Link", "label": "Performed By", "options": "Employee"},
-  {"fieldname": "veterinarian", "fieldtype": "Data", "label": "Veterinarian Name"},
-  {"fieldname": "status", "fieldtype": "Select", "label": "Status", "options": "Completed\nScheduled\nMissed", "default": "Completed", "reqd": 1, "in_list_view": 1},
-  {"fieldname": "section_break_details", "fieldtype": "Section Break", "label": "Event Details"},
-  {"fieldname": "product_used", "fieldtype": "Data", "label": "Product / Vaccine / Drug Used"},
-  {"fieldname": "dosage", "fieldtype": "Data", "label": "Dosage"},
-  {"fieldname": "batch_number", "fieldtype": "Data", "label": "Batch Number"},
-  {"fieldname": "weight_kg", "fieldtype": "Float", "label": "Weight Recorded (kg)"},
-  {"fieldname": "next_due_date", "fieldtype": "Date", "label": "Next Due Date"},
-  {"fieldname": "column_break_2", "fieldtype": "Column Break"},
-  {"fieldname": "cost", "fieldtype": "Currency", "label": "Cost"},
-  {"fieldname": "capitalize_cost", "fieldtype": "Check", "label": "Capitalize Cost to Biological Asset"},
-  {"fieldname": "biological_asset", "fieldtype": "Link", "label": "Biological Asset", "options": "Biological Asset", "read_only": 1},
-  {"fieldname": "capitalized_to_asset", "fieldtype": "Check", "label": "Capitalized to Asset", "read_only": 1},
-  {"fieldname": "outcome", "fieldtype": "Select", "label": "Outcome", "options": "Normal\nPositive Response\nAdverse Reaction\nNo Change"},
-  {"fieldname": "notes", "fieldtype": "Small Text", "label": "Notes"}
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "LHE-.####"
+  },
+  {
+   "fieldname": "animal",
+   "fieldtype": "Link",
+   "label": "Animal",
+   "options": "Livestock Individual",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "farm",
+   "fieldtype": "Link",
+   "label": "Farm",
+   "options": "Farm",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "event_date",
+   "fieldtype": "Date",
+   "label": "Event Date",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "event_type",
+   "fieldtype": "Select",
+   "label": "Event Type",
+   "options": "Vaccination\nDeworming\nTreatment\nWeight Check\nDipping\nAI\nPregnancy Check\nWeaning\nCastration\nDehorning\nOther",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "performed_by",
+   "fieldtype": "Link",
+   "label": "Performed By",
+   "options": "Employee"
+  },
+  {
+   "fieldname": "veterinarian",
+   "fieldtype": "Data",
+   "label": "Veterinarian Name"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Completed\nScheduled\nMissed",
+   "default": "Completed",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "section_break_details",
+   "fieldtype": "Section Break",
+   "label": "Event Details"
+  },
+  {
+   "fieldname": "product_used",
+   "fieldtype": "Data",
+   "label": "Product / Vaccine / Drug Used"
+  },
+  {
+   "fieldname": "dosage",
+   "fieldtype": "Data",
+   "label": "Dosage"
+  },
+  {
+   "fieldname": "batch_number",
+   "fieldtype": "Data",
+   "label": "Batch Number"
+  },
+  {
+   "fieldname": "weight_kg",
+   "fieldtype": "Float",
+   "label": "Weight Recorded (kg)"
+  },
+  {
+   "fieldname": "next_due_date",
+   "fieldtype": "Date",
+   "label": "Next Due Date"
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "cost",
+   "fieldtype": "Currency",
+   "label": "Cost"
+  },
+  {
+   "fieldname": "capitalize_cost",
+   "fieldtype": "Check",
+   "label": "Capitalize Cost to Biological Asset"
+  },
+  {
+   "fieldname": "biological_asset",
+   "fieldtype": "Link",
+   "label": "Biological Asset",
+   "options": "Biological Asset",
+   "read_only": 1
+  },
+  {
+   "fieldname": "capitalized_to_asset",
+   "fieldtype": "Check",
+   "label": "Capitalized to Asset",
+   "read_only": 1
+  },
+  {
+   "fieldname": "outcome",
+   "fieldtype": "Select",
+   "label": "Outcome",
+   "options": "Normal\nPositive Response\nAdverse Reaction\nNo Change"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Small Text",
+   "label": "Notes"
+  }
  ],
  "links": [],
  "modified": "2026-06-19 00:00:00.000000",
@@ -60,9 +167,42 @@
  "name": "Livestock Health Event",
  "owner": "Administrator",
  "permissions": [
-  {"create": 1, "delete": 1, "email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "System Manager", "share": 1, "write": 1},
-  {"create": 1, "delete": 0, "email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "Farm Manager", "share": 1, "write": 1},
-  {"create": 0, "delete": 0, "email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "Farm Worker", "share": 0, "write": 0}
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Farm Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 0,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Farm Worker",
+   "share": 0,
+   "write": 0
+  }
  ],
  "sort_field": "modified",
  "sort_order": "DESC",

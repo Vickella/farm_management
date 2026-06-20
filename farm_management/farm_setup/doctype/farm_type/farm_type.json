@@ -7,6 +7,10 @@
  "field_order": [
   "farm_type_name",
   "category",
+  "classification",
+  "parent_farm_type",
+  "applicable_to",
+  "is_active",
   "description"
  ],
  "fields": [
@@ -24,6 +28,33 @@
    "options": "\nCrop Farming\nHorticulture\nAnimal Husbandry\nPoultry\nAquaculture",
    "reqd": 1,
    "in_list_view": 1
+  },
+  {
+   "fieldname": "classification",
+   "fieldtype": "Select",
+   "label": "Classification",
+   "options": "Enterprise\nCrop\nSpecies\nBreed\nProduction System",
+   "default": "Enterprise",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "parent_farm_type",
+   "fieldtype": "Link",
+   "label": "Parent Farm Type",
+   "options": "Farm Type"
+  },
+  {
+   "fieldname": "applicable_to",
+   "fieldtype": "Select",
+   "label": "Applicable To",
+   "options": "\nCrop\nLivestock\nPoultry\nAquaculture\nMixed"
+  },
+  {
+   "fieldname": "is_active",
+   "fieldtype": "Check",
+   "label": "Is Active",
+   "default": "1"
   },
   {
    "fieldname": "description",

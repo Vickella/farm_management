@@ -1,7 +1,7 @@
 import frappe
 from frappe.model.document import Document
 from frappe.utils import flt
-from farm_management.biological_assets.valuation import capitalize_asset_cost
+from farm_management.biological_assets.valuation import create_capitalization_document
 
 
 class LivestockHealthEvent(Document):
@@ -33,9 +33,10 @@ class LivestockHealthEvent(Document):
         if not biological_asset or not flt(self.cost):
             return
 
-        capitalize_asset_cost(
-            biological_asset,
-            self.cost,
+        create_capitalization_document(
+            biological_asset=biological_asset,
+            amount=self.cost,
+            capitalization_type="Health Cost",
             source_doctype=self.doctype,
             source_name=self.name,
             remarks=f"Capitalised livestock health event: {self.event_type}",

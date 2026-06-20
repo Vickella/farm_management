@@ -3,168 +3,252 @@
     "doctype": "Farm Type",
     "farm_type_name": "Maize",
     "category": "Crop Farming",
-    "description": "Maize farming"
+    "description": "Maize farming",
+    "is_active": 1,
+    "classification": "Crop",
+    "applicable_to": "Crop"
   },
   {
     "doctype": "Farm Type",
     "farm_type_name": "Wheat",
     "category": "Crop Farming",
-    "description": "Wheat farming"
+    "description": "Wheat farming",
+    "is_active": 1,
+    "classification": "Crop",
+    "applicable_to": "Crop"
   },
   {
     "doctype": "Farm Type",
     "farm_type_name": "Soybeans",
     "category": "Crop Farming",
-    "description": "Soybeans farming"
+    "description": "Soybeans farming",
+    "is_active": 1,
+    "classification": "Crop",
+    "applicable_to": "Crop"
   },
   {
     "doctype": "Farm Type",
     "farm_type_name": "Tobacco",
     "category": "Crop Farming",
-    "description": "Tobacco farming"
+    "description": "Tobacco farming",
+    "is_active": 1,
+    "classification": "Crop",
+    "applicable_to": "Crop"
   },
   {
     "doctype": "Farm Type",
     "farm_type_name": "Cotton",
     "category": "Crop Farming",
-    "description": "Cotton farming"
+    "description": "Cotton farming",
+    "is_active": 1,
+    "classification": "Crop",
+    "applicable_to": "Crop"
   },
   {
     "doctype": "Farm Type",
     "farm_type_name": "Sugar Beans",
     "category": "Crop Farming",
-    "description": "Sugar Beans farming"
+    "description": "Sugar Beans farming",
+    "is_active": 1,
+    "classification": "Crop",
+    "applicable_to": "Crop"
   },
   {
     "doctype": "Farm Type",
     "farm_type_name": "Groundnuts",
     "category": "Crop Farming",
-    "description": "Groundnuts farming"
+    "description": "Groundnuts farming",
+    "is_active": 1,
+    "classification": "Crop",
+    "applicable_to": "Crop"
   },
   {
     "doctype": "Farm Type",
     "farm_type_name": "Tomatoes",
     "category": "Horticulture",
-    "description": "Tomatoes farming"
+    "description": "Tomatoes farming",
+    "is_active": 1,
+    "classification": "Crop",
+    "applicable_to": "Crop"
   },
   {
     "doctype": "Farm Type",
     "farm_type_name": "Potatoes",
     "category": "Horticulture",
-    "description": "Potatoes farming"
+    "description": "Potatoes farming",
+    "is_active": 1,
+    "classification": "Crop",
+    "applicable_to": "Crop"
   },
   {
     "doctype": "Farm Type",
     "farm_type_name": "Onions",
     "category": "Horticulture",
-    "description": "Onions farming"
+    "description": "Onions farming",
+    "is_active": 1,
+    "classification": "Crop",
+    "applicable_to": "Crop"
   },
   {
     "doctype": "Farm Type",
     "farm_type_name": "Cabbage",
     "category": "Horticulture",
-    "description": "Cabbage farming"
+    "description": "Cabbage farming",
+    "is_active": 1,
+    "classification": "Crop",
+    "applicable_to": "Crop"
   },
   {
     "doctype": "Farm Type",
     "farm_type_name": "Peppers",
     "category": "Horticulture",
-    "description": "Peppers farming"
+    "description": "Peppers farming",
+    "is_active": 1,
+    "classification": "Crop",
+    "applicable_to": "Crop"
   },
   {
     "doctype": "Farm Type",
     "farm_type_name": "Flowers",
     "category": "Horticulture",
-    "description": "Flowers farming"
+    "description": "Flowers farming",
+    "is_active": 1,
+    "classification": "Crop",
+    "applicable_to": "Crop"
   },
   {
     "doctype": "Farm Type",
     "farm_type_name": "Greenhouse Farming",
     "category": "Horticulture",
-    "description": "Greenhouse Farming farming"
+    "description": "Greenhouse Farming farming",
+    "is_active": 1,
+    "classification": "Production System",
+    "applicable_to": "Crop"
   },
   {
     "doctype": "Farm Type",
     "farm_type_name": "Cattle",
     "category": "Animal Husbandry",
-    "description": "Cattle farming"
+    "description": "Cattle farming",
+    "is_active": 1,
+    "classification": "Species",
+    "applicable_to": "Livestock"
   },
   {
     "doctype": "Farm Type",
     "farm_type_name": "Goats",
     "category": "Animal Husbandry",
-    "description": "Goats farming"
+    "description": "Goats farming",
+    "is_active": 1,
+    "classification": "Species",
+    "applicable_to": "Livestock"
   },
   {
     "doctype": "Farm Type",
     "farm_type_name": "Sheep",
     "category": "Animal Husbandry",
-    "description": "Sheep farming"
+    "description": "Sheep farming",
+    "is_active": 1,
+    "classification": "Species",
+    "applicable_to": "Livestock"
   },
   {
     "doctype": "Farm Type",
     "farm_type_name": "Pigs",
     "category": "Animal Husbandry",
-    "description": "Pigs farming"
+    "description": "Pigs farming",
+    "is_active": 1,
+    "classification": "Species",
+    "applicable_to": "Livestock"
   },
   {
     "doctype": "Farm Type",
     "farm_type_name": "Rabbits",
     "category": "Animal Husbandry",
-    "description": "Rabbits farming"
+    "description": "Rabbits farming",
+    "is_active": 1,
+    "classification": "Species",
+    "applicable_to": "Livestock"
   },
   {
     "doctype": "Farm Type",
     "farm_type_name": "Broilers",
     "category": "Poultry",
-    "description": "Broilers farming"
+    "description": "Broilers farming",
+    "is_active": 1,
+    "classification": "Species",
+    "applicable_to": "Poultry"
   },
   {
     "doctype": "Farm Type",
     "farm_type_name": "Layers",
     "category": "Poultry",
-    "description": "Layers farming"
+    "description": "Layers farming",
+    "is_active": 1,
+    "classification": "Species",
+    "applicable_to": "Poultry"
   },
   {
     "doctype": "Farm Type",
     "farm_type_name": "Road Runners",
     "category": "Poultry",
-    "description": "Road Runners farming"
+    "description": "Road Runners farming",
+    "is_active": 1,
+    "classification": "Species",
+    "applicable_to": "Poultry"
   },
   {
     "doctype": "Farm Type",
     "farm_type_name": "Turkey",
     "category": "Poultry",
-    "description": "Turkey farming"
+    "description": "Turkey farming",
+    "is_active": 1,
+    "classification": "Species",
+    "applicable_to": "Poultry"
   },
   {
     "doctype": "Farm Type",
     "farm_type_name": "Ducks",
     "category": "Poultry",
-    "description": "Ducks farming"
+    "description": "Ducks farming",
+    "is_active": 1,
+    "classification": "Species",
+    "applicable_to": "Poultry"
   },
   {
     "doctype": "Farm Type",
     "farm_type_name": "Tilapia",
     "category": "Aquaculture",
-    "description": "Tilapia farming"
+    "description": "Tilapia farming",
+    "is_active": 1,
+    "classification": "Species",
+    "applicable_to": "Aquaculture"
   },
   {
     "doctype": "Farm Type",
     "farm_type_name": "Catfish",
     "category": "Aquaculture",
-    "description": "Catfish farming"
+    "description": "Catfish farming",
+    "is_active": 1,
+    "classification": "Species",
+    "applicable_to": "Aquaculture"
   },
   {
     "doctype": "Farm Type",
     "farm_type_name": "Trout",
     "category": "Aquaculture",
-    "description": "Trout farming"
+    "description": "Trout farming",
+    "is_active": 1,
+    "classification": "Species",
+    "applicable_to": "Aquaculture"
   },
   {
     "doctype": "Farm Type",
     "farm_type_name": "Shrimp",
     "category": "Aquaculture",
-    "description": "Shrimp farming"
+    "description": "Shrimp farming",
+    "is_active": 1,
+    "classification": "Species",
+    "applicable_to": "Aquaculture"
   }
 ]

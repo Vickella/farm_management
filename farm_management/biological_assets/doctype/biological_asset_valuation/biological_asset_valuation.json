@@ -1,0 +1,163 @@
+{
+ "actions": [],
+ "autoname": "naming_series:",
+ "creation": "2026-06-19 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "is_submittable": 1,
+ "field_order": [
+  "naming_series",
+  "biological_asset",
+  "valuation_date",
+  "valuation_method",
+  "current_fair_value",
+  "cost_to_sell",
+  "column_break_1",
+  "net_fair_value",
+  "previous_net_fair_value",
+  "previous_current_fair_value",
+  "previous_cost_to_sell",
+  "fair_value_movement",
+  "valuation_basis",
+  "post_journal_entry",
+  "journal_entry"
+ ],
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "BAV-.####"
+  },
+  {
+   "fieldname": "biological_asset",
+   "fieldtype": "Link",
+   "label": "Biological Asset",
+   "options": "Biological Asset",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "valuation_date",
+   "fieldtype": "Date",
+   "label": "Valuation Date",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "valuation_method",
+   "fieldtype": "Select",
+   "label": "Valuation Method",
+   "options": "Cost Accumulation\nManual Fair Value",
+   "default": "Manual Fair Value",
+   "reqd": 1
+  },
+  {
+   "fieldname": "current_fair_value",
+   "fieldtype": "Currency",
+   "label": "Current Fair Value",
+   "reqd": 1
+  },
+  {
+   "fieldname": "cost_to_sell",
+   "fieldtype": "Currency",
+   "label": "Estimated Cost to Sell"
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "net_fair_value",
+   "fieldtype": "Currency",
+   "label": "Net Fair Value",
+   "read_only": 1
+  },
+  {
+   "fieldname": "previous_net_fair_value",
+   "fieldtype": "Currency",
+   "label": "Previous Net Fair Value",
+   "read_only": 1
+  },
+  {
+   "fieldname": "previous_current_fair_value",
+   "fieldtype": "Currency",
+   "label": "Previous Current Fair Value",
+   "hidden": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "previous_cost_to_sell",
+   "fieldtype": "Currency",
+   "label": "Previous Cost to Sell",
+   "hidden": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "fair_value_movement",
+   "fieldtype": "Currency",
+   "label": "Fair Value Movement",
+   "read_only": 1
+  },
+  {
+   "fieldname": "valuation_basis",
+   "fieldtype": "Text Editor",
+   "label": "Valuation Basis"
+  },
+  {
+   "fieldname": "post_journal_entry",
+   "fieldtype": "Check",
+   "label": "Post Journal Entry"
+  },
+  {
+   "fieldname": "journal_entry",
+   "fieldtype": "Link",
+   "label": "Journal Entry",
+   "options": "Journal Entry",
+   "read_only": 1
+  }
+ ],
+ "links": [],
+ "modified": "2026-06-19 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Biological Assets",
+ "name": "Biological Asset Valuation",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "submit": 1,
+   "cancel": 1,
+   "amend": 1,
+   "report": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "share": 1
+  },
+  {
+   "role": "Farm Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 0,
+   "submit": 1,
+   "cancel": 1,
+   "amend": 1,
+   "report": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "share": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

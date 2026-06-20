@@ -1,7 +1,7 @@
 import frappe
 from frappe.model.document import Document
 from frappe.utils import date_diff, flt, today
-from farm_management.biological_assets.valuation import capitalize_asset_cost
+from farm_management.biological_assets.valuation import create_capitalization_document
 
 
 class LivestockIndividual(Document):
@@ -36,9 +36,10 @@ class LivestockIndividual(Document):
             return
 
         amount = flt(self.capitalization_value) or flt(self.purchase_price)
-        capitalize_asset_cost(
-            self.biological_asset,
-            amount,
+        create_capitalization_document(
+            biological_asset=self.biological_asset,
+            amount=amount,
+            capitalization_type="Birth" if self.acquisition_type == "Born on Farm" else "Purchase",
             source_doctype=self.doctype,
             source_name=self.name,
             remarks=f"{self.acquisition_type or 'Livestock'} added to biological asset",

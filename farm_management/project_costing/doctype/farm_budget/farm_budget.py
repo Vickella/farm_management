@@ -4,7 +4,12 @@ from frappe.utils import flt
 
 class FarmBudget(Document):
     def validate(self):
+        self.validate_dates()
         self.calculate_variance()
+
+    def validate_dates(self):
+        if self.budget_period_end and self.budget_period_start and self.budget_period_end < self.budget_period_start:
+            frappe.throw("Budget Period End cannot be before Budget Period Start.")
 
     def calculate_variance(self):
         total_budget = 0

@@ -22,6 +22,7 @@ doc_events = {
     },
     "Stock Entry": {
         "on_submit": "farm_management.biological_assets.valuation.sync_project_material_issue",
+        "on_cancel": "farm_management.biological_assets.valuation.cancel_project_material_issue",
     }
 }
 

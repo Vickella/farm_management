@@ -55,7 +55,15 @@ WORKSPACE_GROUPS = [
             ("Livestock Breeding Record", "DocType"),
         ],
     ),
-    ("Biological Assets", [("Biological Asset", "DocType"), ("Harvest Transaction", "DocType")]),
+    (
+        "Biological Assets",
+        [
+            ("Biological Asset", "DocType"),
+            ("Biological Asset Capitalization", "DocType"),
+            ("Biological Asset Valuation", "DocType"),
+            ("Harvest Transaction", "DocType"),
+        ],
+    ),
     (
         "Disease and Pest Intelligence",
         [("Disease Incident", "DocType"), ("Pest", "DocType"), ("Animal Disease", "DocType")],
@@ -78,6 +86,7 @@ WORKSPACE_GROUPS = [
 WORKSPACE_SHORTCUTS = [
     "Farm",
     "Biological Asset",
+    "Biological Asset Valuation",
     "Livestock Individual",
     "Livestock Health Event",
     "Disease Incident",
@@ -269,7 +278,14 @@ def seed_livestock_breeds():
     for species, breed_names in breeds.items():
         for breed in breed_names:
             description = f"{species} breed used in livestock production."
-            values = {"category": "Animal Husbandry", "description": description}
+            values = {
+                "category": "Animal Husbandry",
+                "classification": "Breed",
+                "parent_farm_type": f"{species}s" if species in ("Goat", "Pig") else species,
+                "applicable_to": "Livestock",
+                "is_active": 1,
+                "description": description,
+            }
             if frappe.db.exists("Farm Type", breed):
                 frappe.db.set_value("Farm Type", breed, values)
             else:

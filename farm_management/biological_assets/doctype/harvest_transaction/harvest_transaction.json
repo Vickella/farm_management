@@ -6,14 +6,21 @@
  "engine": "InnoDB",
  "field_order": [
   "naming_series",
+  "section_harvest",
   "farm",
+  "company",
   "biological_asset",
   "harvest_date",
   "quantity_harvested",
+  "asset_quantity_before",
+  "asset_quantity_after",
   "unit",
   "quality_grade",
-  "conversion_item",
   "harvest_value",
+  "asset_value_reduction",
+  "section_stock",
+  "conversion_item",
+  "target_warehouse",
   "stock_entry",
   "notes"
  ],
@@ -25,12 +32,23 @@
    "options": "HT-.####"
   },
   {
+   "fieldname": "section_harvest",
+   "fieldtype": "Section Break",
+   "label": "Harvest Details"
+  },
+  {
    "fieldname": "farm",
    "fieldtype": "Link",
    "label": "Farm",
    "options": "Farm",
    "reqd": 1,
    "in_list_view": 1
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company"
   },
   {
    "fieldname": "biological_asset",
@@ -54,6 +72,18 @@
    "reqd": 1
   },
   {
+   "fieldname": "asset_quantity_before",
+   "fieldtype": "Float",
+   "label": "Asset Quantity Before",
+   "read_only": 1
+  },
+  {
+   "fieldname": "asset_quantity_after",
+   "fieldtype": "Float",
+   "label": "Asset Quantity After",
+   "read_only": 1
+  },
+  {
    "fieldname": "unit",
    "fieldtype": "Select",
    "label": "Unit",
@@ -73,9 +103,27 @@
    "options": "Item"
   },
   {
+   "fieldname": "target_warehouse",
+   "fieldtype": "Link",
+   "label": "Target Warehouse",
+   "options": "Warehouse",
+   "mandatory_depends_on": "eval:doc.conversion_item"
+  },
+  {
    "fieldname": "harvest_value",
    "fieldtype": "Currency",
    "label": "Harvest Value"
+  },
+  {
+   "fieldname": "asset_value_reduction",
+   "fieldtype": "Currency",
+   "label": "Asset Value Reduction",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_stock",
+   "fieldtype": "Section Break",
+   "label": "Stock Conversion"
   },
   {
    "fieldname": "stock_entry",

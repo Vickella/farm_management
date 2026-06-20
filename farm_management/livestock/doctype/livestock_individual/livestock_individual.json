@@ -7,6 +7,7 @@
  "engine": "InnoDB",
  "field_order": [
   "naming_series",
+  "section_identity",
   "animal_name",
   "tag_number",
   "species",
@@ -16,7 +17,7 @@
   "age_months",
   "birth_weight_kg",
   "current_weight_kg",
-  "column_break_1",
+  "section_location",
   "farm",
   "pen",
   "status",
@@ -39,43 +40,218 @@
   "horn_status",
   "microchip_number",
   "section_break_notes",
-  "notes"
+  "notes",
+  "column_break_1"
  ],
  "fields": [
-  {"fieldname": "naming_series", "fieldtype": "Select", "label": "Series", "options": "LI-.####"},
-  {"fieldname": "animal_name", "fieldtype": "Data", "label": "Animal Name / Tag ID", "reqd": 1, "in_list_view": 1},
-  {"fieldname": "tag_number", "fieldtype": "Data", "label": "Ear Tag Number", "unique": 1, "in_list_view": 1},
-  {"fieldname": "species", "fieldtype": "Select", "label": "Species", "options": "Cattle\nGoat\nSheep\nPig\nRabbit", "reqd": 1, "in_list_view": 1},
-  {"fieldname": "breed", "fieldtype": "Data", "label": "Breed", "reqd": 1, "in_list_view": 1},
-  {"fieldname": "sex", "fieldtype": "Select", "label": "Sex", "options": "Male\nFemale\nCastrated", "reqd": 1, "in_list_view": 1},
-  {"fieldname": "date_of_birth", "fieldtype": "Date", "label": "Date of Birth"},
-  {"fieldname": "age_months", "fieldtype": "Float", "label": "Age (Months)", "read_only": 1},
-  {"fieldname": "birth_weight_kg", "fieldtype": "Float", "label": "Birth Weight (kg)"},
-  {"fieldname": "current_weight_kg", "fieldtype": "Float", "label": "Current Weight (kg)"},
-  {"fieldname": "column_break_1", "fieldtype": "Column Break"},
-  {"fieldname": "farm", "fieldtype": "Link", "label": "Farm", "options": "Farm", "reqd": 1, "in_list_view": 1},
-  {"fieldname": "pen", "fieldtype": "Link", "label": "Current Pen/Kraal", "options": "Farm Pen"},
-  {"fieldname": "status", "fieldtype": "Select", "label": "Status", "options": "Active\nSold\nDead\nCulled\nTransferred", "reqd": 1, "default": "Active", "in_list_view": 1},
-  {"fieldname": "acquisition_type", "fieldtype": "Select", "label": "Acquisition Type", "options": "Born on Farm\nPurchased\nTransferred In"},
-  {"fieldname": "acquisition_date", "fieldtype": "Date", "label": "Acquisition Date"},
-  {"fieldname": "purchase_price", "fieldtype": "Currency", "label": "Purchase Price"},
-  {"fieldname": "biological_asset", "fieldtype": "Link", "label": "Biological Asset", "options": "Biological Asset"},
-  {"fieldname": "capitalize_to_asset", "fieldtype": "Check", "label": "Capitalize to Biological Asset", "default": "1"},
-  {"fieldname": "capitalization_value", "fieldtype": "Currency", "label": "Capitalization Value"},
-  {"fieldname": "capitalized_to_asset", "fieldtype": "Check", "label": "Capitalized to Asset", "read_only": 1},
-  {"fieldname": "section_break_parentage", "fieldtype": "Section Break", "label": "Parentage"},
-  {"fieldname": "dam", "fieldtype": "Link", "label": "Dam (Mother)", "options": "Livestock Individual"},
-  {"fieldname": "sire", "fieldtype": "Link", "label": "Sire (Father)", "options": "Livestock Individual"},
-  {"fieldname": "dam_tag", "fieldtype": "Data", "label": "Dam Tag (if not on system)"},
-  {"fieldname": "sire_tag", "fieldtype": "Data", "label": "Sire Tag (if not on system)"},
-  {"fieldname": "siblings", "fieldtype": "Table MultiSelect", "label": "Siblings", "options": "Livestock Sibling"},
-  {"fieldname": "litter_size", "fieldtype": "Int", "label": "Litter Size (if born here)"},
-  {"fieldname": "section_break_physical", "fieldtype": "Section Break", "label": "Physical Description"},
-  {"fieldname": "color_markings", "fieldtype": "Data", "label": "Color / Markings"},
-  {"fieldname": "horn_status", "fieldtype": "Select", "label": "Horn Status", "options": "Horned\nPolled\nDehorned\nDisbudded"},
-  {"fieldname": "microchip_number", "fieldtype": "Data", "label": "Microchip Number"},
-  {"fieldname": "section_break_notes", "fieldtype": "Section Break"},
-  {"fieldname": "notes", "fieldtype": "Small Text", "label": "Notes"}
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "LI-.####"
+  },
+  {
+   "fieldname": "section_identity",
+   "fieldtype": "Section Break",
+   "label": "Animal Identity"
+  },
+  {
+   "fieldname": "animal_name",
+   "fieldtype": "Data",
+   "label": "Animal Name / Tag ID",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "tag_number",
+   "fieldtype": "Data",
+   "label": "Ear Tag Number",
+   "unique": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "species",
+   "fieldtype": "Select",
+   "label": "Species",
+   "options": "Cattle\nGoat\nSheep\nPig\nRabbit",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "breed",
+   "fieldtype": "Data",
+   "label": "Breed",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "sex",
+   "fieldtype": "Select",
+   "label": "Sex",
+   "options": "Male\nFemale\nCastrated",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "date_of_birth",
+   "fieldtype": "Date",
+   "label": "Date of Birth"
+  },
+  {
+   "fieldname": "age_months",
+   "fieldtype": "Float",
+   "label": "Age (Months)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "birth_weight_kg",
+   "fieldtype": "Float",
+   "label": "Birth Weight (kg)"
+  },
+  {
+   "fieldname": "current_weight_kg",
+   "fieldtype": "Float",
+   "label": "Current Weight (kg)"
+  },
+  {
+   "fieldname": "section_location",
+   "fieldtype": "Section Break",
+   "label": "Location and Acquisition"
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "farm",
+   "fieldtype": "Link",
+   "label": "Farm",
+   "options": "Farm",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "pen",
+   "fieldtype": "Link",
+   "label": "Current Pen/Kraal",
+   "options": "Farm Pen"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Active\nSold\nDead\nCulled\nTransferred",
+   "reqd": 1,
+   "default": "Active",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "acquisition_type",
+   "fieldtype": "Select",
+   "label": "Acquisition Type",
+   "options": "Born on Farm\nPurchased\nTransferred In"
+  },
+  {
+   "fieldname": "acquisition_date",
+   "fieldtype": "Date",
+   "label": "Acquisition Date"
+  },
+  {
+   "fieldname": "purchase_price",
+   "fieldtype": "Currency",
+   "label": "Purchase Price"
+  },
+  {
+   "fieldname": "biological_asset",
+   "fieldtype": "Link",
+   "label": "Biological Asset",
+   "options": "Biological Asset"
+  },
+  {
+   "fieldname": "capitalize_to_asset",
+   "fieldtype": "Check",
+   "label": "Capitalize to Biological Asset",
+   "default": "1"
+  },
+  {
+   "fieldname": "capitalization_value",
+   "fieldtype": "Currency",
+   "label": "Capitalization Value"
+  },
+  {
+   "fieldname": "capitalized_to_asset",
+   "fieldtype": "Check",
+   "label": "Capitalized to Asset",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_parentage",
+   "fieldtype": "Section Break",
+   "label": "Parentage"
+  },
+  {
+   "fieldname": "dam",
+   "fieldtype": "Link",
+   "label": "Dam (Mother)",
+   "options": "Livestock Individual"
+  },
+  {
+   "fieldname": "sire",
+   "fieldtype": "Link",
+   "label": "Sire (Father)",
+   "options": "Livestock Individual"
+  },
+  {
+   "fieldname": "dam_tag",
+   "fieldtype": "Data",
+   "label": "Dam Tag (if not on system)"
+  },
+  {
+   "fieldname": "sire_tag",
+   "fieldtype": "Data",
+   "label": "Sire Tag (if not on system)"
+  },
+  {
+   "fieldname": "siblings",
+   "fieldtype": "Table MultiSelect",
+   "label": "Siblings",
+   "options": "Livestock Sibling"
+  },
+  {
+   "fieldname": "litter_size",
+   "fieldtype": "Int",
+   "label": "Litter Size (if born here)"
+  },
+  {
+   "fieldname": "section_break_physical",
+   "fieldtype": "Section Break",
+   "label": "Physical Description"
+  },
+  {
+   "fieldname": "color_markings",
+   "fieldtype": "Data",
+   "label": "Color / Markings"
+  },
+  {
+   "fieldname": "horn_status",
+   "fieldtype": "Select",
+   "label": "Horn Status",
+   "options": "Horned\nPolled\nDehorned\nDisbudded"
+  },
+  {
+   "fieldname": "microchip_number",
+   "fieldtype": "Data",
+   "label": "Microchip Number"
+  },
+  {
+   "fieldname": "section_break_notes",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Small Text",
+   "label": "Notes"
+  }
  ],
  "links": [],
  "modified": "2026-06-19 00:00:00.000000",
@@ -84,9 +260,42 @@
  "name": "Livestock Individual",
  "owner": "Administrator",
  "permissions": [
-  {"create": 1, "delete": 1, "email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "System Manager", "share": 1, "write": 1},
-  {"create": 1, "delete": 0, "email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "Farm Manager", "share": 1, "write": 1},
-  {"create": 0, "delete": 0, "email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "Farm Worker", "share": 0, "write": 0}
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Farm Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 0,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Farm Worker",
+   "share": 0,
+   "write": 0
+  }
  ],
  "sort_field": "modified",
  "sort_order": "DESC",

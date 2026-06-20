@@ -5,6 +5,7 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "section_identity",
   "naming_series",
   "asset_name",
   "farm",
@@ -13,26 +14,29 @@
   "column_break_1",
   "status",
   "growth_stage",
+  "valuation_method",
   "linked_project",
-  "section_break_quantity",
+  "section_quantity",
   "acquisition_date",
   "quantity",
   "unit",
   "average_weight_kg",
   "mortality_to_date",
-  "column_break_2",
+  "section_valuation",
   "initial_cost",
+  "capitalized_cost",
   "current_fair_value",
   "cost_to_sell",
+  "column_break_valuation",
   "net_fair_value",
   "accumulated_gain_loss",
-  "valuation_method",
-  "capitalized_cost",
-  "previous_quantity",
   "last_posted_net_fair_value",
   "last_journal_entry",
   "last_valuation_date",
-  "notes"
+  "previous_quantity",
+  "notes",
+  "section_break_quantity",
+  "column_break_2"
  ],
  "fields": [
   {
@@ -205,6 +209,25 @@
    "fieldname": "notes",
    "fieldtype": "Small Text",
    "label": "Notes"
+  },
+  {
+   "fieldname": "section_identity",
+   "fieldtype": "Section Break",
+   "label": "Asset Identity"
+  },
+  {
+   "fieldname": "section_quantity",
+   "fieldtype": "Section Break",
+   "label": "Quantity and Growth"
+  },
+  {
+   "fieldname": "section_valuation",
+   "fieldtype": "Section Break",
+   "label": "Valuation"
+  },
+  {
+   "fieldname": "column_break_valuation",
+   "fieldtype": "Column Break"
   }
  ],
  "links": [],

@@ -142,5 +142,6 @@
  "sort_order": "DESC",
  "states": [],
  "track_changes": 1,
- "autoname": "naming_series:"
+ "autoname": "naming_series:",
+ "is_submittable": 1
 }

@@ -1,7 +1,6 @@
 import frappe
 from frappe.model.document import Document
 from frappe.utils import flt, today
-from farm_management.biological_assets.valuation import create_fair_value_journal_entry
 
 class BiologicalAsset(Document):
     def validate(self):
@@ -33,7 +32,6 @@ class BiologicalAsset(Document):
 
     def on_update(self):
         self.db_set("last_valuation_date", today(), update_modified=False)
-        create_fair_value_journal_entry(self)
 
 def update_fair_values():
     from frappe.utils import add_days

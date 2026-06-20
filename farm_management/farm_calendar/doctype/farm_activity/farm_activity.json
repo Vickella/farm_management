@@ -19,6 +19,9 @@
   "cost_center",
   "estimated_cost",
   "actual_cost",
+  "capitalizable",
+  "biological_asset",
+  "capitalized_to_asset",
   "notes",
   "completion_notes"
  ],
@@ -108,6 +111,24 @@
    "fieldname": "actual_cost",
    "fieldtype": "Currency",
    "label": "Actual Cost"
+  },
+  {
+   "fieldname": "capitalizable",
+   "fieldtype": "Check",
+   "label": "Capitalizable"
+  },
+  {
+   "fieldname": "biological_asset",
+   "fieldtype": "Link",
+   "label": "Biological Asset",
+   "options": "Biological Asset",
+   "depends_on": "eval:doc.capitalizable"
+  },
+  {
+   "fieldname": "capitalized_to_asset",
+   "fieldtype": "Check",
+   "label": "Capitalized to Asset",
+   "read_only": 1
   },
   {
    "fieldname": "notes",

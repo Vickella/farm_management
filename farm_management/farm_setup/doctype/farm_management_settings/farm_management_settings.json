@@ -7,7 +7,10 @@
  "field_order": [
   "biological_asset_account",
   "fair_value_gain_loss_account",
+  "capital_work_in_progress_account",
   "default_cost_center",
+  "default_company",
+  "default_harvest_warehouse",
   "section_break_ai",
   "ai_api_key",
   "ai_provider",
@@ -15,6 +18,7 @@
   "enable_ai_assistant",
   "enable_auto_activity_generation",
   "enable_fair_value_scheduler",
+  "auto_post_fair_value_journals",
   "section_break_weather",
   "weather_api_key",
   "weather_units"
@@ -33,10 +37,28 @@
    "options": "Account"
   },
   {
+   "fieldname": "capital_work_in_progress_account",
+   "fieldtype": "Link",
+   "label": "Capital Work In Progress Account",
+   "options": "Account"
+  },
+  {
    "fieldname": "default_cost_center",
    "fieldtype": "Link",
    "label": "Default Cost Center",
    "options": "Cost Center"
+  },
+  {
+   "fieldname": "default_company",
+   "fieldtype": "Link",
+   "label": "Default Company",
+   "options": "Company"
+  },
+  {
+   "fieldname": "default_harvest_warehouse",
+   "fieldtype": "Link",
+   "label": "Default Harvest Warehouse",
+   "options": "Warehouse"
   },
   {
    "fieldname": "section_break_ai",
@@ -76,6 +98,12 @@
    "fieldtype": "Check",
    "label": "Enable Fair Value Scheduler",
    "default": "1"
+  },
+  {
+   "fieldname": "auto_post_fair_value_journals",
+   "fieldtype": "Check",
+   "label": "Auto-post Fair Value Journals",
+   "default": "0"
   },
   {
    "fieldname": "section_break_weather",
