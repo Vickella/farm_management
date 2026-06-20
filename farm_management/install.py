@@ -84,7 +84,7 @@ WORKSPACE_SHORTCUTS = [
     "Farm BOM",
     "Farm Budget",
     "Contract Farming Agreement",
-    ("Farm Weather", "URL", "farm-weather"),
+    ("Farm Weather", "Page", "farm-weather"),
 ]
 
 
