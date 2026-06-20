@@ -7,27 +7,31 @@
  "field_order": [
   "farm_type_name",
   "category",
+  "is_active",
+  "description",
+  "section_managed_items",
+  "managed_items",
   "classification",
   "parent_farm_type",
-  "applicable_to",
-  "is_active",
-  "description"
+  "applicable_to"
  ],
  "fields": [
   {
    "fieldname": "farm_type_name",
    "fieldtype": "Data",
-   "label": "Farm Type Name",
+   "label": "Farm Type",
    "reqd": 1,
-   "in_list_view": 1
+   "in_list_view": 1,
+   "description": "Broad type of farming enterprise, for example Crop Production or Animal Husbandry."
   },
   {
    "fieldname": "category",
    "fieldtype": "Select",
-   "label": "Category",
-   "options": "\nCrop Farming\nHorticulture\nAnimal Husbandry\nPoultry\nAquaculture",
+   "label": "Farming Type",
+   "options": "\nCrop Production\nAnimal Husbandry\nHorticulture\nAquaculture\nApiculture\nPoultry\nMixed Farming\nAgroforestry\nOther",
    "reqd": 1,
-   "in_list_view": 1
+   "in_list_view": 1,
+   "description": "The broad farming activity that happens under this Farm Type."
   },
   {
    "fieldname": "classification",
@@ -35,20 +39,25 @@
    "label": "Classification",
    "options": "Enterprise\nCrop\nSpecies\nBreed\nProduction System",
    "default": "Enterprise",
-   "reqd": 1,
-   "in_list_view": 1
+   "reqd": 0,
+   "in_list_view": 1,
+   "hidden": 1
   },
   {
    "fieldname": "parent_farm_type",
    "fieldtype": "Link",
    "label": "Parent Farm Type",
-   "options": "Farm Type"
+   "options": "Farm Type",
+   "hidden": 1,
+   "reqd": 0
   },
   {
    "fieldname": "applicable_to",
    "fieldtype": "Select",
    "label": "Applicable To",
-   "options": "\nCrop\nLivestock\nPoultry\nAquaculture\nMixed"
+   "options": "\nCrop\nLivestock\nPoultry\nAquaculture\nMixed",
+   "hidden": 1,
+   "reqd": 0
   },
   {
    "fieldname": "is_active",
@@ -60,6 +69,17 @@
    "fieldname": "description",
    "fieldtype": "Small Text",
    "label": "Description"
+  },
+  {
+   "fieldname": "section_managed_items",
+   "fieldtype": "Section Break",
+   "label": "Managed Crops / Animals / Species"
+  },
+  {
+   "fieldname": "managed_items",
+   "fieldtype": "Table",
+   "label": "Managed Crops / Animals / Species",
+   "options": "Farm Type Managed Item"
   }
  ],
  "links": [],
@@ -97,7 +117,7 @@
  "sort_field": "farm_type_name",
  "sort_order": "ASC",
  "states": [],
- "track_changes": 0,
+ "track_changes": 1,
  "autoname": "field:farm_type_name",
  "title_field": "farm_type_name",
  "naming_rule": "By fieldname"

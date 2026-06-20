@@ -4,8 +4,23 @@ from frappe.utils import flt, today
 
 class BiologicalAsset(Document):
     def validate(self):
+        self.validate_managed_item()
         self.recalculate_valuation()
         self.validate_quantity()
+
+    def validate_managed_item(self):
+        if not self.farm_type or not self.managed_item:
+            return
+        farm_type = frappe.get_doc("Farm Type", self.farm_type)
+        managed_items = {
+            (row.managed_item_name or "").strip().lower()
+            for row in farm_type.get("managed_items", [])
+            if row.is_active
+        }
+        if managed_items and self.managed_item.strip().lower() not in managed_items:
+            frappe.throw(
+                f"Managed item '{self.managed_item}' is not listed under Farm Type '{self.farm_type}'."
+            )
 
     def recalculate_valuation(self, scale_by_quantity=False):
         if scale_by_quantity and flt(self.previous_quantity):

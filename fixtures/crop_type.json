@@ -2,7 +2,7 @@
   {
     "doctype": "Crop Type",
     "crop_name": "Maize",
-    "category": "Maize",
+    "category": "Crop Production",
     "growth_period_days": 120,
     "expected_yield_per_ha": 5,
     "yield_unit": "Tonne"
@@ -10,7 +10,7 @@
   {
     "doctype": "Crop Type",
     "crop_name": "Wheat",
-    "category": "Wheat",
+    "category": "Crop Production",
     "growth_period_days": 120,
     "expected_yield_per_ha": 5,
     "yield_unit": "Tonne"
@@ -18,7 +18,7 @@
   {
     "doctype": "Crop Type",
     "crop_name": "Soybeans",
-    "category": "Soybeans",
+    "category": "Crop Production",
     "growth_period_days": 120,
     "expected_yield_per_ha": 5,
     "yield_unit": "Tonne"
@@ -26,7 +26,7 @@
   {
     "doctype": "Crop Type",
     "crop_name": "Tobacco",
-    "category": "Tobacco",
+    "category": "Crop Production",
     "growth_period_days": 120,
     "expected_yield_per_ha": 5,
     "yield_unit": "Tonne"
@@ -34,7 +34,7 @@
   {
     "doctype": "Crop Type",
     "crop_name": "Cotton",
-    "category": "Cotton",
+    "category": "Crop Production",
     "growth_period_days": 120,
     "expected_yield_per_ha": 5,
     "yield_unit": "Tonne"
@@ -42,7 +42,7 @@
   {
     "doctype": "Crop Type",
     "crop_name": "Tomatoes",
-    "category": null,
+    "category": "Horticulture",
     "growth_period_days": 120,
     "expected_yield_per_ha": 5,
     "yield_unit": "Tonne"
@@ -50,7 +50,7 @@
   {
     "doctype": "Crop Type",
     "crop_name": "Potatoes",
-    "category": null,
+    "category": "Horticulture",
     "growth_period_days": 120,
     "expected_yield_per_ha": 5,
     "yield_unit": "Tonne"

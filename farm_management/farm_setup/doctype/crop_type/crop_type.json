@@ -24,9 +24,10 @@
   {
    "fieldname": "category",
    "fieldtype": "Link",
-   "label": "Category",
+   "label": "Farm Type",
    "options": "Farm Type",
-   "in_list_view": 1
+   "in_list_view": 1,
+   "description": "Broad farming enterprise this crop belongs to, usually Crop Production or Horticulture."
   },
   {
    "fieldname": "column_break_1",

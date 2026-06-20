@@ -168,10 +168,9 @@
     "dt": "Project",
     "module": "Farm Management",
     "fieldname": "fish_species",
-    "fieldtype": "Link",
+    "fieldtype": "Data",
     "label": "Fish Species",
     "insert_after": "fowl_run_allocation",
-    "options": "Farm Type",
     "depends_on": "eval:doc.agriculture_project_type == 'Fish Farming'"
   },
   {

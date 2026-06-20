@@ -7,6 +7,8 @@ import frappe
 FIXTURE_UNIQUE_FIELDS = {
     "Farm BOM": "bom_title",
     "Custom Field": ("dt", "fieldname"),
+    "Farm Type": "farm_type_name",
+    "Crop Type": "crop_name",
 }
 
 FIXTURE_LOAD_ORDER = [
@@ -151,6 +153,8 @@ def apply_phase2_updates():
     ensure_module_defs()
     remove_legacy_project_custom_fields()
     seed_fixture_data()
+    retire_legacy_flat_farm_types()
+    normalize_existing_farm_type_links()
     seed_livestock_breeds()
     seed_pests()
     seed_animal_diseases()
@@ -258,44 +262,144 @@ def get_fixture_existing_name(record):
 
 def update_existing_fixture_record(record, existing_name):
     doctype = record.get("doctype")
-    if doctype != "Custom Field":
+    if doctype not in ("Custom Field", "Farm Type", "Crop Type"):
         return
 
     doc = frappe.get_doc(doctype, existing_name)
     for key, value in record.items():
-        if key != "doctype":
+        if key == "doctype":
+            continue
+        if isinstance(value, list):
+            doc.set(key, [])
+            for row in value:
+                row = row.copy()
+                row.pop("doctype", None)
+                doc.append(key, row)
+        else:
             doc.set(key, value)
     doc.save(ignore_permissions=True)
 
 
-def seed_livestock_breeds():
-    breeds = {
-        "Cattle": ["Brahman", "Hereford", "Angus", "Simmental", "Mashona", "Tuli", "Nguni", "Charolais", "Limousin"],
-        "Goat": ["Boer", "Kalahari Red", "Savanna", "Indigenous Mashona Goat", "Toggenburg", "Saanen"],
-        "Sheep": ["Merino", "Dorper", "Suffolk", "Damara", "Meatmaster"],
-        "Pig": ["Large White", "Landrace", "Duroc", "Pietrain", "Indigenous (Mukota)"],
+def retire_legacy_flat_farm_types():
+    legacy_names = [
+        "Maize",
+        "Wheat",
+        "Soybeans",
+        "Tobacco",
+        "Cotton",
+        "Sugar Beans",
+        "Groundnuts",
+        "Tomatoes",
+        "Potatoes",
+        "Onions",
+        "Cabbage",
+        "Peppers",
+        "Flowers",
+        "Greenhouse Farming",
+        "Cattle",
+        "Goats",
+        "Sheep",
+        "Pigs",
+        "Rabbits",
+        "Broilers",
+        "Layers",
+        "Road Runners",
+        "Turkey",
+        "Ducks",
+        "Tilapia",
+        "Catfish",
+        "Trout",
+        "Shrimp",
+    ]
+    for name in legacy_names:
+        if frappe.db.exists("Farm Type", name):
+            frappe.db.set_value(
+                "Farm Type",
+                name,
+                {
+                    "category": "Other",
+                    "is_active": 0,
+                    "description": f"Legacy managed item retained for historical links. Use a broad Farm Type with managed item rows instead of {name}.",
+                },
+            )
+
+
+def normalize_existing_farm_type_links():
+    crop_items = {
+        "Maize",
+        "Wheat",
+        "Soybeans",
+        "Tobacco",
+        "Cotton",
+        "Sugar Beans",
+        "Groundnuts",
     }
-    for species, breed_names in breeds.items():
-        for breed in breed_names:
-            description = f"{species} breed used in livestock production."
-            values = {
-                "category": "Animal Husbandry",
-                "classification": "Breed",
-                "parent_farm_type": f"{species}s" if species in ("Goat", "Pig") else species,
-                "applicable_to": "Livestock",
-                "is_active": 1,
-                "description": description,
-            }
-            if frappe.db.exists("Farm Type", breed):
-                frappe.db.set_value("Farm Type", breed, values)
-            else:
-                frappe.get_doc(
-                    {
-                        "doctype": "Farm Type",
-                        "farm_type_name": breed,
-                        **values,
-                    }
-                ).insert(ignore_permissions=True)
+    horticulture_items = {"Tomatoes", "Potatoes", "Onions", "Cabbage", "Peppers", "Flowers", "Greenhouse Farming"}
+    livestock_items = {"Cattle", "Goats", "Sheep", "Pigs", "Rabbits"}
+    poultry_items = {"Broilers", "Layers", "Road Runners", "Turkey", "Ducks"}
+    aquaculture_items = {"Tilapia", "Catfish", "Trout", "Shrimp"}
+
+    def broad_type(old_value):
+        if old_value in crop_items:
+            return "Crop Production"
+        if old_value in horticulture_items:
+            return "Horticulture"
+        if old_value in livestock_items:
+            return "Animal Husbandry"
+        if old_value in poultry_items:
+            return "Poultry"
+        if old_value in aquaculture_items:
+            return "Aquaculture"
+        return old_value
+
+    for name, farm_type in frappe.get_all(
+        "Biological Asset",
+        fields=["name", "farm_type"],
+        filters={"farm_type": ["in", list(crop_items | horticulture_items | livestock_items | poultry_items | aquaculture_items)]},
+        as_list=True,
+    ):
+        frappe.db.set_value(
+            "Biological Asset",
+            name,
+            {"farm_type": broad_type(farm_type), "managed_item": farm_type},
+            update_modified=False,
+        )
+
+    for doctype, link_field in (("Farm Pen", "animal_type"), ("Farm Pond", "species"), ("Fowl Run", "bird_type")):
+        for name, farm_type in frappe.get_all(
+            doctype,
+            fields=["name", link_field],
+            filters={link_field: ["in", list(livestock_items | poultry_items | aquaculture_items)]},
+            as_list=True,
+        ):
+            frappe.db.set_value(
+                doctype,
+                name,
+                {link_field: broad_type(farm_type), "managed_species": farm_type},
+                update_modified=False,
+            )
+
+    for farm in frappe.get_all("Farm", pluck="name"):
+        doc = frappe.get_doc("Farm", farm)
+        changed = False
+        selected = []
+        for row in doc.get("farm_type", []):
+            value = broad_type(row.farm_type)
+            if value not in selected:
+                selected.append(value)
+            if value != row.farm_type:
+                changed = True
+        if changed:
+            doc.set("farm_type", [])
+            for value in selected:
+                doc.append("farm_type", {"farm_type": value})
+            doc.save(ignore_permissions=True)
+
+
+def seed_livestock_breeds():
+    # Breed is captured on Livestock Individual. Farm Type only stores broad
+    # farming enterprises and managed species/crops in its child table.
+    return
 
 
 def seed_pests():

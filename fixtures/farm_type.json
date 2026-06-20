@@ -1,254 +1,265 @@
 [
   {
     "doctype": "Farm Type",
-    "farm_type_name": "Maize",
-    "category": "Crop Farming",
-    "description": "Maize farming",
+    "farm_type_name": "Crop Production",
+    "category": "Crop Production",
     "is_active": 1,
-    "classification": "Crop",
-    "applicable_to": "Crop"
+    "description": "Open-field crop farming enterprise.",
+    "managed_items": [
+      {
+        "doctype": "Farm Type Managed Item",
+        "managed_item_name": "Maize",
+        "managed_item_type": "Crop",
+        "is_active": 1
+      },
+      {
+        "doctype": "Farm Type Managed Item",
+        "managed_item_name": "Wheat",
+        "managed_item_type": "Crop",
+        "is_active": 1
+      },
+      {
+        "doctype": "Farm Type Managed Item",
+        "managed_item_name": "Soybeans",
+        "managed_item_type": "Crop",
+        "is_active": 1
+      },
+      {
+        "doctype": "Farm Type Managed Item",
+        "managed_item_name": "Tobacco",
+        "managed_item_type": "Crop",
+        "is_active": 1
+      },
+      {
+        "doctype": "Farm Type Managed Item",
+        "managed_item_name": "Cotton",
+        "managed_item_type": "Crop",
+        "is_active": 1
+      },
+      {
+        "doctype": "Farm Type Managed Item",
+        "managed_item_name": "Sugar Beans",
+        "managed_item_type": "Crop",
+        "is_active": 1
+      },
+      {
+        "doctype": "Farm Type Managed Item",
+        "managed_item_name": "Groundnuts",
+        "managed_item_type": "Crop",
+        "is_active": 1
+      }
+    ]
   },
   {
     "doctype": "Farm Type",
-    "farm_type_name": "Wheat",
-    "category": "Crop Farming",
-    "description": "Wheat farming",
-    "is_active": 1,
-    "classification": "Crop",
-    "applicable_to": "Crop"
-  },
-  {
-    "doctype": "Farm Type",
-    "farm_type_name": "Soybeans",
-    "category": "Crop Farming",
-    "description": "Soybeans farming",
-    "is_active": 1,
-    "classification": "Crop",
-    "applicable_to": "Crop"
-  },
-  {
-    "doctype": "Farm Type",
-    "farm_type_name": "Tobacco",
-    "category": "Crop Farming",
-    "description": "Tobacco farming",
-    "is_active": 1,
-    "classification": "Crop",
-    "applicable_to": "Crop"
-  },
-  {
-    "doctype": "Farm Type",
-    "farm_type_name": "Cotton",
-    "category": "Crop Farming",
-    "description": "Cotton farming",
-    "is_active": 1,
-    "classification": "Crop",
-    "applicable_to": "Crop"
-  },
-  {
-    "doctype": "Farm Type",
-    "farm_type_name": "Sugar Beans",
-    "category": "Crop Farming",
-    "description": "Sugar Beans farming",
-    "is_active": 1,
-    "classification": "Crop",
-    "applicable_to": "Crop"
-  },
-  {
-    "doctype": "Farm Type",
-    "farm_type_name": "Groundnuts",
-    "category": "Crop Farming",
-    "description": "Groundnuts farming",
-    "is_active": 1,
-    "classification": "Crop",
-    "applicable_to": "Crop"
-  },
-  {
-    "doctype": "Farm Type",
-    "farm_type_name": "Tomatoes",
+    "farm_type_name": "Horticulture",
     "category": "Horticulture",
-    "description": "Tomatoes farming",
     "is_active": 1,
-    "classification": "Crop",
-    "applicable_to": "Crop"
+    "description": "Vegetable, flower, orchard, and greenhouse horticulture enterprise.",
+    "managed_items": [
+      {
+        "doctype": "Farm Type Managed Item",
+        "managed_item_name": "Tomatoes",
+        "managed_item_type": "Crop",
+        "is_active": 1
+      },
+      {
+        "doctype": "Farm Type Managed Item",
+        "managed_item_name": "Potatoes",
+        "managed_item_type": "Crop",
+        "is_active": 1
+      },
+      {
+        "doctype": "Farm Type Managed Item",
+        "managed_item_name": "Onions",
+        "managed_item_type": "Crop",
+        "is_active": 1
+      },
+      {
+        "doctype": "Farm Type Managed Item",
+        "managed_item_name": "Cabbage",
+        "managed_item_type": "Crop",
+        "is_active": 1
+      },
+      {
+        "doctype": "Farm Type Managed Item",
+        "managed_item_name": "Peppers",
+        "managed_item_type": "Crop",
+        "is_active": 1
+      },
+      {
+        "doctype": "Farm Type Managed Item",
+        "managed_item_name": "Flowers",
+        "managed_item_type": "Crop",
+        "is_active": 1
+      },
+      {
+        "doctype": "Farm Type Managed Item",
+        "managed_item_name": "Greenhouse Vegetables",
+        "managed_item_type": "Crop",
+        "is_active": 1
+      }
+    ]
   },
   {
     "doctype": "Farm Type",
-    "farm_type_name": "Potatoes",
-    "category": "Horticulture",
-    "description": "Potatoes farming",
-    "is_active": 1,
-    "classification": "Crop",
-    "applicable_to": "Crop"
-  },
-  {
-    "doctype": "Farm Type",
-    "farm_type_name": "Onions",
-    "category": "Horticulture",
-    "description": "Onions farming",
-    "is_active": 1,
-    "classification": "Crop",
-    "applicable_to": "Crop"
-  },
-  {
-    "doctype": "Farm Type",
-    "farm_type_name": "Cabbage",
-    "category": "Horticulture",
-    "description": "Cabbage farming",
-    "is_active": 1,
-    "classification": "Crop",
-    "applicable_to": "Crop"
-  },
-  {
-    "doctype": "Farm Type",
-    "farm_type_name": "Peppers",
-    "category": "Horticulture",
-    "description": "Peppers farming",
-    "is_active": 1,
-    "classification": "Crop",
-    "applicable_to": "Crop"
-  },
-  {
-    "doctype": "Farm Type",
-    "farm_type_name": "Flowers",
-    "category": "Horticulture",
-    "description": "Flowers farming",
-    "is_active": 1,
-    "classification": "Crop",
-    "applicable_to": "Crop"
-  },
-  {
-    "doctype": "Farm Type",
-    "farm_type_name": "Greenhouse Farming",
-    "category": "Horticulture",
-    "description": "Greenhouse Farming farming",
-    "is_active": 1,
-    "classification": "Production System",
-    "applicable_to": "Crop"
-  },
-  {
-    "doctype": "Farm Type",
-    "farm_type_name": "Cattle",
+    "farm_type_name": "Animal Husbandry",
     "category": "Animal Husbandry",
-    "description": "Cattle farming",
     "is_active": 1,
-    "classification": "Species",
-    "applicable_to": "Livestock"
+    "description": "Livestock enterprise for managed animal species.",
+    "managed_items": [
+      {
+        "doctype": "Farm Type Managed Item",
+        "managed_item_name": "Cattle",
+        "managed_item_type": "Animal Species",
+        "is_active": 1
+      },
+      {
+        "doctype": "Farm Type Managed Item",
+        "managed_item_name": "Goats",
+        "managed_item_type": "Animal Species",
+        "is_active": 1
+      },
+      {
+        "doctype": "Farm Type Managed Item",
+        "managed_item_name": "Sheep",
+        "managed_item_type": "Animal Species",
+        "is_active": 1
+      },
+      {
+        "doctype": "Farm Type Managed Item",
+        "managed_item_name": "Pigs",
+        "managed_item_type": "Animal Species",
+        "is_active": 1
+      },
+      {
+        "doctype": "Farm Type Managed Item",
+        "managed_item_name": "Rabbits",
+        "managed_item_type": "Animal Species",
+        "is_active": 1
+      }
+    ]
   },
   {
     "doctype": "Farm Type",
-    "farm_type_name": "Goats",
-    "category": "Animal Husbandry",
-    "description": "Goats farming",
-    "is_active": 1,
-    "classification": "Species",
-    "applicable_to": "Livestock"
-  },
-  {
-    "doctype": "Farm Type",
-    "farm_type_name": "Sheep",
-    "category": "Animal Husbandry",
-    "description": "Sheep farming",
-    "is_active": 1,
-    "classification": "Species",
-    "applicable_to": "Livestock"
-  },
-  {
-    "doctype": "Farm Type",
-    "farm_type_name": "Pigs",
-    "category": "Animal Husbandry",
-    "description": "Pigs farming",
-    "is_active": 1,
-    "classification": "Species",
-    "applicable_to": "Livestock"
-  },
-  {
-    "doctype": "Farm Type",
-    "farm_type_name": "Rabbits",
-    "category": "Animal Husbandry",
-    "description": "Rabbits farming",
-    "is_active": 1,
-    "classification": "Species",
-    "applicable_to": "Livestock"
-  },
-  {
-    "doctype": "Farm Type",
-    "farm_type_name": "Broilers",
+    "farm_type_name": "Poultry",
     "category": "Poultry",
-    "description": "Broilers farming",
     "is_active": 1,
-    "classification": "Species",
-    "applicable_to": "Poultry"
+    "description": "Poultry enterprise for commercial and indigenous bird production.",
+    "managed_items": [
+      {
+        "doctype": "Farm Type Managed Item",
+        "managed_item_name": "Broilers",
+        "managed_item_type": "Poultry",
+        "is_active": 1
+      },
+      {
+        "doctype": "Farm Type Managed Item",
+        "managed_item_name": "Layers",
+        "managed_item_type": "Poultry",
+        "is_active": 1
+      },
+      {
+        "doctype": "Farm Type Managed Item",
+        "managed_item_name": "Road Runners",
+        "managed_item_type": "Poultry",
+        "is_active": 1
+      },
+      {
+        "doctype": "Farm Type Managed Item",
+        "managed_item_name": "Turkey",
+        "managed_item_type": "Poultry",
+        "is_active": 1
+      },
+      {
+        "doctype": "Farm Type Managed Item",
+        "managed_item_name": "Ducks",
+        "managed_item_type": "Poultry",
+        "is_active": 1
+      }
+    ]
   },
   {
     "doctype": "Farm Type",
-    "farm_type_name": "Layers",
-    "category": "Poultry",
-    "description": "Layers farming",
-    "is_active": 1,
-    "classification": "Species",
-    "applicable_to": "Poultry"
-  },
-  {
-    "doctype": "Farm Type",
-    "farm_type_name": "Road Runners",
-    "category": "Poultry",
-    "description": "Road Runners farming",
-    "is_active": 1,
-    "classification": "Species",
-    "applicable_to": "Poultry"
-  },
-  {
-    "doctype": "Farm Type",
-    "farm_type_name": "Turkey",
-    "category": "Poultry",
-    "description": "Turkey farming",
-    "is_active": 1,
-    "classification": "Species",
-    "applicable_to": "Poultry"
-  },
-  {
-    "doctype": "Farm Type",
-    "farm_type_name": "Ducks",
-    "category": "Poultry",
-    "description": "Ducks farming",
-    "is_active": 1,
-    "classification": "Species",
-    "applicable_to": "Poultry"
-  },
-  {
-    "doctype": "Farm Type",
-    "farm_type_name": "Tilapia",
+    "farm_type_name": "Aquaculture",
     "category": "Aquaculture",
-    "description": "Tilapia farming",
     "is_active": 1,
-    "classification": "Species",
-    "applicable_to": "Aquaculture"
+    "description": "Fish and aquatic species farming enterprise.",
+    "managed_items": [
+      {
+        "doctype": "Farm Type Managed Item",
+        "managed_item_name": "Tilapia",
+        "managed_item_type": "Aquaculture Species",
+        "is_active": 1
+      },
+      {
+        "doctype": "Farm Type Managed Item",
+        "managed_item_name": "Catfish",
+        "managed_item_type": "Aquaculture Species",
+        "is_active": 1
+      },
+      {
+        "doctype": "Farm Type Managed Item",
+        "managed_item_name": "Trout",
+        "managed_item_type": "Aquaculture Species",
+        "is_active": 1
+      },
+      {
+        "doctype": "Farm Type Managed Item",
+        "managed_item_name": "Shrimp",
+        "managed_item_type": "Aquaculture Species",
+        "is_active": 1
+      }
+    ]
   },
   {
     "doctype": "Farm Type",
-    "farm_type_name": "Catfish",
-    "category": "Aquaculture",
-    "description": "Catfish farming",
+    "farm_type_name": "Apiculture",
+    "category": "Apiculture",
     "is_active": 1,
-    "classification": "Species",
-    "applicable_to": "Aquaculture"
+    "description": "Beekeeping and honey production enterprise.",
+    "managed_items": [
+      {
+        "doctype": "Farm Type Managed Item",
+        "managed_item_name": "Honey Bees",
+        "managed_item_type": "Apiary",
+        "is_active": 1
+      },
+      {
+        "doctype": "Farm Type Managed Item",
+        "managed_item_name": "Bee Colonies",
+        "managed_item_type": "Apiary",
+        "is_active": 1
+      }
+    ]
   },
   {
     "doctype": "Farm Type",
-    "farm_type_name": "Trout",
-    "category": "Aquaculture",
-    "description": "Trout farming",
+    "farm_type_name": "Mixed Farming",
+    "category": "Mixed Farming",
     "is_active": 1,
-    "classification": "Species",
-    "applicable_to": "Aquaculture"
+    "description": "Integrated farm enterprise combining crops, livestock, poultry, aquaculture, or apiculture.",
+    "managed_items": []
   },
   {
     "doctype": "Farm Type",
-    "farm_type_name": "Shrimp",
-    "category": "Aquaculture",
-    "description": "Shrimp farming",
+    "farm_type_name": "Agroforestry",
+    "category": "Agroforestry",
     "is_active": 1,
-    "classification": "Species",
-    "applicable_to": "Aquaculture"
+    "description": "Integrated trees, crops, and/or livestock farming system.",
+    "managed_items": [
+      {
+        "doctype": "Farm Type Managed Item",
+        "managed_item_name": "Fruit Trees",
+        "managed_item_type": "Other",
+        "is_active": 1
+      },
+      {
+        "doctype": "Farm Type Managed Item",
+        "managed_item_name": "Woodlots",
+        "managed_item_type": "Other",
+        "is_active": 1
+      }
+    ]
   }
 ]

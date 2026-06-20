@@ -73,17 +73,37 @@ Fields:
 
 ### Farm Type
 
-Master record for farming categories, species, crop families, or production types.
+Defines the broad type of farming enterprise, such as Crop Production, Animal Husbandry, Horticulture, Aquaculture, Apiculture, Poultry, Mixed Farming, Agroforestry, or Other. The actual crops, animals, or species managed under that enterprise are entered in the Managed Crops / Animals / Species child table.
 
-Links: none.
+Links:
+
+| Field | Target |
+| --- | --- |
+| managed_items | Farm Type Managed Item |
 
 Fields:
 
 | Field | Label | Type | Required | Options or Target |
 | --- | --- | --- | --- | --- |
-| farm_type_name | Farm Type Name | Data | Yes |  |
-| category | Category | Select | Yes | Crop Farming, Horticulture, Animal Husbandry, Poultry, Aquaculture |
+| farm_type_name | Farm Type | Data | Yes |  |
+| category | Farming Type | Select | Yes | Crop Production, Animal Husbandry, Horticulture, Aquaculture, Apiculture, Poultry, Mixed Farming, Agroforestry, Other |
+| is_active | Is Active | Check | No |  |
 | description | Description | Small Text | No |  |
+| managed_items | Managed Crops / Animals / Species | Table | No | Farm Type Managed Item |
+
+### Farm Type Managed Item
+
+Child table listing the actual managed crops, animals, poultry, aquaculture species, apiary units, or other species/items under a Farm Type.
+
+Fields:
+
+| Field | Label | Type | Required | Options or Target |
+| --- | --- | --- | --- | --- |
+| managed_item_name | Managed Crop / Animal / Species | Data | Yes |  |
+| managed_item_type | Managed Item Type | Select | Yes | Crop, Animal Species, Poultry, Aquaculture Species, Apiary, Other |
+| crop_type | Crop Type | Link | No | Crop Type |
+| is_active | Is Active | Check | No |  |
+| notes | Notes | Small Text | No |  |
 
 ### Crop Type
 
@@ -100,7 +120,7 @@ Fields:
 | Field | Label | Type | Required | Options or Target |
 | --- | --- | --- | --- | --- |
 | crop_name | Crop Name | Data | Yes |  |
-| category | Category | Link | No | Farm Type |
+| category | Farm Type | Link | No | Farm Type |
 | growth_period_days | Growth Period (Days) | Int | No |  |
 | expected_yield_per_ha | Expected Yield per Ha | Float | No |  |
 | yield_unit | Yield Unit | Select | No | kg, Tonne, Bag, Crate |
@@ -222,7 +242,7 @@ Fields:
 | pen_number | Pen Number | Data | Yes |  |
 | farm | Farm | Link | Yes | Farm |
 | pen_type | Pen Type | Select | No | Kraal, Pen, Stall, Shed |
-| animal_type | Animal Type | Link | No | Farm Type |
+| animal_type | Farm Type | Link | No | Farm Type |
 | current_status | Status | Select | No | Active, Empty, Under Maintenance |
 | capacity | Capacity | Int | No |  |
 | current_occupancy | Current Occupancy | Int | No |  |
@@ -248,7 +268,7 @@ Fields:
 | naming_series | Series | Select | No | FR-.#### |
 | run_number | Run Number | Data | Yes |  |
 | farm | Farm | Link | Yes | Farm |
-| bird_type | Bird Type | Link | No | Farm Type |
+| bird_type | Farm Type | Link | No | Farm Type |
 | current_status | Status | Select | No | Active, Empty, Cleaning |
 | capacity | Capacity | Int | No |  |
 | current_flock_size | Current Flock Size | Int | No |  |
@@ -278,7 +298,8 @@ Fields:
 | asset_name | Asset Name | Data | Yes |  |
 | farm | Farm | Link | Yes | Farm |
 | asset_category | Asset Category | Select | Yes | Livestock, Poultry, Crops in Growth, Aquaculture |
-| farm_type | Species/Crop | Link | Yes | Farm Type |
+| farm_type | Farm Type | Link | Yes | Farm Type |
+| managed_item | Managed Crop / Animal / Species | Data | Yes |  |
 | status | Status | Select | Yes | Active, Harvested, Sold, Dead Loss |
 | growth_stage | Growth Stage | Select | Yes | Immature, Mature, Producing, Ready for Harvest |
 | linked_project | Linked Project | Link | No | Project |

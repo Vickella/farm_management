@@ -11,6 +11,7 @@
   "column_break_1",
   "pen_type",
   "animal_type",
+  "managed_species",
   "current_status",
   "section_break_2",
   "capacity",
@@ -54,8 +55,15 @@
   {
    "fieldname": "animal_type",
    "fieldtype": "Link",
-   "label": "Animal Type",
-   "options": "Farm Type"
+   "label": "Farm Type",
+   "options": "Farm Type",
+   "description": "Broad farming enterprise type, not the specific species/crop."
+  },
+  {
+   "fieldname": "managed_species",
+   "fieldtype": "Data",
+   "label": "Managed Animal Species",
+   "in_list_view": 1
   },
   {
    "fieldname": "current_status",

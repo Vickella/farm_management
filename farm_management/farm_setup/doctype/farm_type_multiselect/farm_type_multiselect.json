@@ -14,7 +14,8 @@
    "label": "Farm Type",
    "options": "Farm Type",
    "reqd": 1,
-   "in_list_view": 1
+   "in_list_view": 1,
+   "description": "Select a broad farming enterprise such as Crop Production or Animal Husbandry."
   }
  ],
  "links": [],

@@ -16,6 +16,7 @@
   "growth_stage",
   "valuation_method",
   "linked_project",
+  "managed_item",
   "section_quantity",
   "acquisition_date",
   "quantity",
@@ -71,9 +72,10 @@
   {
    "fieldname": "farm_type",
    "fieldtype": "Link",
-   "label": "Species/Crop",
+   "label": "Farm Type",
    "options": "Farm Type",
-   "reqd": 1
+   "reqd": 1,
+   "description": "Broad farming enterprise such as Crop Production, Animal Husbandry, Aquaculture, or Apiculture."
   },
   {
    "fieldname": "column_break_1",
@@ -100,6 +102,14 @@
    "fieldtype": "Link",
    "label": "Linked Project",
    "options": "Project"
+  },
+  {
+   "fieldname": "managed_item",
+   "fieldtype": "Data",
+   "label": "Managed Crop / Animal / Species",
+   "in_list_view": 1,
+   "reqd": 1,
+   "description": "Specific managed crop, animal, or species from the selected Farm Type managed-items table."
   },
   {
    "fieldname": "section_break_quantity",
