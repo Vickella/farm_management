@@ -168,10 +168,23 @@
     "dt": "Project",
     "module": "Farm Management",
     "fieldname": "fish_species",
-    "fieldtype": "Data",
-    "label": "Fish Species",
+    "fieldtype": "Link",
+    "label": "Aquaculture Farm Type",
     "insert_after": "fowl_run_allocation",
-    "depends_on": "eval:doc.agriculture_project_type == 'Fish Farming'"
+    "depends_on": "eval:doc.agriculture_project_type == 'Fish Farming'",
+    "options": "Farm Type",
+    "description": "Broad Farm Type for aquaculture projects. Use Fish Species / Managed Species for the actual species."
+  },
+  {
+    "doctype": "Custom Field",
+    "dt": "Project",
+    "module": "Farm Management",
+    "fieldname": "fish_species_managed_item",
+    "fieldtype": "Data",
+    "label": "Fish Species / Managed Species",
+    "insert_after": "fish_species",
+    "depends_on": "eval:doc.agriculture_project_type == 'Fish Farming'",
+    "description": "Actual fish or aquaculture species being managed, for example Tilapia or Catfish."
   },
   {
     "doctype": "Custom Field",
@@ -180,7 +193,7 @@
     "fieldname": "fingerling_quantity",
     "fieldtype": "Int",
     "label": "Fingerling Quantity",
-    "insert_after": "fish_species",
+    "insert_after": "fish_species_managed_item",
     "depends_on": "eval:doc.agriculture_project_type == 'Fish Farming'"
   },
   {

@@ -22,7 +22,7 @@ def validate_agriculture_project(doc, method=None):
             frappe.throw("Chick Quantity must be greater than zero.")
 
     elif ptype == "Fish Farming":
-        if not doc.get("fish_species"):
+        if not doc.get("fish_species_managed_item") and not doc.get("fish_species"):
             frappe.throw("Fish Species is required for Fish Farming projects.")
         if not doc.get("fingerling_quantity") or int(doc.get("fingerling_quantity", 0)) <= 0:
             frappe.throw("Fingerling Quantity must be greater than zero.")
