@@ -25,6 +25,7 @@
   "cost",
   "capitalize_cost",
   "biological_asset",
+  "capitalization",
   "capitalized_to_asset",
   "outcome"
  ],
@@ -141,6 +142,13 @@
    "fieldtype": "Link",
    "label": "Biological Asset",
    "options": "Biological Asset",
+   "read_only": 1
+  },
+  {
+   "fieldname": "capitalization",
+   "fieldtype": "Link",
+   "label": "Biological Asset Capitalization",
+   "options": "Biological Asset Capitalization",
    "read_only": 1
   },
   {

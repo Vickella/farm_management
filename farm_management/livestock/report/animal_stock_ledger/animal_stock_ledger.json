@@ -1,0 +1,9 @@
+{
+ "doctype": "Report",
+ "name": "Animal Stock Ledger",
+ "ref_doctype": "Animal Stock Entry",
+ "report_name": "Animal Stock Ledger",
+ "report_type": "Script Report",
+ "module": "Livestock",
+ "is_standard": "Yes"
+}

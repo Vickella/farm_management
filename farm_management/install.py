@@ -28,6 +28,43 @@ LEGACY_DOCTYPES = [
 LEGACY_PROJECT_CUSTOM_FIELDS = [
     "Project-breed",
     "Project-initial_quantity",
+    "Project-crop_variety",
+    "Project-planting_date",
+    "Project-expected_yield",
+    "Project-harvest_date",
+    "Project-field_allocation",
+    "Project-fertilizer_schedule",
+    "Project-poultry_breed",
+    "Project-chick_quantity",
+    "Project-growth_period_days",
+    "Project-mortality_target_percent",
+    "Project-vaccination_schedule",
+    "Project-feed_program",
+    "Project-fowl_run_allocation",
+    "Project-fish_species",
+    "Project-fish_species_managed_item",
+    "Project-fingerling_quantity",
+    "Project-stocking_date",
+    "Project-feed_type",
+    "Project-water_monitoring_schedule",
+    "Project-pond_allocation",
+    "Project-fish_harvest_date",
+    "Project-dairy_breed",
+    "Project-herd_size",
+    "Project-daily_yield_target_litres",
+    "Project-pen_allocation_dairy",
+    "Project-goat_breed",
+    "Project-goat_herd_size",
+    "Project-kidding_season",
+    "Project-pen_allocation_goats",
+    "Project-pig_breed",
+    "Project-pig_herd_size",
+    "Project-farrowing_date",
+    "Project-pen_allocation_pigs",
+    "Project-greenhouse_crop",
+    "Project-greenhouse_area_sqm",
+    "Project-planting_date_gh",
+    "Project-harvest_date_gh",
 ]
 
 WORKSPACE_GROUPS = [
@@ -86,7 +123,16 @@ WORKSPACE_GROUPS = [
     ),
     ("Farm Calendar", [("Farm Activity", "DocType"), ("Farm Activity Type", "DocType")]),
     ("Weather", [("Farm Weather Forecast", "Page", "farm-weather")]),
-    ("Reports", [("Farm KPI Summary", "Report"), ("Farm Budget Variance Analysis", "Report")]),
+    (
+        "Reports",
+        [
+            ("Farm KPI Summary", "Report"),
+            ("Farm Budget Variance Analysis", "Report"),
+            ("Biological Asset Register", "Report"),
+            ("Animal Stock Ledger", "Report"),
+            ("Contract Farming Statement", "Report"),
+        ],
+    ),
 ]
 
 WORKSPACE_SHORTCUTS = [
@@ -167,6 +213,7 @@ def apply_phase2_updates():
     create_farm_workspace()
     setup_farm_management_settings()
     setup_biological_asset_accounts()
+    setup_contract_farming_accounts()
 
 
 def ensure_module_defs():
@@ -262,6 +309,52 @@ def setup_biological_asset_accounts():
         frappe.db.set_value("Farm Management Settings", "Farm Management Settings", updates, update_modified=False)
 
 
+def setup_contract_farming_accounts():
+    settings = frappe.get_single("Farm Management Settings")
+    company = settings.default_company or frappe.defaults.get_user_default("Company") or frappe.db.get_single_value(
+        "Global Defaults", "default_company"
+    )
+    if not company:
+        return
+
+    ensure_account(
+        "Biological Asset Sales Receivable",
+        company,
+        root_type="Asset",
+        report_type="Balance Sheet",
+    )
+    ensure_account(
+        "Biological Asset Sales Income",
+        company,
+        root_type="Income",
+        report_type="Profit and Loss",
+    )
+    ensure_account(
+        "Contract Farming Input Loans Receivable",
+        company,
+        root_type="Asset",
+        report_type="Balance Sheet",
+    )
+    ensure_account(
+        "Contract Farming Input Clearing",
+        company,
+        root_type="Liability",
+        report_type="Balance Sheet",
+    )
+    ensure_account(
+        "Contract Farming Harvest Purchases",
+        company,
+        root_type="Expense",
+        report_type="Profit and Loss",
+    )
+    ensure_account(
+        "Contract Farming Grower Payable",
+        company,
+        root_type="Liability",
+        report_type="Balance Sheet",
+    )
+
+
 def setup_managed_item_accounts(farm_type_name, company, biological_assets_group, cwip_account, gain_loss_account):
     farm_type = frappe.get_doc("Farm Type", farm_type_name)
     changed = False
@@ -354,6 +447,9 @@ def seed_fixture_data():
             records = json.load(fixture_file)
 
         for record in records:
+            if is_legacy_project_custom_field(record):
+                continue
+
             existing_name = get_fixture_existing_name(record)
             if existing_name:
                 update_existing_fixture_record(record, existing_name)
@@ -363,6 +459,13 @@ def seed_fixture_data():
                 frappe.get_doc(record).insert(ignore_permissions=True, ignore_if_duplicate=True)
             except frappe.DuplicateEntryError:
                 continue
+
+
+def is_legacy_project_custom_field(record):
+    if record.get("doctype") != "Custom Field" or record.get("dt") != "Project":
+        return False
+    name = record.get("name") or f"Project-{record.get('fieldname')}"
+    return name in LEGACY_PROJECT_CUSTOM_FIELDS
 
 
 def seed_agriculture_project_types():
@@ -942,3 +1045,104 @@ def create_farm_workspace():
         ws.insert(ignore_permissions=True)
     else:
         ws.save(ignore_permissions=True)
+
+
+def verify_installation():
+    expected_doctypes = [
+        "Farm",
+        "Farm Type",
+        "Farm Type Managed Item",
+        "Agriculture Project Type",
+        "Crop Type",
+        "Farm Management Settings",
+        "Farm Field",
+        "Farm Pond",
+        "Farm Pen",
+        "Fowl Run",
+        "Livestock Species",
+        "Livestock Breed",
+        "Livestock Individual",
+        "Animal Stock Entry",
+        "Livestock Health Event",
+        "Livestock Breeding Record",
+        "Biological Asset",
+        "Biological Asset Capitalization",
+        "Biological Asset Valuation",
+        "Harvest Transaction",
+        "Disease Incident",
+        "Pest",
+        "Animal Disease",
+        "Farm BOM",
+        "Farm BOM Item",
+        "Farm Budget",
+        "Farm Budget Item",
+        "Outgrower Farmer",
+        "Contract Farming Agreement",
+        "Input Loan Disbursement",
+        "Harvest Recovery",
+        "Farm Activity",
+        "Farm Activity Type",
+    ]
+    expected_reports = [
+        "Farm KPI Summary",
+        "Farm Budget Variance Analysis",
+        "Biological Asset Register",
+        "Animal Stock Ledger",
+        "Contract Farming Statement",
+    ]
+    expected_account_names = [
+        "Biological Assets",
+        "Biological Asset Capital Work In Progress",
+        "Biological Asset Fair Value Gain Loss",
+        "Biological Asset Sales Receivable",
+        "Biological Asset Sales Income",
+        "Contract Farming Input Loans Receivable",
+        "Contract Farming Input Clearing",
+        "Contract Farming Harvest Purchases",
+        "Contract Farming Grower Payable",
+    ]
+    legacy_project_fields = [
+        fieldname.replace("Project-", "")
+        for fieldname in LEGACY_PROJECT_CUSTOM_FIELDS
+    ]
+
+    missing_doctypes = [
+        doctype for doctype in expected_doctypes if not frappe.db.exists("DocType", doctype)
+    ]
+    missing_reports = [
+        report for report in expected_reports if not frappe.db.exists("Report", report)
+    ]
+    workspace_exists = bool(frappe.db.exists("Workspace", "Farm Management"))
+    workspace_links = 0
+    workspace_shortcuts = 0
+    if workspace_exists:
+        workspace = frappe.get_doc("Workspace", "Farm Management")
+        workspace_links = len(workspace.get("links", []))
+        workspace_shortcuts = len(workspace.get("shortcuts", []))
+
+    remaining_legacy_project_fields = frappe.get_all(
+        "Custom Field",
+        filters={"dt": "Project", "fieldname": ["in", legacy_project_fields]},
+        pluck="fieldname",
+    )
+    settings = frappe.get_single("Farm Management Settings")
+    company = settings.default_company or frappe.defaults.get_user_default("Company") or frappe.db.get_single_value(
+        "Global Defaults", "default_company"
+    )
+    missing_accounts = []
+    if company:
+        missing_accounts = [
+            account_name
+            for account_name in expected_account_names
+            if not frappe.db.exists("Account", {"account_name": account_name, "company": company})
+        ]
+
+    return {
+        "missing_doctypes": missing_doctypes,
+        "missing_reports": missing_reports,
+        "missing_accounts": missing_accounts,
+        "workspace_exists": workspace_exists,
+        "workspace_links": workspace_links,
+        "workspace_shortcuts": workspace_shortcuts,
+        "remaining_legacy_project_fields": remaining_legacy_project_fields,
+    }

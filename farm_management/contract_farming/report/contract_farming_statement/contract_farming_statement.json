@@ -1,0 +1,9 @@
+{
+ "doctype": "Report",
+ "name": "Contract Farming Statement",
+ "ref_doctype": "Contract Farming Agreement",
+ "report_name": "Contract Farming Statement",
+ "report_type": "Script Report",
+ "module": "Contract Farming",
+ "is_standard": "Yes"
+}

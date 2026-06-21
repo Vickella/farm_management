@@ -1,0 +1,9 @@
+{
+ "doctype": "Report",
+ "name": "Biological Asset Register",
+ "ref_doctype": "Biological Asset",
+ "report_name": "Biological Asset Register",
+ "report_type": "Script Report",
+ "module": "Biological Assets",
+ "is_standard": "Yes"
+}

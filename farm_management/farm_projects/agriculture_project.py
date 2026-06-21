@@ -11,39 +11,11 @@ def validate_agriculture_project(doc, method=None):
         doc.agriculture_farm_type = project_type.farm_type
         if project_type.managed_item and not doc.get("managed_crop_animal_species"):
             doc.managed_crop_animal_species = project_type.managed_item
+    else:
+        frappe.throw("Agriculture Project Type must be an active Agriculture Project Type record.")
 
-    if ptype == "Crop Production":
-        if not doc.get("crop_variety"):
-            frappe.throw("Crop Variety is required for Crop Production projects.")
-        if not doc.get("planting_date"):
-            frappe.throw("Planting Date is required for Crop Production projects.")
-        if doc.get("harvest_date") and doc.get("planting_date"):
-            if doc.harvest_date <= doc.planting_date:
-                frappe.throw("Harvest Date must be after Planting Date.")
-
-    elif ptype == "Poultry Production":
-        if not doc.get("poultry_breed"):
-            frappe.throw("Breed is required for Poultry Production projects.")
-        if not doc.get("chick_quantity") or int(doc.get("chick_quantity", 0)) <= 0:
-            frappe.throw("Chick Quantity must be greater than zero.")
-
-    elif ptype == "Fish Farming":
-        if not doc.get("fish_species_managed_item") and not doc.get("fish_species"):
-            frappe.throw("Fish Species is required for Fish Farming projects.")
-        if not doc.get("fingerling_quantity") or int(doc.get("fingerling_quantity", 0)) <= 0:
-            frappe.throw("Fingerling Quantity must be greater than zero.")
-
-    elif ptype == "Dairy Production":
-        if not doc.get("dairy_breed"):
-            frappe.throw("Breed is required for Dairy Production projects.")
-
-    elif ptype == "Goat Farming":
-        if not doc.get("goat_breed"):
-            frappe.throw("Breed is required for Goat Farming projects.")
-
-    elif ptype == "Pig Farming":
-        if not doc.get("pig_breed"):
-            frappe.throw("Breed is required for Pig Farming projects.")
+    if doc.get("project_quantity") and flt(doc.get("project_quantity")) < 0:
+        frappe.throw("Project Quantity cannot be negative.")
 
 
 def on_project_submit(doc, method=None):

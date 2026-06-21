@@ -7,6 +7,7 @@
  "engine": "InnoDB",
  "is_submittable": 1,
  "field_order": [
+  "section_capitalization",
   "naming_series",
   "biological_asset",
   "posting_date",
@@ -17,10 +18,16 @@
   "source_doctype",
   "source_name",
   "project",
+  "section_accounting",
   "remarks",
   "journal_entry"
  ],
  "fields": [
+  {
+   "fieldname": "section_capitalization",
+   "fieldtype": "Section Break",
+   "label": "Capitalization"
+  },
   {
    "fieldname": "naming_series",
    "fieldtype": "Select",
@@ -81,6 +88,11 @@
    "fieldtype": "Link",
    "label": "Project",
    "options": "Project"
+  },
+  {
+   "fieldname": "section_accounting",
+   "fieldtype": "Section Break",
+   "label": "Accounting"
   },
   {
    "fieldname": "remarks",

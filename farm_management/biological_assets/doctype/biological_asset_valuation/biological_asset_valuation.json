@@ -7,6 +7,7 @@
  "engine": "InnoDB",
  "is_submittable": 1,
  "field_order": [
+  "section_valuation",
   "naming_series",
   "biological_asset",
   "valuation_date",
@@ -19,11 +20,18 @@
   "previous_current_fair_value",
   "previous_cost_to_sell",
   "fair_value_movement",
+  "section_basis",
   "valuation_basis",
+  "section_accounting",
   "post_journal_entry",
   "journal_entry"
  ],
  "fields": [
+  {
+   "fieldname": "section_valuation",
+   "fieldtype": "Section Break",
+   "label": "Valuation"
+  },
   {
    "fieldname": "naming_series",
    "fieldtype": "Select",
@@ -101,9 +109,19 @@
    "read_only": 1
   },
   {
+   "fieldname": "section_basis",
+   "fieldtype": "Section Break",
+   "label": "Valuation Basis"
+  },
+  {
    "fieldname": "valuation_basis",
    "fieldtype": "Text Editor",
    "label": "Valuation Basis"
+  },
+  {
+   "fieldname": "section_accounting",
+   "fieldtype": "Section Break",
+   "label": "Accounting"
   },
   {
    "fieldname": "post_journal_entry",

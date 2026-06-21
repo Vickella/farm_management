@@ -137,13 +137,14 @@ def repair_missing_livestock_assets():
     skipped = []
     livestock_records = frappe.get_all(
         "Livestock Individual",
-        filters={"capitalized_to_asset": ["!=", 1]},
+        filters={"biological_asset": ["is", "not set"]},
         fields=["name"],
     )
     for row in livestock_records:
         try:
             livestock = frappe.get_doc("Livestock Individual", row.name)
-            livestock.capitalize_to_biological_asset()
+            biological_asset = get_or_create_biological_asset_for_livestock(livestock)
+            livestock.db_set("biological_asset", biological_asset, update_modified=False)
             if frappe.db.get_value("Livestock Individual", row.name, "biological_asset"):
                 repaired.append(row.name)
             else:
@@ -229,7 +230,7 @@ def create_capitalization_journal_entry(capitalization, asset=None):
     cwip_account = get_capital_work_in_progress_account(asset)
     if not biological_asset_account or not cwip_account:
         frappe.throw(
-            "Set Biological Asset Account and Capital Work In Progress Account in Farm Management Settings."
+            "Set Biological Asset Account and Capital Work In Progress Account on the managed item row in Farm Type."
         )
 
     company = get_company(asset)
@@ -336,7 +337,7 @@ def cancel_capitalization_journal_entry(capitalization):
         journal_entry.cancel()
 
 
-def reduce_asset_quantity(biological_asset, quantity, source_doctype=None, source_name=None):
+def reduce_asset_quantity(biological_asset, quantity, source_doctype=None, source_name=None, empty_status="Harvested"):
     quantity = flt(quantity)
     if not biological_asset or not quantity:
         return 0
@@ -349,7 +350,7 @@ def reduce_asset_quantity(biological_asset, quantity, source_doctype=None, sourc
     asset.quantity = flt(asset.quantity) - quantity
     if flt(asset.quantity) <= 0:
         asset.quantity = 0
-        asset.status = "Harvested"
+        asset.status = empty_status or "Harvested"
 
     asset.recalculate_valuation(scale_by_quantity=True)
     asset.last_valuation_date = today()
@@ -368,7 +369,7 @@ def restore_asset_quantity(biological_asset, quantity, asset_value_reduction=0, 
 
     asset = frappe.get_doc("Biological Asset", biological_asset)
     asset.quantity = flt(asset.quantity) + quantity
-    if asset.status == "Harvested":
+    if asset.status in ("Harvested", "Sold", "Dead Loss"):
         asset.status = "Active"
 
     if flt(asset_value_reduction):
@@ -382,6 +383,112 @@ def restore_asset_quantity(biological_asset, quantity, asset_value_reduction=0, 
         get_capitalization_comment(0, source_doctype, source_name, "Harvest cancellation quantity restored", quantity),
     )
     asset.save(ignore_permissions=True)
+
+
+def create_asset_outflow_journal_entry(
+    biological_asset,
+    amount,
+    posting_date=None,
+    project=None,
+    source_doctype=None,
+    source_name=None,
+    remarks=None,
+):
+    amount = flt(amount)
+    if not biological_asset or not amount:
+        return None
+
+    from farm_management.install import setup_biological_asset_accounts
+
+    setup_biological_asset_accounts()
+
+    asset = frappe.get_doc("Biological Asset", biological_asset)
+    biological_asset_account = get_biological_asset_account(asset)
+    gain_loss_account = get_fair_value_gain_loss_account(asset)
+    if not biological_asset_account or not gain_loss_account:
+        frappe.throw(
+            "Set Biological Asset Account and Fair Value Gain/Loss Account on the managed item row in Farm Type."
+        )
+
+    company = get_company(asset)
+    if not company:
+        frappe.throw("Set Default Company in Farm Management Settings or on the linked Project.")
+
+    journal_entry = frappe.new_doc("Journal Entry")
+    journal_entry.voucher_type = "Journal Entry"
+    journal_entry.company = company
+    journal_entry.posting_date = posting_date or today()
+    journal_entry.user_remark = remarks or (
+        f"Biological asset outflow for {asset.name}"
+        + (f" from {source_doctype} {source_name}" if source_doctype and source_name else "")
+    )
+
+    append_account(
+        journal_entry,
+        gain_loss_account,
+        debit=amount,
+        project=project or asset.linked_project,
+    )
+    append_account(
+        journal_entry,
+        biological_asset_account,
+        credit=amount,
+        project=project or asset.linked_project,
+    )
+    journal_entry.insert(ignore_permissions=True)
+    journal_entry.submit()
+    asset.db_set("last_journal_entry", journal_entry.name, update_modified=False)
+    return journal_entry.name
+
+
+def create_asset_sale_proceeds_journal_entry(
+    biological_asset,
+    amount,
+    posting_date=None,
+    project=None,
+    source_doctype=None,
+    source_name=None,
+):
+    amount = flt(amount)
+    if not biological_asset or not amount:
+        return None
+
+    from farm_management.install import setup_contract_farming_accounts
+
+    setup_contract_farming_accounts()
+
+    asset = frappe.get_doc("Biological Asset", biological_asset)
+    company = get_company(asset)
+    if not company:
+        frappe.throw("Set Default Company in Farm Management Settings or on the linked Project.")
+
+    receivable_account = frappe.db.get_value(
+        "Account",
+        {"account_name": "Biological Asset Sales Receivable", "company": company, "is_group": 0},
+        "name",
+    )
+    income_account = frappe.db.get_value(
+        "Account",
+        {"account_name": "Biological Asset Sales Income", "company": company, "is_group": 0},
+        "name",
+    )
+    if not receivable_account or not income_account:
+        frappe.throw("Biological Asset sales accounts could not be created for the selected company.")
+
+    journal_entry = frappe.new_doc("Journal Entry")
+    journal_entry.voucher_type = "Journal Entry"
+    journal_entry.company = company
+    journal_entry.posting_date = posting_date or today()
+    journal_entry.user_remark = (
+        f"Biological asset sale proceeds for {asset.name}"
+        + (f" from {source_doctype} {source_name}" if source_doctype and source_name else "")
+    )
+    append_account(journal_entry, receivable_account, debit=amount, project=project or asset.linked_project)
+    append_account(journal_entry, income_account, credit=amount, project=project or asset.linked_project)
+    journal_entry.insert(ignore_permissions=True)
+    journal_entry.submit()
+    asset.db_set("last_journal_entry", journal_entry.name, update_modified=False)
+    return journal_entry.name
 
 
 def sync_project_material_issue(stock_entry, method=None):

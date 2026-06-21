@@ -1,7 +1,7 @@
 {
  "category": "Modules",
  "charts": [],
- "content": "[{\"id\": \"farm-shortcuts-header\", \"type\": \"header\", \"data\": {\"text\": \"Shortcuts\", \"col\": 12}}, {\"id\": \"shortcut-farm\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Farm\", \"col\": 3}}, {\"id\": \"shortcut-biological-asset\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Biological Asset\", \"col\": 3}}, {\"id\": \"shortcut-biological-asset-valuation\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Biological Asset Valuation\", \"col\": 3}}, {\"id\": \"shortcut-livestock-individual\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Livestock Individual\", \"col\": 3}}, {\"id\": \"shortcut-livestock-health-event\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Livestock Health Event\", \"col\": 3}}, {\"id\": \"shortcut-disease-incident\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Disease Incident\", \"col\": 3}}, {\"id\": \"shortcut-farm-bom\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Farm BOM\", \"col\": 3}}, {\"id\": \"shortcut-farm-budget\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Farm Budget\", \"col\": 3}}, {\"id\": \"shortcut-contract-farming-agreement\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Contract Farming Agreement\", \"col\": 3}}, {\"id\": \"shortcut-farm-weather\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Farm Weather\", \"col\": 3}}, {\"id\": \"farm-spacer\", \"type\": \"spacer\", \"data\": {\"col\": 12}}, {\"id\": \"farm-management-header\", \"type\": \"header\", \"data\": {\"text\": \"Farm Management\", \"col\": 12}}, {\"id\": \"card-farm-setup\", \"type\": \"card\", \"data\": {\"card_name\": \"Farm Setup\", \"col\": 4}}, {\"id\": \"card-farm-infrastructure\", \"type\": \"card\", \"data\": {\"card_name\": \"Farm Infrastructure\", \"col\": 4}}, {\"id\": \"card-livestock-tracking\", \"type\": \"card\", \"data\": {\"card_name\": \"Livestock Tracking\", \"col\": 4}}, {\"id\": \"card-biological-assets\", \"type\": \"card\", \"data\": {\"card_name\": \"Biological Assets\", \"col\": 4}}, {\"id\": \"card-disease-and-pest-intelligence\", \"type\": \"card\", \"data\": {\"card_name\": \"Disease and Pest Intelligence\", \"col\": 4}}, {\"id\": \"card-farm-bom-and-budgeting\", \"type\": \"card\", \"data\": {\"card_name\": \"Farm BOM and Budgeting\", \"col\": 4}}, {\"id\": \"card-contract-farming\", \"type\": \"card\", \"data\": {\"card_name\": \"Contract Farming\", \"col\": 4}}, {\"id\": \"card-farm-calendar\", \"type\": \"card\", \"data\": {\"card_name\": \"Farm Calendar\", \"col\": 4}}, {\"id\": \"card-weather\", \"type\": \"card\", \"data\": {\"card_name\": \"Weather\", \"col\": 4}}, {\"id\": \"card-reports\", \"type\": \"card\", \"data\": {\"card_name\": \"Reports\", \"col\": 4}}]",
+ "content": "[{\"id\": \"farm-shortcuts-header\", \"type\": \"header\", \"data\": {\"text\": \"Shortcuts\", \"col\": 12}}, {\"id\": \"shortcut-farm\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Farm\", \"col\": 3}}, {\"id\": \"shortcut-biological-asset\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Biological Asset\", \"col\": 3}}, {\"id\": \"shortcut-biological-asset-valuation\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Biological Asset Valuation\", \"col\": 3}}, {\"id\": \"shortcut-livestock-individual\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Livestock Individual\", \"col\": 3}}, {\"id\": \"shortcut-animal-stock-entry\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Animal Stock Entry\", \"col\": 3}}, {\"id\": \"shortcut-livestock-health-event\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Livestock Health Event\", \"col\": 3}}, {\"id\": \"shortcut-disease-incident\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Disease Incident\", \"col\": 3}}, {\"id\": \"shortcut-farm-bom\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Farm BOM\", \"col\": 3}}, {\"id\": \"shortcut-farm-budget\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Farm Budget\", \"col\": 3}}, {\"id\": \"shortcut-contract-farming-agreement\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Contract Farming Agreement\", \"col\": 3}}, {\"id\": \"shortcut-farm-weather\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Farm Weather\", \"col\": 3}}, {\"id\": \"farm-spacer\", \"type\": \"spacer\", \"data\": {\"col\": 12}}, {\"id\": \"farm-management-header\", \"type\": \"header\", \"data\": {\"text\": \"Farm Management\", \"col\": 12}}, {\"id\": \"card-farm-setup\", \"type\": \"card\", \"data\": {\"card_name\": \"Farm Setup\", \"col\": 4}}, {\"id\": \"card-farm-infrastructure\", \"type\": \"card\", \"data\": {\"card_name\": \"Farm Infrastructure\", \"col\": 4}}, {\"id\": \"card-livestock-tracking\", \"type\": \"card\", \"data\": {\"card_name\": \"Livestock Tracking\", \"col\": 4}}, {\"id\": \"card-biological-assets\", \"type\": \"card\", \"data\": {\"card_name\": \"Biological Assets\", \"col\": 4}}, {\"id\": \"card-disease-and-pest-intelligence\", \"type\": \"card\", \"data\": {\"card_name\": \"Disease and Pest Intelligence\", \"col\": 4}}, {\"id\": \"card-farm-bom-and-budgeting\", \"type\": \"card\", \"data\": {\"card_name\": \"Farm BOM and Budgeting\", \"col\": 4}}, {\"id\": \"card-contract-farming\", \"type\": \"card\", \"data\": {\"card_name\": \"Contract Farming\", \"col\": 4}}, {\"id\": \"card-farm-calendar\", \"type\": \"card\", \"data\": {\"card_name\": \"Farm Calendar\", \"col\": 4}}, {\"id\": \"card-weather\", \"type\": \"card\", \"data\": {\"card_name\": \"Weather\", \"col\": 4}}, {\"id\": \"card-reports\", \"type\": \"card\", \"data\": {\"card_name\": \"Reports\", \"col\": 4}}]",
  "custom_blocks": [],
  "docstatus": 0,
  "doctype": "Workspace",
@@ -108,13 +108,40 @@
    "hidden": 0,
    "is_query_report": 0,
    "onboard": 0,
-   "link_count": 3
+   "link_count": 6
   },
   {
    "type": "Link",
    "label": "Livestock Individual",
    "link_type": "DocType",
    "link_to": "Livestock Individual",
+   "hidden": 0,
+   "is_query_report": 0,
+   "onboard": 0
+  },
+  {
+   "type": "Link",
+   "label": "Animal Stock Entry",
+   "link_type": "DocType",
+   "link_to": "Animal Stock Entry",
+   "hidden": 0,
+   "is_query_report": 0,
+   "onboard": 0
+  },
+  {
+   "type": "Link",
+   "label": "Livestock Species",
+   "link_type": "DocType",
+   "link_to": "Livestock Species",
+   "hidden": 0,
+   "is_query_report": 0,
+   "onboard": 0
+  },
+  {
+   "type": "Link",
+   "label": "Livestock Breed",
+   "link_type": "DocType",
+   "link_to": "Livestock Breed",
    "hidden": 0,
    "is_query_report": 0,
    "onboard": 0
@@ -222,7 +249,7 @@
    "hidden": 0,
    "is_query_report": 0,
    "onboard": 0,
-   "link_count": 2
+   "link_count": 5
   },
   {
    "type": "Link",
@@ -354,6 +381,33 @@
    "hidden": 0,
    "is_query_report": 1,
    "onboard": 0
+  },
+  {
+   "type": "Link",
+   "label": "Biological Asset Register",
+   "link_type": "Report",
+   "link_to": "Biological Asset Register",
+   "hidden": 0,
+   "is_query_report": 1,
+   "onboard": 0
+  },
+  {
+   "type": "Link",
+   "label": "Animal Stock Ledger",
+   "link_type": "Report",
+   "link_to": "Animal Stock Ledger",
+   "hidden": 0,
+   "is_query_report": 1,
+   "onboard": 0
+  },
+  {
+   "type": "Link",
+   "label": "Contract Farming Statement",
+   "link_type": "Report",
+   "link_to": "Contract Farming Statement",
+   "hidden": 0,
+   "is_query_report": 1,
+   "onboard": 0
   }
  ],
  "modified": "2024-01-01 00:00:00.000000",
@@ -394,6 +448,13 @@
    "label": "Livestock Individual",
    "type": "DocType",
    "link_to": "Livestock Individual",
+   "doc_view": "List",
+   "color": "Grey"
+  },
+  {
+   "label": "Animal Stock Entry",
+   "type": "DocType",
+   "link_to": "Animal Stock Entry",
    "doc_view": "List",
    "color": "Grey"
   },

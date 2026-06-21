@@ -24,9 +24,13 @@
   "rate",
   "amount",
   "section_cost",
+  "sale_amount",
   "item",
   "capitalization",
-  "asset_value_reduction"
+  "asset_value_reduction",
+  "journal_entry",
+  "sale_journal_entry",
+  "amended_from"
  ],
  "fields": [
   {
@@ -127,17 +131,24 @@
   {
    "fieldname": "rate",
    "fieldtype": "Currency",
-   "label": "Rate"
+   "label": "Unit Cost / Rate"
   },
   {
    "fieldname": "amount",
    "fieldtype": "Currency",
-   "label": "Amount"
+   "label": "Total Amount",
+   "read_only": 1
   },
   {
    "fieldname": "section_cost",
    "fieldtype": "Section Break",
-   "label": "Cost Link"
+   "label": "Cost and Accounting"
+  },
+  {
+   "fieldname": "sale_amount",
+   "fieldtype": "Currency",
+   "label": "Sale Proceeds Amount",
+   "depends_on": "eval:doc.entry_type == 'Sale'"
   },
   {
    "fieldname": "item",
@@ -157,6 +168,30 @@
    "fieldtype": "Currency",
    "label": "Asset Value Reduction",
    "read_only": 1
+  },
+  {
+   "fieldname": "journal_entry",
+   "fieldtype": "Link",
+   "label": "Outflow Journal Entry",
+   "options": "Journal Entry",
+   "read_only": 1
+  },
+  {
+   "fieldname": "sale_journal_entry",
+   "fieldtype": "Link",
+   "label": "Sale Proceeds Journal Entry",
+   "options": "Journal Entry",
+   "read_only": 1,
+   "depends_on": "eval:doc.entry_type == 'Sale' || doc.sale_journal_entry"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "options": "Animal Stock Entry",
+   "read_only": 1,
+   "no_copy": 1,
+   "print_hide": 1
   }
  ],
  "is_submittable": 1,

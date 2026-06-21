@@ -38,7 +38,7 @@ class LivestockHealthEvent(Document):
         if not biological_asset or not flt(self.cost):
             return
 
-        create_capitalization_document(
+        capitalization = create_capitalization_document(
             biological_asset=biological_asset,
             amount=self.cost,
             capitalization_type="Health Cost",
@@ -47,4 +47,6 @@ class LivestockHealthEvent(Document):
             remarks=f"Capitalised livestock health event: {self.event_type}",
         )
         self.db_set("biological_asset", biological_asset, update_modified=False)
+        if capitalization:
+            self.db_set("capitalization", capitalization, update_modified=False)
         self.db_set("capitalized_to_asset", 1, update_modified=False)

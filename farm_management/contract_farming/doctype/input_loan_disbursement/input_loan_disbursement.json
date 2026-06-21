@@ -17,7 +17,8 @@
   "column_break_1",
   "recovered",
   "recovery_date",
-  "recovery_reference"
+  "recovery_reference",
+  "journal_entry"
  ],
  "fields": [
   {
@@ -98,6 +99,13 @@
    "fieldname": "recovery_reference",
    "fieldtype": "Data",
    "label": "Recovery Reference"
+  },
+  {
+   "fieldname": "journal_entry",
+   "fieldtype": "Link",
+   "label": "Journal Entry",
+   "options": "Journal Entry",
+   "read_only": 1
   }
  ],
  "links": [],

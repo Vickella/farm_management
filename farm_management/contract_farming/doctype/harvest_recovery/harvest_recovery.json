@@ -17,7 +17,8 @@
   "loan_recovery_amount",
   "net_payment",
   "payment_status",
-  "payment_reference"
+  "payment_reference",
+  "journal_entry"
  ],
  "fields": [
   {
@@ -101,6 +102,13 @@
    "fieldname": "payment_reference",
    "fieldtype": "Data",
    "label": "Payment Reference"
+  },
+  {
+   "fieldname": "journal_entry",
+   "fieldtype": "Link",
+   "label": "Journal Entry",
+   "options": "Journal Entry",
+   "read_only": 1
   }
  ],
  "links": [],

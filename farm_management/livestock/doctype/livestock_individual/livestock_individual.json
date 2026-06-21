@@ -17,6 +17,7 @@
   "age_months",
   "birth_weight_kg",
   "current_weight_kg",
+  "column_break_1",
   "section_location",
   "farm",
   "pen",
@@ -25,9 +26,6 @@
   "acquisition_date",
   "purchase_price",
   "biological_asset",
-  "capitalize_to_asset",
-  "capitalization_value",
-  "capitalized_to_asset",
   "section_break_parentage",
   "dam",
   "sire",
@@ -38,8 +36,7 @@
   "section_break_physical",
   "color_markings",
   "horn_status",
-  "microchip_number",
-  "column_break_1"
+  "microchip_number"
  ],
  "fields": [
   {
@@ -158,30 +155,13 @@
   {
    "fieldname": "purchase_price",
    "fieldtype": "Currency",
-   "label": "Purchase Price"
+   "label": "Reference Purchase Price"
   },
   {
    "fieldname": "biological_asset",
    "fieldtype": "Link",
    "label": "Biological Asset",
    "options": "Biological Asset"
-  },
-  {
-   "fieldname": "capitalize_to_asset",
-   "fieldtype": "Check",
-   "label": "Capitalize to Biological Asset",
-   "default": "1"
-  },
-  {
-   "fieldname": "capitalization_value",
-   "fieldtype": "Currency",
-   "label": "Capitalization Value"
-  },
-  {
-   "fieldname": "capitalized_to_asset",
-   "fieldtype": "Check",
-   "label": "Capitalized to Asset",
-   "read_only": 1
   },
   {
    "fieldname": "section_break_parentage",
