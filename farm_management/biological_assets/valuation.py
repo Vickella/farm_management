@@ -222,6 +222,13 @@ def create_capitalization_journal_entry(capitalization, asset=None):
 
     settings = frappe.get_single("Farm Management Settings")
     if not settings.biological_asset_account or not settings.capital_work_in_progress_account:
+        from farm_management.install import setup_biological_asset_accounts
+
+        setup_biological_asset_accounts()
+        settings = frappe.get_single("Farm Management Settings")
+
+    biological_asset_account = get_biological_asset_account(asset or capitalization.biological_asset, settings)
+    if not biological_asset_account or not settings.capital_work_in_progress_account:
         frappe.throw(
             "Set Biological Asset Account and Capital Work In Progress Account in Farm Management Settings."
         )
@@ -243,7 +250,7 @@ def create_capitalization_journal_entry(capitalization, asset=None):
 
     append_account(
         journal_entry,
-        settings.biological_asset_account,
+        biological_asset_account,
         debit=amount,
         project=capitalization.project or asset.linked_project,
     )
@@ -257,6 +264,25 @@ def create_capitalization_journal_entry(capitalization, asset=None):
     journal_entry.submit()
     capitalization.db_set("journal_entry", journal_entry.name, update_modified=False)
     asset.db_set("last_journal_entry", journal_entry.name, update_modified=False)
+
+
+def get_biological_asset_account(asset, settings=None):
+    if isinstance(asset, str):
+        asset = frappe.get_doc("Biological Asset", asset)
+
+    settings = settings or frappe.get_single("Farm Management Settings")
+    company = get_company(asset)
+    if asset.farm_type and company:
+        account_name = f"Biological Asset - {asset.farm_type}"
+        account = frappe.db.get_value(
+            "Account",
+            {"account_name": account_name, "company": company, "is_group": 0},
+            "name",
+        )
+        if account:
+            return account
+
+    return settings.biological_asset_account
 
 
 def cancel_capitalization_journal_entry(capitalization):

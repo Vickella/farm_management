@@ -160,6 +160,7 @@ def apply_phase2_updates():
     seed_animal_diseases()
     create_farm_workspace()
     setup_farm_management_settings()
+    setup_biological_asset_accounts()
 
 
 def ensure_module_defs():
@@ -198,6 +199,116 @@ def setup_farm_management_settings():
         doc.enable_auto_activity_generation = 1
         doc.enable_fair_value_scheduler = 1
         doc.insert(ignore_permissions=True)
+
+
+def setup_biological_asset_accounts():
+    settings = frappe.get_single("Farm Management Settings")
+    company = settings.default_company or frappe.defaults.get_user_default("Company") or frappe.db.get_single_value(
+        "Global Defaults", "default_company"
+    )
+    if not company:
+        return
+
+    biological_assets_group = ensure_account(
+        "Biological Assets",
+        company,
+        root_type="Asset",
+        report_type="Balance Sheet",
+        is_group=1,
+    )
+    cwip_account = ensure_account(
+        "Biological Asset Capital Work In Progress",
+        company,
+        root_type="Asset",
+        report_type="Balance Sheet",
+        parent_account=biological_assets_group,
+        account_type="Capital Work in Progress",
+    )
+
+    default_asset_account = None
+    for farm_type in frappe.get_all("Farm Type", filters={"is_active": 1}, pluck="name"):
+        account = ensure_account(
+            f"Biological Asset - {farm_type}",
+            company,
+            root_type="Asset",
+            report_type="Balance Sheet",
+            parent_account=biological_assets_group,
+            account_type="Fixed Asset",
+        )
+        if not default_asset_account:
+            default_asset_account = account
+
+    gain_loss_account = ensure_account(
+        "Biological Asset Fair Value Gain Loss",
+        company,
+        root_type="Expense",
+        report_type="Profit and Loss",
+        account_type="Expense Account",
+    )
+
+    updates = {}
+    if not settings.default_company:
+        updates["default_company"] = company
+    if default_asset_account and not settings.biological_asset_account:
+        updates["biological_asset_account"] = default_asset_account
+    if cwip_account and not settings.capital_work_in_progress_account:
+        updates["capital_work_in_progress_account"] = cwip_account
+    if gain_loss_account and not settings.fair_value_gain_loss_account:
+        updates["fair_value_gain_loss_account"] = gain_loss_account
+    if updates:
+        frappe.db.set_value("Farm Management Settings", "Farm Management Settings", updates, update_modified=False)
+
+
+def ensure_account(
+    account_name,
+    company,
+    root_type,
+    report_type,
+    parent_account=None,
+    account_type=None,
+    is_group=0,
+):
+    existing = frappe.db.get_value("Account", {"account_name": account_name, "company": company}, "name")
+    if existing:
+        return existing
+
+    if not parent_account:
+        parent_account = get_root_account(company, root_type)
+        if not parent_account:
+            return None
+
+    account = frappe.new_doc("Account")
+    account.account_name = account_name
+    account.company = company
+    account.parent_account = parent_account
+    account.root_type = root_type
+    account.report_type = report_type
+    account.is_group = is_group
+    if account_type:
+        account.account_type = account_type
+    account.insert(ignore_permissions=True)
+    return account.name
+
+
+def get_root_account(company, root_type):
+    return frappe.db.get_value(
+        "Account",
+        {
+            "company": company,
+            "root_type": root_type,
+            "is_group": 1,
+            "parent_account": ["is", "not set"],
+        },
+        "name",
+    ) or frappe.db.get_value(
+        "Account",
+        {
+            "company": company,
+            "root_type": root_type,
+            "is_group": 1,
+        },
+        "name",
+    )
 
 
 def seed_fixture_data():
