@@ -444,6 +444,9 @@ def update_existing_fixture_record(record, existing_name):
     if doctype not in ("Custom Field", "Farm Type", "Crop Type"):
         return
 
+    if doctype == "Custom Field":
+        force_update_custom_field_type(record, existing_name)
+
     doc = frappe.get_doc(doctype, existing_name)
     for key, value in record.items():
         if key == "doctype":
@@ -457,6 +460,23 @@ def update_existing_fixture_record(record, existing_name):
         else:
             doc.set(key, value)
     doc.save(ignore_permissions=True)
+
+
+def force_update_custom_field_type(record, existing_name):
+    new_fieldtype = record.get("fieldtype")
+    if not new_fieldtype:
+        return
+
+    current_fieldtype = frappe.db.get_value("Custom Field", existing_name, "fieldtype")
+    if current_fieldtype == new_fieldtype:
+        return
+
+    updates = {"fieldtype": new_fieldtype}
+    if record.get("options") is not None:
+        updates["options"] = record.get("options")
+    frappe.db.set_value("Custom Field", existing_name, updates, update_modified=False)
+    if record.get("dt"):
+        frappe.clear_cache(doctype=record.get("dt"))
 
 
 def retire_legacy_flat_farm_types():
