@@ -36,6 +36,7 @@ WORKSPACE_GROUPS = [
         [
             ("Farm", "DocType"),
             ("Farm Type", "DocType"),
+            ("Agriculture Project Type", "DocType"),
             ("Crop Type", "DocType"),
             ("Farm Management Settings", "DocType"),
         ],
@@ -53,6 +54,9 @@ WORKSPACE_GROUPS = [
         "Livestock Tracking",
         [
             ("Livestock Individual", "DocType"),
+            ("Animal Stock Entry", "DocType"),
+            ("Livestock Species", "DocType"),
+            ("Livestock Breed", "DocType"),
             ("Livestock Health Event", "DocType"),
             ("Livestock Breeding Record", "DocType"),
         ],
@@ -90,6 +94,7 @@ WORKSPACE_SHORTCUTS = [
     "Biological Asset",
     "Biological Asset Valuation",
     "Livestock Individual",
+    "Animal Stock Entry",
     "Livestock Health Event",
     "Disease Incident",
     "Farm BOM",
@@ -153,6 +158,7 @@ def apply_phase2_updates():
     ensure_module_defs()
     remove_legacy_project_custom_fields()
     seed_fixture_data()
+    seed_agriculture_project_types()
     retire_legacy_flat_farm_types()
     normalize_existing_farm_type_links()
     seed_livestock_breeds()
@@ -237,6 +243,7 @@ def setup_biological_asset_accounts():
         )
         if not default_asset_account:
             default_asset_account = account
+        setup_managed_item_accounts(farm_type, company, biological_assets_group, cwip_account, gain_loss_account=None)
 
     gain_loss_account = ensure_account(
         "Biological Asset Fair Value Gain Loss",
@@ -245,18 +252,43 @@ def setup_biological_asset_accounts():
         report_type="Profit and Loss",
         account_type="Expense Account",
     )
+    for farm_type in frappe.get_all("Farm Type", filters={"is_active": 1}, pluck="name"):
+        setup_managed_item_accounts(farm_type, company, biological_assets_group, cwip_account, gain_loss_account)
 
     updates = {}
     if not settings.default_company:
         updates["default_company"] = company
-    if default_asset_account and not settings.biological_asset_account:
-        updates["biological_asset_account"] = default_asset_account
-    if cwip_account and not settings.capital_work_in_progress_account:
-        updates["capital_work_in_progress_account"] = cwip_account
-    if gain_loss_account and not settings.fair_value_gain_loss_account:
-        updates["fair_value_gain_loss_account"] = gain_loss_account
     if updates:
         frappe.db.set_value("Farm Management Settings", "Farm Management Settings", updates, update_modified=False)
+
+
+def setup_managed_item_accounts(farm_type_name, company, biological_assets_group, cwip_account, gain_loss_account):
+    farm_type = frappe.get_doc("Farm Type", farm_type_name)
+    changed = False
+    for row in farm_type.get("managed_items", []):
+        if not row.managed_item_name:
+            continue
+
+        asset_account = ensure_account(
+            f"Biological Asset - {row.managed_item_name}",
+            company,
+            root_type="Asset",
+            report_type="Balance Sheet",
+            parent_account=biological_assets_group,
+            account_type="Fixed Asset",
+        )
+        if asset_account and not row.biological_asset_account:
+            row.biological_asset_account = asset_account
+            changed = True
+        if cwip_account and not row.capital_work_in_progress_account:
+            row.capital_work_in_progress_account = cwip_account
+            changed = True
+        if gain_loss_account and not row.fair_value_gain_loss_account:
+            row.fair_value_gain_loss_account = gain_loss_account
+            changed = True
+
+    if changed:
+        farm_type.save(ignore_permissions=True)
 
 
 def ensure_account(
@@ -331,6 +363,42 @@ def seed_fixture_data():
                 frappe.get_doc(record).insert(ignore_permissions=True, ignore_if_duplicate=True)
             except frappe.DuplicateEntryError:
                 continue
+
+
+def seed_agriculture_project_types():
+    project_types = [
+        ("Crop Production", "Crop Production", None),
+        ("Horticulture", "Horticulture", None),
+        ("Greenhouse Farming", "Horticulture", None),
+        ("Poultry Production", "Poultry", None),
+        ("Broiler Production", "Poultry", "Broilers"),
+        ("Layer Production", "Poultry", "Layers"),
+        ("Animal Husbandry", "Animal Husbandry", None),
+        ("Cattle Ranching", "Animal Husbandry", "Cattle"),
+        ("Cattle Pen Fattening", "Animal Husbandry", "Cattle"),
+        ("Dairy Production", "Animal Husbandry", "Cattle"),
+        ("Goat Farming", "Animal Husbandry", "Goats"),
+        ("Sheep Farming", "Animal Husbandry", "Sheep"),
+        ("Pig Farming", "Animal Husbandry", "Pigs"),
+        ("Rabbit Production", "Animal Husbandry", "Rabbits"),
+        ("Fish Farming", "Aquaculture", None),
+        ("Tilapia Production", "Aquaculture", "Tilapia"),
+        ("Catfish Production", "Aquaculture", "Catfish"),
+        ("Apiculture", "Apiculture", "Honey Bees"),
+        ("Mixed Farming", "Mixed Farming", None),
+        ("Agroforestry", "Agroforestry", None),
+    ]
+    for project_type_name, farm_type, managed_item in project_types:
+        if not frappe.db.exists("Farm Type", farm_type):
+            continue
+        if frappe.db.exists("Agriculture Project Type", project_type_name):
+            continue
+        doc = frappe.new_doc("Agriculture Project Type")
+        doc.project_type_name = project_type_name
+        doc.farm_type = farm_type
+        doc.managed_item = managed_item
+        doc.is_active = 1
+        doc.insert(ignore_permissions=True)
 
 
 def get_fixture_sort_key(fixture_path):

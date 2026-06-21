@@ -1,36 +1,42 @@
 {
  "actions": [],
- "autoname": "field:breed_name",
- "creation": "2026-06-20 00:00:00.000000",
+ "autoname": "field:project_type_name",
+ "creation": "2026-06-21 00:00:00.000000",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "breed_name",
-  "species",
+  "project_type_name",
+  "farm_type",
   "column_break_1",
+  "managed_item",
   "is_active"
  ],
  "fields": [
   {
-   "fieldname": "breed_name",
+   "fieldname": "project_type_name",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Breed Name",
+   "label": "Project Type Name",
    "reqd": 1,
    "unique": 1
   },
   {
-   "fieldname": "species",
+   "fieldname": "farm_type",
    "fieldtype": "Link",
    "in_list_view": 1,
-   "label": "Animal",
-   "options": "Livestock Species",
+   "label": "Farm Type",
+   "options": "Farm Type",
    "reqd": 1
   },
   {
    "fieldname": "column_break_1",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "managed_item",
+   "fieldtype": "Data",
+   "label": "Managed Crop / Animal / Species"
   },
   {
    "default": "1",
@@ -41,10 +47,10 @@
   }
  ],
  "links": [],
- "modified": "2026-06-20 00:00:00.000000",
+ "modified": "2026-06-21 00:00:00.000000",
  "modified_by": "Administrator",
- "module": "Livestock",
- "name": "Livestock Breed",
+ "module": "Farm Setup",
+ "name": "Agriculture Project Type",
  "owner": "Administrator",
  "permissions": [
   {

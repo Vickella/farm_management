@@ -24,7 +24,11 @@ class BiologicalAssetValuation(Document):
         asset.save(ignore_permissions=True)
 
         if self.post_journal_entry:
-            create_fair_value_journal_entry(asset)
+            create_fair_value_journal_entry(
+                asset,
+                delta=self.fair_value_movement,
+                posting_date=self.valuation_date,
+            )
             self.db_set("journal_entry", asset.last_journal_entry, update_modified=False)
 
     def on_cancel(self):

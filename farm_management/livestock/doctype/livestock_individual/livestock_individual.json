@@ -70,7 +70,7 @@
   {
    "fieldname": "species",
    "fieldtype": "Link",
-   "label": "Species",
+   "label": "Animal",
    "options": "Livestock Species",
    "reqd": 1,
    "in_list_view": 1

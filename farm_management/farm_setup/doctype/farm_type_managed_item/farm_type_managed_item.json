@@ -8,7 +8,11 @@
   "managed_item_name",
   "managed_item_type",
   "crop_type",
-  "is_active"
+  "is_active",
+  "section_accounting",
+  "biological_asset_account",
+  "capital_work_in_progress_account",
+  "fair_value_gain_loss_account"
  ],
  "fields": [
   {
@@ -38,6 +42,29 @@
    "fieldtype": "Check",
    "label": "Is Active",
    "default": "1"
+  },
+  {
+   "fieldname": "section_accounting",
+   "fieldtype": "Section Break",
+   "label": "Accounting"
+  },
+  {
+   "fieldname": "biological_asset_account",
+   "fieldtype": "Link",
+   "label": "Biological Asset Account",
+   "options": "Account"
+  },
+  {
+   "fieldname": "capital_work_in_progress_account",
+   "fieldtype": "Link",
+   "label": "Capital Work In Progress Account",
+   "options": "Account"
+  },
+  {
+   "fieldname": "fair_value_gain_loss_account",
+   "fieldtype": "Link",
+   "label": "Fair Value Gain/Loss Account",
+   "options": "Account"
   }
  ],
  "istable": 1,

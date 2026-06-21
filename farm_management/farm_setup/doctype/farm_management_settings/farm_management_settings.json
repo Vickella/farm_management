@@ -5,9 +5,6 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "biological_asset_account",
-  "fair_value_gain_loss_account",
-  "capital_work_in_progress_account",
   "column_break_company",
   "default_cost_center",
   "default_company",
@@ -25,24 +22,6 @@
   "weather_units"
  ],
  "fields": [
-  {
-   "fieldname": "biological_asset_account",
-   "fieldtype": "Link",
-   "label": "Biological Asset Account",
-   "options": "Account"
-  },
-  {
-   "fieldname": "fair_value_gain_loss_account",
-   "fieldtype": "Link",
-   "label": "Fair Value Gain/Loss Account",
-   "options": "Account"
-  },
-  {
-   "fieldname": "capital_work_in_progress_account",
-   "fieldtype": "Link",
-   "label": "Capital Work In Progress Account",
-   "options": "Account"
-  },
   {
    "fieldname": "column_break_company",
    "fieldtype": "Column Break"

@@ -220,20 +220,18 @@ def create_capitalization_journal_entry(capitalization, asset=None):
     if not amount:
         return
 
-    settings = frappe.get_single("Farm Management Settings")
-    if not settings.biological_asset_account or not settings.capital_work_in_progress_account:
-        from farm_management.install import setup_biological_asset_accounts
+    from farm_management.install import setup_biological_asset_accounts
 
-        setup_biological_asset_accounts()
-        settings = frappe.get_single("Farm Management Settings")
+    setup_biological_asset_accounts()
 
-    biological_asset_account = get_biological_asset_account(asset or capitalization.biological_asset, settings)
-    if not biological_asset_account or not settings.capital_work_in_progress_account:
+    asset = asset or frappe.get_doc("Biological Asset", capitalization.biological_asset)
+    biological_asset_account = get_biological_asset_account(asset)
+    cwip_account = get_capital_work_in_progress_account(asset)
+    if not biological_asset_account or not cwip_account:
         frappe.throw(
             "Set Biological Asset Account and Capital Work In Progress Account in Farm Management Settings."
         )
 
-    asset = asset or frappe.get_doc("Biological Asset", capitalization.biological_asset)
     company = get_company(asset)
     if not company:
         frappe.throw("Set Default Company in Farm Management Settings or on the linked Project.")
@@ -256,7 +254,7 @@ def create_capitalization_journal_entry(capitalization, asset=None):
     )
     append_account(
         journal_entry,
-        settings.capital_work_in_progress_account,
+        cwip_account,
         credit=amount,
         project=capitalization.project or asset.linked_project,
     )
@@ -270,7 +268,10 @@ def get_biological_asset_account(asset, settings=None):
     if isinstance(asset, str):
         asset = frappe.get_doc("Biological Asset", asset)
 
-    settings = settings or frappe.get_single("Farm Management Settings")
+    managed_item_account = get_managed_item_account(asset, "biological_asset_account")
+    if managed_item_account:
+        return managed_item_account
+
     company = get_company(asset)
     if asset.farm_type and company:
         account_name = f"Biological Asset - {asset.farm_type}"
@@ -282,7 +283,48 @@ def get_biological_asset_account(asset, settings=None):
         if account:
             return account
 
-    return settings.biological_asset_account
+    return None
+
+
+def get_capital_work_in_progress_account(asset, settings=None):
+    account = get_managed_item_account(asset, "capital_work_in_progress_account")
+    if account:
+        return account
+    company = get_company(asset)
+    if not company:
+        return None
+    return frappe.db.get_value(
+        "Account",
+        {"account_name": "Biological Asset Capital Work In Progress", "company": company, "is_group": 0},
+        "name",
+    )
+
+
+def get_fair_value_gain_loss_account(asset, settings=None):
+    account = get_managed_item_account(asset, "fair_value_gain_loss_account")
+    if account:
+        return account
+    company = get_company(asset)
+    if not company:
+        return None
+    return frappe.db.get_value(
+        "Account",
+        {"account_name": "Biological Asset Fair Value Gain Loss", "company": company, "is_group": 0},
+        "name",
+    )
+
+
+def get_managed_item_account(asset, fieldname):
+    if isinstance(asset, str):
+        asset = frappe.get_doc("Biological Asset", asset)
+    if not asset.farm_type or not asset.managed_item:
+        return None
+    farm_type = frappe.get_doc("Farm Type", asset.farm_type)
+    managed_item_key = (asset.managed_item or "").strip().lower()
+    for row in farm_type.get("managed_items", []):
+        if (row.managed_item_name or "").strip().lower() == managed_item_key:
+            return row.get(fieldname)
+    return None
 
 
 def cancel_capitalization_journal_entry(capitalization):
@@ -394,31 +436,36 @@ def cancel_project_material_issue(stock_entry, method=None):
         frappe.get_doc("Biological Asset Capitalization", name).cancel()
 
 
-def create_fair_value_journal_entry(asset):
-    settings = frappe.get_single("Farm Management Settings")
-    if not settings.biological_asset_account or not settings.fair_value_gain_loss_account:
+def create_fair_value_journal_entry(asset, delta=None, posting_date=None):
+    from farm_management.install import setup_biological_asset_accounts
+
+    setup_biological_asset_accounts()
+
+    biological_asset_account = get_biological_asset_account(asset)
+    fair_value_gain_loss_account = get_fair_value_gain_loss_account(asset)
+    if not biological_asset_account or not fair_value_gain_loss_account:
         return
 
     company = get_company(asset)
     if not company:
         return
 
-    delta = flt(asset.net_fair_value) - flt(asset.last_posted_net_fair_value)
+    delta = flt(delta) if delta is not None else flt(asset.net_fair_value) - flt(asset.last_posted_net_fair_value)
     if not delta:
         return
 
     journal_entry = frappe.new_doc("Journal Entry")
     journal_entry.voucher_type = "Journal Entry"
     journal_entry.company = company
-    journal_entry.posting_date = today()
+    journal_entry.posting_date = posting_date or today()
     journal_entry.user_remark = f"Fair value movement for Biological Asset {asset.name}"
 
     if delta > 0:
-        append_account(journal_entry, settings.biological_asset_account, debit=delta)
-        append_account(journal_entry, settings.fair_value_gain_loss_account, credit=delta)
+        append_account(journal_entry, biological_asset_account, debit=delta, project=asset.linked_project)
+        append_account(journal_entry, fair_value_gain_loss_account, credit=delta, project=asset.linked_project)
     else:
-        append_account(journal_entry, settings.fair_value_gain_loss_account, debit=abs(delta))
-        append_account(journal_entry, settings.biological_asset_account, credit=abs(delta))
+        append_account(journal_entry, fair_value_gain_loss_account, debit=abs(delta), project=asset.linked_project)
+        append_account(journal_entry, biological_asset_account, credit=abs(delta), project=asset.linked_project)
 
     journal_entry.insert(ignore_permissions=True)
     journal_entry.submit()

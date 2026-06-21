@@ -1,0 +1,205 @@
+{
+ "actions": [],
+ "autoname": "naming_series:",
+ "creation": "2026-06-21 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "posting_date",
+  "entry_type",
+  "status",
+  "column_break_1",
+  "farm",
+  "biological_asset",
+  "project",
+  "section_movement",
+  "species",
+  "breed",
+  "livestock_individual",
+  "column_break_2",
+  "quantity",
+  "unit",
+  "rate",
+  "amount",
+  "section_cost",
+  "item",
+  "capitalization",
+  "asset_value_reduction"
+ ],
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "ASE-.####"
+  },
+  {
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Posting Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "entry_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Entry Type",
+   "options": "Opening\nReceipt\nPurchase\nBirth\nTransfer In\nIssue\nSale\nDeath\nTransfer Out\nAdjustment Increase\nAdjustment Decrease\nCost Capitalization",
+   "reqd": 1
+  },
+  {
+   "default": "Draft",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Draft\nSubmitted\nCancelled"
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "farm",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Farm",
+   "options": "Farm",
+   "reqd": 1
+  },
+  {
+   "fieldname": "biological_asset",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Biological Asset",
+   "options": "Biological Asset",
+   "reqd": 1
+  },
+  {
+   "fieldname": "project",
+   "fieldtype": "Link",
+   "label": "Project",
+   "options": "Project"
+  },
+  {
+   "fieldname": "section_movement",
+   "fieldtype": "Section Break",
+   "label": "Movement Details"
+  },
+  {
+   "fieldname": "species",
+   "fieldtype": "Link",
+   "label": "Animal",
+   "options": "Livestock Species"
+  },
+  {
+   "fieldname": "breed",
+   "fieldtype": "Link",
+   "label": "Breed",
+   "options": "Livestock Breed"
+  },
+  {
+   "fieldname": "livestock_individual",
+   "fieldtype": "Link",
+   "label": "Individual Animal",
+   "options": "Livestock Individual"
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "quantity",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Quantity",
+   "reqd": 1
+  },
+  {
+   "fieldname": "unit",
+   "fieldtype": "Select",
+   "label": "Unit",
+   "options": "Head\nBird\nKg\nFingerling\nColony",
+   "reqd": 1
+  },
+  {
+   "fieldname": "rate",
+   "fieldtype": "Currency",
+   "label": "Rate"
+  },
+  {
+   "fieldname": "amount",
+   "fieldtype": "Currency",
+   "label": "Amount"
+  },
+  {
+   "fieldname": "section_cost",
+   "fieldtype": "Section Break",
+   "label": "Cost Link"
+  },
+  {
+   "fieldname": "item",
+   "fieldtype": "Link",
+   "label": "Item / Input",
+   "options": "Item"
+  },
+  {
+   "fieldname": "capitalization",
+   "fieldtype": "Link",
+   "label": "Biological Asset Capitalization",
+   "options": "Biological Asset Capitalization",
+   "read_only": 1
+  },
+  {
+   "fieldname": "asset_value_reduction",
+   "fieldtype": "Currency",
+   "label": "Asset Value Reduction",
+   "read_only": 1
+  }
+ ],
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2026-06-21 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Livestock",
+ "name": "Animal Stock Entry",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Farm Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}
