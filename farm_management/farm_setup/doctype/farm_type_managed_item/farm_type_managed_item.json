@@ -8,8 +8,7 @@
   "managed_item_name",
   "managed_item_type",
   "crop_type",
-  "is_active",
-  "notes"
+  "is_active"
  ],
  "fields": [
   {
@@ -39,11 +38,6 @@
    "fieldtype": "Check",
    "label": "Is Active",
    "default": "1"
-  },
-  {
-   "fieldname": "notes",
-   "fieldtype": "Small Text",
-   "label": "Notes"
   }
  ],
  "istable": 1,

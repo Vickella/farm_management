@@ -397,9 +397,32 @@ def normalize_existing_farm_type_links():
 
 
 def seed_livestock_breeds():
-    # Breed is captured on Livestock Individual. Farm Type only stores broad
-    # farming enterprises and managed species/crops in its child table.
-    return
+    species_rows = [
+        ("Cattle", "Animal Husbandry", "Livestock", ["Brahman", "Bonsmara", "Tuli", "Mashona", "Holstein Friesian"]),
+        ("Goats", "Animal Husbandry", "Livestock", ["Boer", "Kalahari Red", "Matabele", "Mashona"]),
+        ("Sheep", "Animal Husbandry", "Livestock", ["Dorper", "Merino", "Damara"]),
+        ("Pigs", "Animal Husbandry", "Livestock", ["Large White", "Landrace", "Duroc"]),
+        ("Rabbits", "Animal Husbandry", "Livestock", ["New Zealand White", "Californian"]),
+        ("Broilers", "Poultry", "Poultry", ["Ross 308", "Cobb 500", "Arbor Acres"]),
+        ("Layers", "Poultry", "Poultry", ["Hy-Line Brown", "Lohmann Brown", "ISA Brown"]),
+        ("Tilapia", "Aquaculture", "Aquaculture", ["Nile Tilapia", "Red Tilapia"]),
+        ("Catfish", "Aquaculture", "Aquaculture", ["African Catfish"]),
+    ]
+    for species_name, farm_type, species_group, breeds in species_rows:
+        if not frappe.db.exists("Livestock Species", species_name):
+            doc = frappe.new_doc("Livestock Species")
+            doc.species_name = species_name
+            doc.farm_type = farm_type if frappe.db.exists("Farm Type", farm_type) else None
+            doc.species_group = species_group
+            doc.is_active = 1
+            doc.insert(ignore_permissions=True)
+        for breed_name in breeds:
+            if not frappe.db.exists("Livestock Breed", breed_name):
+                breed = frappe.new_doc("Livestock Breed")
+                breed.breed_name = breed_name
+                breed.species = species_name
+                breed.is_active = 1
+                breed.insert(ignore_permissions=True)
 
 
 def seed_pests():

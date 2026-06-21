@@ -8,6 +8,7 @@
   "biological_asset_account",
   "fair_value_gain_loss_account",
   "capital_work_in_progress_account",
+  "column_break_company",
   "default_cost_center",
   "default_company",
   "default_harvest_warehouse",
@@ -41,6 +42,10 @@
    "fieldtype": "Link",
    "label": "Capital Work In Progress Account",
    "options": "Account"
+  },
+  {
+   "fieldname": "column_break_company",
+   "fieldtype": "Column Break"
   },
   {
    "fieldname": "default_cost_center",

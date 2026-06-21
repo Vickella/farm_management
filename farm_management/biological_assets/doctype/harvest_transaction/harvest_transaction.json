@@ -21,8 +21,7 @@
   "section_stock",
   "conversion_item",
   "target_warehouse",
-  "stock_entry",
-  "notes"
+  "stock_entry"
  ],
  "fields": [
   {
@@ -131,11 +130,6 @@
    "label": "Stock Entry",
    "options": "Stock Entry",
    "read_only": 1
-  },
-  {
-   "fieldname": "notes",
-   "fieldtype": "Small Text",
-   "label": "Notes"
   }
  ],
  "links": [],

@@ -21,9 +21,7 @@
   "actual_cost",
   "capitalizable",
   "biological_asset",
-  "capitalized_to_asset",
-  "notes",
-  "completion_notes"
+  "capitalized_to_asset"
  ],
  "fields": [
   {
@@ -129,16 +127,6 @@
    "fieldtype": "Check",
    "label": "Capitalized to Asset",
    "read_only": 1
-  },
-  {
-   "fieldname": "notes",
-   "fieldtype": "Small Text",
-   "label": "Notes"
-  },
-  {
-   "fieldname": "completion_notes",
-   "fieldtype": "Small Text",
-   "label": "Completion Notes"
   }
  ],
  "links": [],

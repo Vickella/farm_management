@@ -21,8 +21,7 @@
   "loss_estimate",
   "resolved",
   "resolution_date",
-  "reported_by",
-  "notes"
+  "reported_by"
  ],
  "fields": [
   {
@@ -132,11 +131,6 @@
    "fieldtype": "Link",
    "label": "Reported By",
    "options": "Employee"
-  },
-  {
-   "fieldname": "notes",
-   "fieldtype": "Small Text",
-   "label": "Notes"
   }
  ],
  "links": [],

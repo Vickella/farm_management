@@ -26,8 +26,7 @@
   "capitalize_cost",
   "biological_asset",
   "capitalized_to_asset",
-  "outcome",
-  "notes"
+  "outcome"
  ],
  "fields": [
   {
@@ -98,8 +97,10 @@
   },
   {
    "fieldname": "product_used",
-   "fieldtype": "Data",
-   "label": "Product / Vaccine / Drug Used"
+   "fieldtype": "Link",
+   "label": "Product / Vaccine / Drug Used",
+   "options": "Item",
+   "in_list_view": 1
   },
   {
    "fieldname": "dosage",
@@ -153,11 +154,6 @@
    "fieldtype": "Select",
    "label": "Outcome",
    "options": "Normal\nPositive Response\nAdverse Reaction\nNo Change"
-  },
-  {
-   "fieldname": "notes",
-   "fieldtype": "Small Text",
-   "label": "Notes"
   }
  ],
  "links": [],

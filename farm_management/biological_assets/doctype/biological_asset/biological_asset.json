@@ -35,7 +35,6 @@
   "last_journal_entry",
   "last_valuation_date",
   "previous_quantity",
-  "notes",
   "section_break_quantity",
   "column_break_2"
  ],
@@ -74,8 +73,7 @@
    "fieldtype": "Link",
    "label": "Farm Type",
    "options": "Farm Type",
-   "reqd": 1,
-   "description": "Broad farming enterprise such as Crop Production, Animal Husbandry, Aquaculture, or Apiculture."
+   "reqd": 1
   },
   {
    "fieldname": "column_break_1",
@@ -108,8 +106,7 @@
    "fieldtype": "Data",
    "label": "Managed Crop / Animal / Species",
    "in_list_view": 1,
-   "reqd": 1,
-   "description": "Specific managed crop, animal, or species from the selected Farm Type managed-items table."
+   "reqd": 1
   },
   {
    "fieldname": "section_break_quantity",
@@ -214,11 +211,6 @@
    "fieldname": "last_valuation_date",
    "fieldtype": "Date",
    "label": "Last Valuation Date"
-  },
-  {
-   "fieldname": "notes",
-   "fieldtype": "Small Text",
-   "label": "Notes"
   },
   {
    "fieldname": "section_identity",

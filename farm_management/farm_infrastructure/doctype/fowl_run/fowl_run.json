@@ -50,8 +50,7 @@
    "fieldname": "bird_type",
    "fieldtype": "Link",
    "label": "Farm Type",
-   "options": "Farm Type",
-   "description": "Broad farming enterprise type, not the specific species/crop."
+   "options": "Farm Type"
   },
   {
    "fieldname": "managed_species",

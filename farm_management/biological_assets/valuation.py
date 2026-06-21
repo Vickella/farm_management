@@ -68,6 +68,96 @@ def capitalize_asset_cost(
     )
 
 
+def get_or_create_biological_asset_for_livestock(livestock):
+    if livestock.biological_asset:
+        return livestock.biological_asset
+
+    if not livestock.farm or not livestock.species:
+        frappe.throw("Set Farm and Species before capitalizing livestock.")
+
+    species = frappe.get_doc("Livestock Species", livestock.species)
+    farm_type = species.farm_type or find_farm_type_for_managed_item(species.name)
+    if not farm_type:
+        frappe.throw(f"Set Farm Type on Livestock Species '{species.name}'.")
+
+    filters = {
+        "farm": livestock.farm,
+        "farm_type": farm_type,
+        "managed_item": species.name,
+        "status": "Active",
+    }
+    existing = frappe.db.get_value("Biological Asset", filters, "name")
+    if existing:
+        return existing
+
+    asset = frappe.new_doc("Biological Asset")
+    asset.asset_name = f"{livestock.farm} - {species.name}"
+    asset.farm = livestock.farm
+    asset.asset_category = get_asset_category_for_species(species)
+    asset.farm_type = farm_type
+    asset.managed_item = species.name
+    asset.status = "Active"
+    asset.growth_stage = "Immature"
+    asset.valuation_method = "Cost Accumulation"
+    asset.acquisition_date = livestock.acquisition_date or livestock.date_of_birth or today()
+    asset.quantity = 0
+    asset.unit = "Bird" if asset.asset_category == "Poultry" else "Head"
+    asset.initial_cost = 0
+    asset.current_fair_value = 0
+    asset.insert(ignore_permissions=True)
+    return asset.name
+
+
+def find_farm_type_for_managed_item(managed_item):
+    matches = frappe.get_all(
+        "Farm Type",
+        filters={"is_active": 1},
+        fields=["name"],
+    )
+    managed_item_key = (managed_item or "").strip().lower()
+    for row in matches:
+        doc = frappe.get_doc("Farm Type", row.name)
+        for item in doc.get("managed_items", []):
+            if item.is_active and (item.managed_item_name or "").strip().lower() == managed_item_key:
+                return doc.name
+    return frappe.db.get_value("Farm Type", {"category": "Animal Husbandry", "is_active": 1}, "name")
+
+
+def get_asset_category_for_species(species):
+    if species.species_group == "Poultry":
+        return "Poultry"
+    if species.species_group == "Aquaculture":
+        return "Aquaculture"
+    return "Livestock"
+
+
+@frappe.whitelist()
+def repair_missing_livestock_assets():
+    repaired = []
+    skipped = []
+    livestock_records = frappe.get_all(
+        "Livestock Individual",
+        filters={"capitalized_to_asset": ["!=", 1]},
+        fields=["name"],
+    )
+    for row in livestock_records:
+        try:
+            livestock = frappe.get_doc("Livestock Individual", row.name)
+            livestock.capitalize_to_biological_asset()
+            if frappe.db.get_value("Livestock Individual", row.name, "biological_asset"):
+                repaired.append(row.name)
+            else:
+                skipped.append(row.name)
+        except Exception:
+            skipped.append(row.name)
+            frappe.log_error(
+                title=f"Livestock Asset Repair Failed: {row.name}"[:140],
+                message=frappe.get_traceback(),
+            )
+
+    return {"repaired": repaired, "skipped": skipped}
+
+
 def apply_capitalization(capitalization):
     if not capitalization.biological_asset or (not flt(capitalization.amount) and not flt(capitalization.quantity_delta)):
         return
@@ -93,6 +183,7 @@ def apply_capitalization(capitalization):
         ),
     )
     asset.save(ignore_permissions=True)
+    create_capitalization_journal_entry(capitalization, asset)
 
 
 def reverse_capitalization(capitalization):
@@ -121,6 +212,60 @@ def reverse_capitalization(capitalization):
         ),
     )
     asset.save(ignore_permissions=True)
+    cancel_capitalization_journal_entry(capitalization)
+
+
+def create_capitalization_journal_entry(capitalization, asset=None):
+    amount = flt(capitalization.amount)
+    if not amount:
+        return
+
+    settings = frappe.get_single("Farm Management Settings")
+    if not settings.biological_asset_account or not settings.capital_work_in_progress_account:
+        frappe.throw(
+            "Set Biological Asset Account and Capital Work In Progress Account in Farm Management Settings."
+        )
+
+    asset = asset or frappe.get_doc("Biological Asset", capitalization.biological_asset)
+    company = get_company(asset)
+    if not company:
+        frappe.throw("Set Default Company in Farm Management Settings or on the linked Project.")
+
+    journal_entry = frappe.new_doc("Journal Entry")
+    journal_entry.voucher_type = "Journal Entry"
+    journal_entry.company = company
+    journal_entry.posting_date = capitalization.posting_date or today()
+    journal_entry.user_remark = (
+        f"Biological asset capitalization for {asset.name} from "
+        f"{capitalization.source_doctype or capitalization.doctype} "
+        f"{capitalization.source_name or capitalization.name}"
+    )
+
+    append_account(
+        journal_entry,
+        settings.biological_asset_account,
+        debit=amount,
+        project=capitalization.project or asset.linked_project,
+    )
+    append_account(
+        journal_entry,
+        settings.capital_work_in_progress_account,
+        credit=amount,
+        project=capitalization.project or asset.linked_project,
+    )
+    journal_entry.insert(ignore_permissions=True)
+    journal_entry.submit()
+    capitalization.db_set("journal_entry", journal_entry.name, update_modified=False)
+    asset.db_set("last_journal_entry", journal_entry.name, update_modified=False)
+
+
+def cancel_capitalization_journal_entry(capitalization):
+    if not capitalization.journal_entry or not frappe.db.exists("Journal Entry", capitalization.journal_entry):
+        return
+
+    journal_entry = frappe.get_doc("Journal Entry", capitalization.journal_entry)
+    if journal_entry.docstatus == 1:
+        journal_entry.cancel()
 
 
 def reduce_asset_quantity(biological_asset, quantity, source_doctype=None, source_name=None):
@@ -255,7 +400,7 @@ def create_fair_value_journal_entry(asset):
     asset.db_set("last_posted_net_fair_value", asset.net_fair_value, update_modified=False)
 
 
-def append_account(journal_entry, account, debit=0, credit=0):
+def append_account(journal_entry, account, debit=0, credit=0, project=None):
     settings = frappe.get_single("Farm Management Settings")
     row = {
         "account": account,
@@ -264,6 +409,8 @@ def append_account(journal_entry, account, debit=0, credit=0):
     }
     if settings.default_cost_center:
         row["cost_center"] = settings.default_cost_center
+    if project:
+        row["project"] = project
     journal_entry.append("accounts", row)
 
 

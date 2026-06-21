@@ -6,6 +6,7 @@ from farm_management.biological_assets.valuation import create_capitalization_do
 
 class LivestockHealthEvent(Document):
     def validate(self):
+        self.fetch_item_cost()
         if self.weight_kg and self.animal:
             frappe.db.set_value(
                 "Livestock Individual",
@@ -14,6 +15,10 @@ class LivestockHealthEvent(Document):
                 self.weight_kg,
                 update_modified=False,
             )
+
+    def fetch_item_cost(self):
+        if self.product_used and not flt(self.cost):
+            self.cost = flt(frappe.db.get_value("Item", self.product_used, "valuation_rate"))
 
     def on_update(self):
         self.capitalize_health_cost()

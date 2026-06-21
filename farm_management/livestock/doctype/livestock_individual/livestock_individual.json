@@ -39,8 +39,6 @@
   "color_markings",
   "horn_status",
   "microchip_number",
-  "section_break_notes",
-  "notes",
   "column_break_1"
  ],
  "fields": [
@@ -71,18 +69,19 @@
   },
   {
    "fieldname": "species",
-   "fieldtype": "Select",
+   "fieldtype": "Link",
    "label": "Species",
-   "options": "Cattle\nGoat\nSheep\nPig\nRabbit",
+   "options": "Livestock Species",
    "reqd": 1,
    "in_list_view": 1
   },
   {
    "fieldname": "breed",
-   "fieldtype": "Data",
+   "fieldtype": "Link",
    "label": "Breed",
    "reqd": 1,
-   "in_list_view": 1
+   "in_list_view": 1,
+   "options": "Livestock Breed"
   },
   {
    "fieldname": "sex",
@@ -242,15 +241,6 @@
    "fieldname": "microchip_number",
    "fieldtype": "Data",
    "label": "Microchip Number"
-  },
-  {
-   "fieldname": "section_break_notes",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "notes",
-   "fieldtype": "Small Text",
-   "label": "Notes"
   }
  ],
  "links": [],

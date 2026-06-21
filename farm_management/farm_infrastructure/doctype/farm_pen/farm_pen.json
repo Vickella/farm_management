@@ -17,8 +17,7 @@
   "capacity",
   "current_occupancy",
   "occupancy_rate",
-  "vaccination_status",
-  "notes"
+  "vaccination_status"
  ],
  "fields": [
   {
@@ -56,8 +55,7 @@
    "fieldname": "animal_type",
    "fieldtype": "Link",
    "label": "Farm Type",
-   "options": "Farm Type",
-   "description": "Broad farming enterprise type, not the specific species/crop."
+   "options": "Farm Type"
   },
   {
    "fieldname": "managed_species",
@@ -99,11 +97,6 @@
    "fieldtype": "Select",
    "label": "Vaccination Status",
    "options": "\nUp to Date\nDue\nOverdue"
-  },
-  {
-   "fieldname": "notes",
-   "fieldtype": "Small Text",
-   "label": "Notes"
   }
  ],
  "links": [],

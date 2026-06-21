@@ -17,8 +17,7 @@
   "column_break_1",
   "recovered",
   "recovery_date",
-  "recovery_reference",
-  "notes"
+  "recovery_reference"
  ],
  "fields": [
   {
@@ -99,11 +98,6 @@
    "fieldname": "recovery_reference",
    "fieldtype": "Data",
    "label": "Recovery Reference"
-  },
-  {
-   "fieldname": "notes",
-   "fieldtype": "Small Text",
-   "label": "Notes"
   }
  ],
  "links": [],

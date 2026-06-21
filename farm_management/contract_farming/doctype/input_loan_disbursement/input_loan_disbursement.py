@@ -2,6 +2,10 @@ import frappe
 from frappe.model.document import Document
 from frappe.utils import flt
 
+from farm_management.contract_farming.doctype.contract_farming_agreement.contract_farming_agreement import (
+    update_contract_rollups,
+)
+
 
 class InputLoanDisbursement(Document):
     def validate(self):
@@ -14,3 +18,9 @@ class InputLoanDisbursement(Document):
             frappe.throw("Item is required for non-cash input loan disbursements.")
         if self.recovered and not self.recovery_date:
             frappe.throw("Recovery Date is required when the input loan is marked recovered.")
+
+    def on_update(self):
+        update_contract_rollups(self.agreement)
+
+    def after_delete(self):
+        update_contract_rollups(self.agreement)

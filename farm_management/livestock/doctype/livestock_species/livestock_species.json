@@ -1,58 +1,56 @@
 {
  "actions": [],
- "creation": "2024-01-01 00:00:00.000000",
+ "autoname": "field:species_name",
+ "creation": "2026-06-20 00:00:00.000000",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "crop_name",
-  "category",
+  "species_name",
+  "farm_type",
   "column_break_1",
-  "growth_period_days",
-  "expected_yield_per_ha",
-  "yield_unit"
+  "species_group",
+  "is_active"
  ],
  "fields": [
   {
-   "fieldname": "crop_name",
+   "fieldname": "species_name",
    "fieldtype": "Data",
-   "label": "Crop Name",
+   "in_list_view": 1,
+   "label": "Species Name",
    "reqd": 1,
-   "in_list_view": 1
+   "unique": 1
   },
   {
-   "fieldname": "category",
+   "fieldname": "farm_type",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Farm Type",
-   "options": "Farm Type",
-   "in_list_view": 1
+   "options": "Farm Type"
   },
   {
    "fieldname": "column_break_1",
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "growth_period_days",
-   "fieldtype": "Int",
-   "label": "Growth Period (Days)"
-  },
-  {
-   "fieldname": "expected_yield_per_ha",
-   "fieldtype": "Float",
-   "label": "Expected Yield per Ha"
-  },
-  {
-   "fieldname": "yield_unit",
+   "fieldname": "species_group",
    "fieldtype": "Select",
-   "label": "Yield Unit",
-   "options": "\nkg\nTonne\nBag\nCrate"
+   "label": "Species Group",
+   "options": "Livestock\nPoultry\nAquaculture\nOther"
+  },
+  {
+   "default": "1",
+   "fieldname": "is_active",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Is Active"
   }
  ],
  "links": [],
- "modified": "2024-01-01 00:00:00.000000",
+ "modified": "2026-06-20 00:00:00.000000",
  "modified_by": "Administrator",
- "module": "Farm Setup",
- "name": "Crop Type",
+ "module": "Livestock",
+ "name": "Livestock Species",
  "owner": "Administrator",
  "permissions": [
   {
@@ -83,8 +81,5 @@
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],
- "track_changes": 0,
- "autoname": "field:crop_name",
- "title_field": "crop_name",
- "naming_rule": "By fieldname"
+ "track_changes": 1
 }

@@ -35,8 +35,8 @@
   {
    "fieldname": "owner_name",
    "fieldtype": "Link",
-   "label": "Owner",
-   "options": "Customer",
+   "label": "Farm Owner Company",
+   "options": "Company",
    "reqd": 1,
    "in_list_view": 1
   },

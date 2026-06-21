@@ -34,6 +34,18 @@
     "doctype": "Custom Field",
     "dt": "Project",
     "module": "Farm Management",
+    "fieldname": "biological_asset",
+    "fieldtype": "Link",
+    "label": "Biological Asset",
+    "insert_after": "farm",
+    "options": "Biological Asset",
+    "read_only": 1,
+    "depends_on": "eval:doc.agriculture_project_type"
+  },
+  {
+    "doctype": "Custom Field",
+    "dt": "Project",
+    "module": "Farm Management",
     "fieldname": "crop_variety",
     "fieldtype": "Link",
     "label": "Crop Variety",
@@ -172,8 +184,7 @@
     "label": "Aquaculture Farm Type",
     "insert_after": "fowl_run_allocation",
     "depends_on": "eval:doc.agriculture_project_type == 'Fish Farming'",
-    "options": "Farm Type",
-    "description": "Broad Farm Type for aquaculture projects. Use Fish Species / Managed Species for the actual species."
+    "options": "Farm Type"
   },
   {
     "doctype": "Custom Field",
@@ -183,8 +194,7 @@
     "fieldtype": "Data",
     "label": "Fish Species / Managed Species",
     "insert_after": "fish_species",
-    "depends_on": "eval:doc.agriculture_project_type == 'Fish Farming'",
-    "description": "Actual fish or aquaculture species being managed, for example Tilapia or Catfish."
+    "depends_on": "eval:doc.agriculture_project_type == 'Fish Farming'"
   },
   {
     "doctype": "Custom Field",

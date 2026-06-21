@@ -10,6 +10,10 @@
   "farm",
   "column_break_1",
   "status",
+  "linked_project",
+  "sponsor_type",
+  "sponsor_company",
+  "sponsor_customer",
   "section_break_contract",
   "contract_start_date",
   "contract_end_date",
@@ -27,6 +31,9 @@
   "chemical_provided",
   "chemical_value",
   "total_input_loan",
+  "actual_inputs_disbursed",
+  "harvest_recovery_value",
+  "net_contract_position",
   "quality_standards"
  ],
  "fields": [
@@ -64,6 +71,32 @@
    "reqd": 1,
    "default": "Draft",
    "in_list_view": 1
+  },
+  {
+   "fieldname": "linked_project",
+   "fieldtype": "Link",
+   "label": "Linked Project",
+   "options": "Project"
+  },
+  {
+   "fieldname": "sponsor_type",
+   "fieldtype": "Select",
+   "label": "Sponsor Type",
+   "options": "\nInternal\nCompany\nCustomer"
+  },
+  {
+   "fieldname": "sponsor_company",
+   "fieldtype": "Link",
+   "label": "Sponsor Company",
+   "options": "Company",
+   "depends_on": "eval:doc.sponsor_type == 'Company'"
+  },
+  {
+   "fieldname": "sponsor_customer",
+   "fieldtype": "Link",
+   "label": "Sponsor Customer",
+   "options": "Customer",
+   "depends_on": "eval:doc.sponsor_type == 'Customer'"
   },
   {
    "fieldname": "section_break_contract",
@@ -155,6 +188,24 @@
    "fieldname": "total_input_loan",
    "fieldtype": "Currency",
    "label": "Total Input Loan",
+   "read_only": 1
+  },
+  {
+   "fieldname": "actual_inputs_disbursed",
+   "fieldtype": "Currency",
+   "label": "Actual Inputs Disbursed",
+   "read_only": 1
+  },
+  {
+   "fieldname": "harvest_recovery_value",
+   "fieldtype": "Currency",
+   "label": "Harvest Recovery Value",
+   "read_only": 1
+  },
+  {
+   "fieldname": "net_contract_position",
+   "fieldtype": "Currency",
+   "label": "Net Contract Position",
    "read_only": 1
   },
   {

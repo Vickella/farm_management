@@ -4,10 +4,25 @@
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
- "field_order": ["sibling", "tag_number"],
+ "field_order": [
+  "sibling",
+  "tag_number"
+ ],
  "fields": [
-  {"fieldname": "sibling", "fieldtype": "Link", "label": "Sibling", "options": "Livestock Individual", "reqd": 1, "in_list_view": 1},
-  {"fieldname": "tag_number", "fieldtype": "Data", "label": "Tag Number", "read_only": 1}
+  {
+   "fieldname": "sibling",
+   "fieldtype": "Link",
+   "label": "Sibling",
+   "options": "Livestock Individual",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "tag_number",
+   "fieldtype": "Data",
+   "label": "Tag Number",
+   "read_only": 1
+  }
  ],
  "istable": 1,
  "links": [],

@@ -18,24 +18,89 @@
   "outcome",
   "litter_size",
   "offspring_born_alive",
-  "offspring_stillborn",
-  "notes"
+  "offspring_stillborn"
  ],
  "fields": [
-  {"fieldname": "naming_series", "fieldtype": "Select", "label": "Series", "options": "LBR-.####"},
-  {"fieldname": "dam", "fieldtype": "Link", "label": "Dam", "options": "Livestock Individual", "reqd": 1, "in_list_view": 1},
-  {"fieldname": "sire", "fieldtype": "Link", "label": "Sire", "options": "Livestock Individual", "reqd": 1, "in_list_view": 1},
-  {"fieldname": "farm", "fieldtype": "Link", "label": "Farm", "options": "Farm", "reqd": 1},
-  {"fieldname": "mating_date", "fieldtype": "Date", "label": "Mating Date", "reqd": 1, "in_list_view": 1},
-  {"fieldname": "mating_method", "fieldtype": "Select", "label": "Mating Method", "options": "Natural\nArtificial Insemination", "reqd": 1},
-  {"fieldname": "column_break_1", "fieldtype": "Column Break"},
-  {"fieldname": "expected_birth_date", "fieldtype": "Date", "label": "Expected Birth Date"},
-  {"fieldname": "actual_birth_date", "fieldtype": "Date", "label": "Actual Birth Date"},
-  {"fieldname": "outcome", "fieldtype": "Select", "label": "Outcome", "options": "Pending\nConfirmed Pregnant\nNot Pregnant\nAborted\nDelivered", "default": "Pending", "in_list_view": 1},
-  {"fieldname": "litter_size", "fieldtype": "Int", "label": "Litter Size"},
-  {"fieldname": "offspring_born_alive", "fieldtype": "Int", "label": "Born Alive"},
-  {"fieldname": "offspring_stillborn", "fieldtype": "Int", "label": "Stillborn"},
-  {"fieldname": "notes", "fieldtype": "Small Text", "label": "Notes"}
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "LBR-.####"
+  },
+  {
+   "fieldname": "dam",
+   "fieldtype": "Link",
+   "label": "Dam",
+   "options": "Livestock Individual",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "sire",
+   "fieldtype": "Link",
+   "label": "Sire",
+   "options": "Livestock Individual",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "farm",
+   "fieldtype": "Link",
+   "label": "Farm",
+   "options": "Farm",
+   "reqd": 1
+  },
+  {
+   "fieldname": "mating_date",
+   "fieldtype": "Date",
+   "label": "Mating Date",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "mating_method",
+   "fieldtype": "Select",
+   "label": "Mating Method",
+   "options": "Natural\nArtificial Insemination",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "expected_birth_date",
+   "fieldtype": "Date",
+   "label": "Expected Birth Date"
+  },
+  {
+   "fieldname": "actual_birth_date",
+   "fieldtype": "Date",
+   "label": "Actual Birth Date"
+  },
+  {
+   "fieldname": "outcome",
+   "fieldtype": "Select",
+   "label": "Outcome",
+   "options": "Pending\nConfirmed Pregnant\nNot Pregnant\nAborted\nDelivered",
+   "default": "Pending",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "litter_size",
+   "fieldtype": "Int",
+   "label": "Litter Size"
+  },
+  {
+   "fieldname": "offspring_born_alive",
+   "fieldtype": "Int",
+   "label": "Born Alive"
+  },
+  {
+   "fieldname": "offspring_stillborn",
+   "fieldtype": "Int",
+   "label": "Stillborn"
+  }
  ],
  "links": [],
  "modified": "2026-06-19 00:00:00.000000",
@@ -44,9 +109,42 @@
  "name": "Livestock Breeding Record",
  "owner": "Administrator",
  "permissions": [
-  {"create": 1, "delete": 1, "email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "System Manager", "share": 1, "write": 1},
-  {"create": 1, "delete": 0, "email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "Farm Manager", "share": 1, "write": 1},
-  {"create": 0, "delete": 0, "email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "Farm Worker", "share": 0, "write": 0}
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Farm Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 0,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Farm Worker",
+   "share": 0,
+   "write": 0
+  }
  ],
  "sort_field": "modified",
  "sort_order": "DESC",
