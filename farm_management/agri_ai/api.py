@@ -5,9 +5,9 @@ from frappe import _
 @frappe.whitelist()
 def get_agri_response(question, context_farm=None):
     system_prompt = _build_system_prompt(context_farm)
-    api_key = frappe.conf.get("openai_api_key") or frappe.db.get_single_value(
-        "Farm Management Settings", "ai_api_key"
-    )
+    api_key = frappe.conf.get("openai_api_key")
+    if not api_key:
+        api_key = frappe.get_single("Farm Management Settings").get_password("ai_api_key")
     if not api_key:
         frappe.throw(
             _("AI API key not configured. Please set it in Farm Management Settings.")
