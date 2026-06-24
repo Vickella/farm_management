@@ -9,6 +9,7 @@
   "farmer",
   "farm",
   "column_break_1",
+  "contract_type",
   "status",
   "linked_project",
   "sponsor_type",
@@ -19,17 +20,13 @@
   "contract_end_date",
   "crop_type",
   "contracted_area_ha",
-  "production_target_kg",
-  "agreed_purchase_price_per_kg",
+  "production_target",
+  "unit",
+  "agreed_purchase_price_per_unit",
   "column_break_2",
   "total_expected_purchase",
   "section_break_inputs",
-  "seed_provided",
-  "seed_value",
-  "fertilizer_provided",
-  "fertilizer_value",
-  "chemical_provided",
-  "chemical_value",
+  "inputs_provided",
   "total_input_loan",
   "actual_inputs_disbursed",
   "harvest_recovery_value",
@@ -62,6 +59,15 @@
   {
    "fieldname": "column_break_1",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "contract_type",
+   "fieldtype": "Select",
+   "label": "Contract Type",
+   "options": "Giving Contract (Asset)\nReceiving Contract (Liability)",
+   "default": "Giving Contract (Asset)",
+   "reqd": 1,
+   "in_list_view": 1
   },
   {
    "fieldname": "status",
@@ -128,15 +134,22 @@
    "reqd": 1
   },
   {
-   "fieldname": "production_target_kg",
+   "fieldname": "production_target",
    "fieldtype": "Float",
-   "label": "Production Target Kg",
+   "label": "Production Target",
    "reqd": 1
   },
   {
-   "fieldname": "agreed_purchase_price_per_kg",
+   "fieldname": "unit",
+   "fieldtype": "Select",
+   "label": "Unit",
+   "options": "kg\nTonne\nBag\nHead\nBird",
+   "reqd": 1
+  },
+  {
+   "fieldname": "agreed_purchase_price_per_unit",
    "fieldtype": "Currency",
-   "label": "Agreed Purchase Price Per Kg",
+   "label": "Agreed Purchase Price Per Unit",
    "reqd": 1
   },
   {
@@ -155,34 +168,10 @@
    "label": "Inputs Provided"
   },
   {
-   "fieldname": "seed_provided",
-   "fieldtype": "Check",
-   "label": "Seed Provided"
-  },
-  {
-   "fieldname": "seed_value",
-   "fieldtype": "Currency",
-   "label": "Seed Value"
-  },
-  {
-   "fieldname": "fertilizer_provided",
-   "fieldtype": "Check",
-   "label": "Fertilizer Provided"
-  },
-  {
-   "fieldname": "fertilizer_value",
-   "fieldtype": "Currency",
-   "label": "Fertilizer Value"
-  },
-  {
-   "fieldname": "chemical_provided",
-   "fieldtype": "Check",
-   "label": "Chemical Provided"
-  },
-  {
-   "fieldname": "chemical_value",
-   "fieldtype": "Currency",
-   "label": "Chemical Value"
+   "fieldname": "inputs_provided",
+   "fieldtype": "Table",
+   "label": "Inputs Provided",
+   "options": "Contract Farming Input"
   },
   {
    "fieldname": "total_input_loan",

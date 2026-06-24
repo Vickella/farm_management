@@ -19,7 +19,7 @@ class HarvestTransaction(Document):
             frappe.throw("Harvest farm must match the Biological Asset farm.")
         if asset.status != "Active":
             frappe.throw("Only Active Biological Assets can be harvested.")
-        if flt(self.quantity_harvested) > flt(asset.quantity):
+        if asset.asset_category != "Crops in Growth" and flt(asset.quantity) > 0 and flt(self.quantity_harvested) > flt(asset.quantity):
             frappe.throw("Harvest quantity cannot exceed Biological Asset quantity.")
 
     def set_defaults(self):
@@ -37,8 +37,10 @@ class HarvestTransaction(Document):
         asset = frappe.get_doc("Biological Asset", self.biological_asset)
         self.asset_quantity_before = flt(asset.quantity)
         self.asset_quantity_after = flt(asset.quantity) - flt(self.quantity_harvested)
-        if flt(asset.quantity):
+        if asset.asset_category != "Crops in Growth" and flt(asset.quantity):
             self.asset_value_reduction = flt(asset.net_fair_value) * flt(self.quantity_harvested) / flt(asset.quantity)
+        else:
+            self.asset_value_reduction = flt(asset.net_fair_value)
 
     def on_submit(self):
         self.asset_value_reduction = reduce_asset_quantity(
@@ -58,7 +60,7 @@ class HarvestTransaction(Document):
                     "item_code": self.conversion_item,
                     "qty": self.quantity_harvested,
                     "uom": self.unit,
-                    "basic_rate": self.harvest_value or 0,
+                    "basic_rate": (flt(asset.net_fair_value) / flt(self.quantity_harvested)) if asset.net_fair_value else (self.harvest_value or 0),
                     "t_warehouse": self.target_warehouse,
                 },
             )

@@ -9,6 +9,7 @@
   "bom_title",
   "project_type",
   "farm",
+  "project",
   "column_break_1",
   "planned_quantity",
   "planned_quantity_unit",
@@ -48,6 +49,14 @@
    "fieldtype": "Link",
    "label": "Farm",
    "options": "Farm"
+  },
+  {
+   "fieldname": "project",
+   "fieldtype": "Link",
+   "label": "Project",
+   "options": "Project",
+   "reqd": 1,
+   "in_list_view": 1
   },
   {
    "fieldname": "column_break_1",

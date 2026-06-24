@@ -51,7 +51,7 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Entry Type",
-   "options": "Opening\nReceipt\nPurchase\nBirth\nTransfer In\nIssue\nSale\nDeath\nTransfer Out\nAdjustment Increase\nAdjustment Decrease\nCost Capitalization",
+   "options": "Opening\nReceipt\nPurchase\nBirth\nTransfer\nIssue\nSale\nDeath",
    "reqd": 1
   },
   {

@@ -9,11 +9,7 @@
   "item_description",
   "budgeted_quantity",
   "budgeted_unit_cost",
-  "budgeted_amount",
-  "actual_amount",
-  "variance",
-  "variance_percent",
-  "variance_type"
+  "budgeted_amount"
  ],
  "fields": [
   {
@@ -44,33 +40,6 @@
    "fieldname": "budgeted_amount",
    "fieldtype": "Currency",
    "label": "Budgeted Amount",
-   "read_only": 1,
-   "in_list_view": 1
-  },
-  {
-   "fieldname": "actual_amount",
-   "fieldtype": "Currency",
-   "label": "Actual Amount",
-   "in_list_view": 1
-  },
-  {
-   "fieldname": "variance",
-   "fieldtype": "Currency",
-   "label": "Variance",
-   "read_only": 1,
-   "in_list_view": 1
-  },
-  {
-   "fieldname": "variance_percent",
-   "fieldtype": "Float",
-   "label": "Variance Percent",
-   "read_only": 1
-  },
-  {
-   "fieldname": "variance_type",
-   "fieldtype": "Select",
-   "label": "Variance Type",
-   "options": "Favourable\nAdverse",
    "read_only": 1,
    "in_list_view": 1
   }

@@ -24,12 +24,25 @@ frappe.ui.form.on("Animal Stock Entry", {
 		frappe.db.get_value(
 			"Biological Asset",
 			frm.doc.biological_asset,
-			["farm", "linked_project", "unit", "managed_item"]
+			["farm", "linked_project", "unit", "managed_item", "net_fair_value", "quantity"]
 		).then((r) => {
 			const asset = r.message || {};
 			frm.set_value("farm", asset.farm || frm.doc.farm);
 			frm.set_value("project", asset.linked_project || frm.doc.project);
 			frm.set_value("unit", asset.unit || frm.doc.unit);
+
+			if (["Sale", "Issue", "Transfer"].includes(frm.doc.entry_type)) {
+				if (asset.managed_item) {
+					frappe.db.get_value("Livestock Species", {species_name: asset.managed_item}, "name").then((res) => {
+						if (res && res.message && res.message.name) {
+							frm.set_value("species", res.message.name);
+						}
+					});
+				}
+				if (asset.net_fair_value && asset.quantity) {
+					frm.set_value("rate", flt(asset.net_fair_value) / flt(asset.quantity));
+				}
+			}
 		});
 	},
 
@@ -63,16 +76,15 @@ function update_amount(frm) {
 }
 
 function update_entry_type_fields(frm) {
-	const decrease_types = ["Issue", "Sale", "Death", "Transfer Out", "Adjustment Decrease"];
-	const cost_type = frm.doc.entry_type === "Cost Capitalization";
+	const decrease_types = ["Issue", "Sale", "Death"];
 	const sale_type = frm.doc.entry_type === "Sale";
 	const decrease_type = decrease_types.includes(frm.doc.entry_type);
 
-	frm.toggle_display("item", cost_type);
 	frm.toggle_display("sale_amount", sale_type);
-	frm.toggle_display("sale_journal_entry", sale_type || frm.doc.sale_journal_entry);
 	frm.toggle_display("asset_value_reduction", decrease_type || frm.doc.asset_value_reduction);
-	frm.toggle_display("journal_entry", decrease_type || frm.doc.journal_entry);
-	frm.toggle_display("capitalization", !decrease_type && (cost_type || frm.doc.capitalization));
 	frm.toggle_reqd("rate", !decrease_type);
+	
+	const is_transfer = frm.doc.entry_type === "Transfer";
+	frm.toggle_display("target_farm", is_transfer);
+	frm.toggle_reqd("target_farm", is_transfer);
 }

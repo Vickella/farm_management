@@ -17,9 +17,7 @@
   "section_break_items",
   "budget_items",
   "section_break_totals",
-  "total_budget",
-  "total_actual",
-  "total_variance"
+  "total_budget"
  ],
  "fields": [
   {
@@ -98,18 +96,6 @@
    "fieldname": "total_budget",
    "fieldtype": "Currency",
    "label": "Total Budget",
-   "read_only": 1
-  },
-  {
-   "fieldname": "total_actual",
-   "fieldtype": "Currency",
-   "label": "Total Actual",
-   "read_only": 1
-  },
-  {
-   "fieldname": "total_variance",
-   "fieldtype": "Currency",
-   "label": "Total Variance",
    "read_only": 1
   }
  ],

@@ -9,6 +9,10 @@
   "default_cost_center",
   "default_company",
   "default_harvest_warehouse",
+  "section_contract_farming",
+  "contract_farming_cost_center",
+  "contract_farming_income_account",
+  "contract_farming_liability_account",
   "section_break_ai",
   "ai_api_key",
   "ai_provider",
@@ -43,6 +47,29 @@
    "fieldtype": "Link",
    "label": "Default Harvest Warehouse",
    "options": "Warehouse"
+  },
+  {
+   "fieldname": "section_contract_farming",
+   "fieldtype": "Section Break",
+   "label": "Contract Farming Settings"
+  },
+  {
+   "fieldname": "contract_farming_cost_center",
+   "fieldtype": "Link",
+   "label": "Contract Farming Cost Center",
+   "options": "Cost Center"
+  },
+  {
+   "fieldname": "contract_farming_income_account",
+   "fieldtype": "Link",
+   "label": "Contract Farming Income Account",
+   "options": "Account"
+  },
+  {
+   "fieldname": "contract_farming_liability_account",
+   "fieldtype": "Link",
+   "label": "Contract Farming Liability Account",
+   "options": "Account"
   },
   {
    "fieldname": "section_break_ai",

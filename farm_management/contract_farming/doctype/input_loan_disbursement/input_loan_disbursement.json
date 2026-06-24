@@ -9,11 +9,8 @@
   "agreement",
   "farmer",
   "disbursement_date",
-  "input_type",
-  "item",
-  "quantity",
-  "unit",
-  "value",
+  "disbursed_inputs",
+  "total_value",
   "column_break_1",
   "recovered",
   "recovery_date",
@@ -51,35 +48,16 @@
    "in_list_view": 1
   },
   {
-   "fieldname": "input_type",
-   "fieldtype": "Select",
-   "label": "Input Type",
-   "options": "Seed\nFertilizer\nChemical\nCash",
-   "reqd": 1,
-   "in_list_view": 1
+   "fieldname": "disbursed_inputs",
+   "fieldtype": "Table",
+   "label": "Disbursed Inputs",
+   "options": "Contract Farming Input"
   },
   {
-   "fieldname": "item",
-   "fieldtype": "Link",
-   "label": "Item",
-   "options": "Item"
-  },
-  {
-   "fieldname": "quantity",
-   "fieldtype": "Float",
-   "label": "Quantity"
-  },
-  {
-   "fieldname": "unit",
-   "fieldtype": "Data",
-   "label": "Unit"
-  },
-  {
-   "fieldname": "value",
+   "fieldname": "total_value",
    "fieldtype": "Currency",
-   "label": "Value",
-   "reqd": 1,
-   "in_list_view": 1
+   "label": "Total Value",
+   "read_only": 1
   },
   {
    "fieldname": "column_break_1",

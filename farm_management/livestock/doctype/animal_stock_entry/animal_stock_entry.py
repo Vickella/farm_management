@@ -44,12 +44,12 @@ class AnimalStockEntry(Document):
                 frappe.throw("Breed must belong to the selected Animal.")
 
     def on_submit(self):
-        if self.entry_type in ("Opening", "Receipt", "Purchase", "Birth", "Transfer In", "Adjustment Increase"):
+        if self.entry_type in ("Opening", "Receipt", "Purchase", "Birth"):
             self.apply_increase()
-        elif self.entry_type in ("Issue", "Sale", "Death", "Transfer Out", "Adjustment Decrease"):
+        elif self.entry_type in ("Issue", "Sale", "Death"):
             self.apply_decrease()
-        elif self.entry_type == "Cost Capitalization":
-            self.apply_cost_capitalization()
+        elif self.entry_type == "Transfer":
+            self.apply_transfer()
 
         self.db_set("status", "Submitted", update_modified=False)
 
@@ -68,15 +68,9 @@ class AnimalStockEntry(Document):
                 self.name,
             )
 
-        if self.journal_entry and frappe.db.exists("Journal Entry", self.journal_entry):
-            journal_entry = frappe.get_doc("Journal Entry", self.journal_entry)
-            if journal_entry.docstatus == 1:
-                journal_entry.cancel()
-
-        if self.sale_journal_entry and frappe.db.exists("Journal Entry", self.sale_journal_entry):
-            sale_journal_entry = frappe.get_doc("Journal Entry", self.sale_journal_entry)
-            if sale_journal_entry.docstatus == 1:
-                sale_journal_entry.cancel()
+        if self.entry_type == "Transfer" and self.target_farm:
+            asset = frappe.get_doc("Biological Asset", self.biological_asset)
+            asset.db_set("farm", self.farm)
 
         self.db_set("status", "Cancelled", update_modified=False)
 
@@ -103,43 +97,14 @@ class AnimalStockEntry(Document):
             empty_status=get_empty_asset_status(self.entry_type),
         )
         self.db_set("asset_value_reduction", value_reduction, update_modified=False)
-        journal_entry = create_asset_outflow_journal_entry(
-            self.biological_asset,
-            value_reduction,
-            posting_date=self.posting_date,
-            project=self.project,
-            source_doctype=self.doctype,
-            source_name=self.name,
-            remarks=f"Animal stock {self.entry_type}: {self.name}",
-        )
-        if journal_entry:
-            self.db_set("journal_entry", journal_entry, update_modified=False)
 
-        if self.entry_type == "Sale" and flt(self.sale_amount):
-            sale_journal_entry = create_asset_sale_proceeds_journal_entry(
-                self.biological_asset,
-                self.sale_amount,
-                posting_date=self.posting_date,
-                project=self.project,
-                source_doctype=self.doctype,
-                source_name=self.name,
-            )
-            if sale_journal_entry:
-                self.db_set("sale_journal_entry", sale_journal_entry, update_modified=False)
-
-    def apply_cost_capitalization(self):
-        capitalization = create_capitalization_document(
-            biological_asset=self.biological_asset,
-            amount=self.amount,
-            capitalization_type="Other",
-            source_doctype=self.doctype,
-            source_name=self.name,
-            remarks=f"Animal stock cost capitalization: {self.item or ''}",
-            quantity_delta=0,
-            project=self.project,
-        )
-        if capitalization:
-            self.db_set("capitalization", capitalization, update_modified=False)
+    def apply_transfer(self):
+        if not self.target_farm:
+            frappe.throw("Target Farm is required for Transfer.")
+        asset = frappe.get_doc("Biological Asset", self.biological_asset)
+        if flt(self.quantity) < flt(asset.quantity):
+            frappe.throw("Partial transfer of biological asset is not supported via Stock Entry. Please split the asset first.")
+        asset.db_set("farm", self.target_farm)
 
 
 def get_capitalization_type(entry_type):
