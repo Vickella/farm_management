@@ -46,7 +46,7 @@
    "fieldname": "unit",
    "fieldtype": "Select",
    "label": "Unit",
-   "options": "kg\nLitre\nBag\nPiece\nHour\nDay",
+   "options": "kg\nKg\nLitre\nBag\nPiece\nHour\nDay",
    "reqd": 1,
    "in_list_view": 1
   },
