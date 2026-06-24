@@ -343,7 +343,7 @@ def reduce_asset_quantity(biological_asset, quantity, source_doctype=None, sourc
         return 0
 
     asset = frappe.get_doc("Biological Asset", biological_asset)
-    if quantity > flt(asset.quantity):
+    if asset.asset_category != "Crops in Growth" and quantity > flt(asset.quantity):
         frappe.throw("Harvest quantity cannot exceed Biological Asset quantity.")
 
     value_before = flt(asset.net_fair_value)

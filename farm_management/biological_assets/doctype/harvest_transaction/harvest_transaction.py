@@ -60,7 +60,8 @@ class HarvestTransaction(Document):
                     "item_code": self.conversion_item,
                     "qty": self.quantity_harvested,
                     "uom": self.unit,
-                    "basic_rate": (flt(asset.net_fair_value) / flt(self.quantity_harvested)) if asset.net_fair_value else (self.harvest_value or 0),
+                    "basic_rate": (flt(self.asset_value_reduction) / flt(self.quantity_harvested)) if self.asset_value_reduction else (self.harvest_value or 0),
+                    "allow_zero_valuation_rate": 1,
                     "t_warehouse": self.target_warehouse,
                 },
             )

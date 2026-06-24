@@ -12,8 +12,8 @@ class ContractFarmingAgreement(Document):
             frappe.throw("Contract End Date must be after Contract Start Date.")
 
     def calculate_totals(self):
-        self.total_input_loan = flt(self.seed_value) + flt(self.fertilizer_value) + flt(self.chemical_value)
-        self.total_expected_purchase = flt(self.production_target_kg) * flt(self.agreed_purchase_price_per_kg)
+        self.total_input_loan = sum(flt(row.value) for row in self.get("inputs_provided", []))
+        self.total_expected_purchase = flt(self.production_target) * flt(self.agreed_purchase_price_per_unit)
         self.actual_inputs_disbursed = flt(
             frappe.db.get_value(
                 "Input Loan Disbursement",

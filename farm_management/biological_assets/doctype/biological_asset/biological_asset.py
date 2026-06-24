@@ -5,8 +5,16 @@ from frappe.utils import flt, today
 class BiologicalAsset(Document):
     def validate(self):
         self.validate_managed_item()
+        self.validate_mandatory_fields()
         self.recalculate_valuation()
         self.validate_quantity()
+
+    def validate_mandatory_fields(self):
+        if self.asset_category != "Crops in Growth":
+            mandatory_fields = ["acquisition_date", "quantity", "unit", "initial_cost"]
+            missing = [f for f in mandatory_fields if self.get(f) is None or str(self.get(f)).strip() == ""]
+            if missing:
+                frappe.throw(f"Mandatory fields required for {self.asset_category}: {', '.join(missing)}")
 
     def validate_managed_item(self):
         if not self.farm_type or not self.managed_item:
