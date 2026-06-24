@@ -18,7 +18,7 @@ class ContractFarmingAgreement(Document):
             frappe.db.get_value(
                 "Input Loan Disbursement",
                 {"agreement": self.name, "docstatus": ["!=", 2]},
-                "sum(value)",
+                "sum(total_value)",
             )
         )
         self.harvest_recovery_value = flt(
