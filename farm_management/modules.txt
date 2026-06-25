@@ -10,3 +10,12 @@ Farm BOM
 Project Costing
 Contract Farming
 Agri Ai
+Crop Production
+Poultry Production
+Fish Farming
+Animal Husbandry
+Dairy Production
+Goat Farming
+Pig Farming
+Greenhouse Farming
+Accounting
