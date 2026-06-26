@@ -21,21 +21,44 @@
  "module": "Farm Setup",
  "name": "Farm Management",
  "title": "Farm Management",
- "content": "[{\"id\": \"farm-management-header\", \"type\": \"header\", \"data\": {\"text\": \"Farm Management\", \"col\": 12}}, {\"id\": \"card-farm-setup\", \"type\": \"card\", \"data\": {\"card_name\": \"Farm Setup\", \"col\": 4}}, {\"id\": \"card-biological-assets\", \"type\": \"card\", \"data\": {\"card_name\": \"Biological Assets\", \"col\": 4}}, {\"id\": \"card-poultry-production\", \"type\": \"card\", \"data\": {\"card_name\": \"Poultry Production\", \"col\": 4}}, {\"id\": \"card-crop-production\", \"type\": \"card\", \"data\": {\"card_name\": \"Crop Production\", \"col\": 4}}, {\"id\": \"card-fish-farming\", \"type\": \"card\", \"data\": {\"card_name\": \"Fish Farming\", \"col\": 4}}, {\"id\": \"card-dairy-production\", \"type\": \"card\", \"data\": {\"card_name\": \"Dairy Production\", \"col\": 4}}, {\"id\": \"card-animal-husbandry\", \"type\": \"card\", \"data\": {\"card_name\": \"Animal Husbandry\", \"col\": 4}}, {\"id\": \"card-goat-farming\", \"type\": \"card\", \"data\": {\"card_name\": \"Goat Farming\", \"col\": 4}}, {\"id\": \"card-pig-farming\", \"type\": \"card\", \"data\": {\"card_name\": \"Pig Farming\", \"col\": 4}}, {\"id\": \"card-greenhouse-farming\", \"type\": \"card\", \"data\": {\"card_name\": \"Greenhouse Farming\", \"col\": 4}}, {\"id\": \"card-accounting\", \"type\": \"card\", \"data\": {\"card_name\": \"Accounting\", \"col\": 4}}, {\"id\": \"spacer-1\", \"type\": \"spacer\", \"data\": {\"col\": 12}}, {\"id\": \"shortcuts-header\", \"type\": \"header\", \"data\": {\"text\": \"Shortcuts\", \"col\": 12}}, {\"id\": \"shortcut-biological-asset\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Biological Asset\", \"col\": 3}}, {\"id\": \"shortcut-broiler-batch\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Broiler Batch\", \"col\": 3}}, {\"id\": \"shortcut-farm-cashbook\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Farm Cashbook\", \"col\": 3}}, {\"id\": \"shortcut-harvest-log\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Harvest Log\", \"col\": 3}}, {\"id\": \"shortcut-pig-batch\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Pig Batch\", \"col\": 3}}]",
+ "modified": "2024-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "owner": "Administrator",
+ "sequence_id": 1.0,
+ "type": "Workspace",
+ "content": "[{\"id\": \"farm-management-header\", \"type\": \"header\", \"data\": {\"text\": \"Farm Management\", \"col\": 12}}, {\"id\": \"card-farm-setup\", \"type\": \"card\", \"data\": {\"card_name\": \"FARM SETUP\", \"col\": 4}}, {\"id\": \"card-crop-production\", \"type\": \"card\", \"data\": {\"card_name\": \"CROP PRODUCTION\", \"col\": 4}}, {\"id\": \"card-poultry-management\", \"type\": \"card\", \"data\": {\"card_name\": \"POULTRY MANAGEMENT\", \"col\": 4}}, {\"id\": \"card-fish-farming\", \"type\": \"card\", \"data\": {\"card_name\": \"FISH FARMING\", \"col\": 4}}, {\"id\": \"card-livestock-management\", \"type\": \"card\", \"data\": {\"card_name\": \"LIVESTOCK MANAGEMENT\", \"col\": 4}}, {\"id\": \"card-dairy-management\", \"type\": \"card\", \"data\": {\"card_name\": \"DAIRY MANAGEMENT\", \"col\": 4}}, {\"id\": \"card-biological-assets-ias-41\", \"type\": \"card\", \"data\": {\"card_name\": \"BIOLOGICAL ASSETS IAS 41\", \"col\": 4}}, {\"id\": \"card-financial-management\", \"type\": \"card\", \"data\": {\"card_name\": \"FINANCIAL MANAGEMENT\", \"col\": 4}}, {\"id\": \"card-inventory-management\", \"type\": \"card\", \"data\": {\"card_name\": \"INVENTORY MANAGEMENT\", \"col\": 4}}, {\"id\": \"card-reporting-analytics\", \"type\": \"card\", \"data\": {\"card_name\": \"REPORTING & ANALYTICS\", \"col\": 4}}, {\"id\": \"spacer-1\", \"type\": \"spacer\", \"data\": {\"col\": 12}}, {\"id\": \"shortcuts-header\", \"type\": \"header\", \"data\": {\"text\": \"Shortcuts\", \"col\": 12}}, {\"id\": \"shortcut-farm\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Farm\", \"col\": 3}}, {\"id\": \"shortcut-biological-asset-register\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Biological Asset Register\", \"col\": 3}}, {\"id\": \"shortcut-farm-cashbook\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Farm Cashbook\", \"col\": 3}}, {\"id\": \"shortcut-farm-budget\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Farm Budget\", \"col\": 3}}]",
  "links": [
   {
    "type": "Card Break",
-   "label": "Farm Setup",
+   "label": "FARM SETUP",
    "hidden": 0,
    "is_query_report": 0,
    "onboard": 0,
-   "link_count": 4
+   "link_count": 5
   },
   {
    "type": "Link",
    "label": "Farm",
    "link_type": "DocType",
    "link_to": "Farm",
+   "hidden": 0,
+   "is_query_report": 0,
+   "onboard": 0
+  },
+  {
+   "type": "Link",
+   "label": "Agriculture Project",
+   "link_type": "DocType",
+   "link_to": "Agriculture Project",
+   "hidden": 0,
+   "is_query_report": 0,
+   "onboard": 0
+  },
+  {
+   "type": "Link",
+   "label": "Farm Unit",
+   "link_type": "DocType",
+   "link_to": "Farm Unit",
    "hidden": 0,
    "is_query_report": 0,
    "onboard": 0
@@ -51,35 +74,399 @@
   },
   {
    "type": "Link",
-   "label": "Crop Type",
+   "label": "Production Cycle",
    "link_type": "DocType",
-   "link_to": "Crop Type",
-   "hidden": 0,
-   "is_query_report": 0,
-   "onboard": 0
-  },
-  {
-   "type": "Link",
-   "label": "Farm Management Settings",
-   "link_type": "DocType",
-   "link_to": "Farm Management Settings",
+   "link_to": "Production Cycle",
    "hidden": 0,
    "is_query_report": 0,
    "onboard": 0
   },
   {
    "type": "Card Break",
-   "label": "Biological Assets",
+   "label": "CROP PRODUCTION",
    "hidden": 0,
    "is_query_report": 0,
    "onboard": 0,
-   "link_count": 4
+   "link_count": 8
   },
   {
    "type": "Link",
-   "label": "Biological Asset",
+   "label": "Crop Project",
    "link_type": "DocType",
-   "link_to": "Biological Asset",
+   "link_to": "Crop Project",
+   "hidden": 0,
+   "is_query_report": 0,
+   "onboard": 0
+  },
+  {
+   "type": "Link",
+   "label": "Seed Registry",
+   "link_type": "DocType",
+   "link_to": "Seed Registry",
+   "hidden": 0,
+   "is_query_report": 0,
+   "onboard": 0
+  },
+  {
+   "type": "Link",
+   "label": "Planting Schedule",
+   "link_type": "DocType",
+   "link_to": "Planting Schedule",
+   "hidden": 0,
+   "is_query_report": 0,
+   "onboard": 0
+  },
+  {
+   "type": "Link",
+   "label": "Fertilizer Application",
+   "link_type": "DocType",
+   "link_to": "Fertilizer Application",
+   "hidden": 0,
+   "is_query_report": 0,
+   "onboard": 0
+  },
+  {
+   "type": "Link",
+   "label": "Irrigation Schedule",
+   "link_type": "DocType",
+   "link_to": "Irrigation Schedule",
+   "hidden": 0,
+   "is_query_report": 0,
+   "onboard": 0
+  },
+  {
+   "type": "Link",
+   "label": "Crop Growth Monitoring",
+   "link_type": "DocType",
+   "link_to": "Crop Growth Monitoring",
+   "hidden": 0,
+   "is_query_report": 0,
+   "onboard": 0
+  },
+  {
+   "type": "Link",
+   "label": "Crop Harvesting",
+   "link_type": "DocType",
+   "link_to": "Crop Harvesting",
+   "hidden": 0,
+   "is_query_report": 0,
+   "onboard": 0
+  },
+  {
+   "type": "Link",
+   "label": "Crop Yield Analysis",
+   "link_type": "Report",
+   "link_to": "Crop Yield Analysis",
+   "hidden": 0,
+   "is_query_report": 1,
+   "onboard": 0
+  },
+  {
+   "type": "Card Break",
+   "label": "POULTRY MANAGEMENT",
+   "hidden": 0,
+   "is_query_report": 0,
+   "onboard": 0,
+   "link_count": 8
+  },
+  {
+   "type": "Link",
+   "label": "Poultry Batch",
+   "link_type": "DocType",
+   "link_to": "Poultry Batch",
+   "hidden": 0,
+   "is_query_report": 0,
+   "onboard": 0
+  },
+  {
+   "type": "Link",
+   "label": "Broiler Cycle",
+   "link_type": "DocType",
+   "link_to": "Broiler Cycle",
+   "hidden": 0,
+   "is_query_report": 0,
+   "onboard": 0
+  },
+  {
+   "type": "Link",
+   "label": "Layer Production",
+   "link_type": "DocType",
+   "link_to": "Layer Production",
+   "hidden": 0,
+   "is_query_report": 0,
+   "onboard": 0
+  },
+  {
+   "type": "Link",
+   "label": "Feed Consumption",
+   "link_type": "DocType",
+   "link_to": "Feed Consumption",
+   "hidden": 0,
+   "is_query_report": 0,
+   "onboard": 0
+  },
+  {
+   "type": "Link",
+   "label": "Vaccination Schedule",
+   "link_type": "DocType",
+   "link_to": "Vaccination Schedule",
+   "hidden": 0,
+   "is_query_report": 0,
+   "onboard": 0
+  },
+  {
+   "type": "Link",
+   "label": "Egg Production",
+   "link_type": "DocType",
+   "link_to": "Egg Production",
+   "hidden": 0,
+   "is_query_report": 0,
+   "onboard": 0
+  },
+  {
+   "type": "Link",
+   "label": "Mortality Tracking",
+   "link_type": "DocType",
+   "link_to": "Mortality Tracking",
+   "hidden": 0,
+   "is_query_report": 0,
+   "onboard": 0
+  },
+  {
+   "type": "Link",
+   "label": "Poultry Sales",
+   "link_type": "DocType",
+   "link_to": "Poultry Sales",
+   "hidden": 0,
+   "is_query_report": 0,
+   "onboard": 0
+  },
+  {
+   "type": "Card Break",
+   "label": "FISH FARMING",
+   "hidden": 0,
+   "is_query_report": 0,
+   "onboard": 0,
+   "link_count": 7
+  },
+  {
+   "type": "Link",
+   "label": "Fish Pond",
+   "link_type": "DocType",
+   "link_to": "Fish Pond",
+   "hidden": 0,
+   "is_query_report": 0,
+   "onboard": 0
+  },
+  {
+   "type": "Link",
+   "label": "Fish Batch",
+   "link_type": "DocType",
+   "link_to": "Fish Batch",
+   "hidden": 0,
+   "is_query_report": 0,
+   "onboard": 0
+  },
+  {
+   "type": "Link",
+   "label": "Fingerling Stocking",
+   "link_type": "DocType",
+   "link_to": "Fingerling Stocking",
+   "hidden": 0,
+   "is_query_report": 0,
+   "onboard": 0
+  },
+  {
+   "type": "Link",
+   "label": "Water Quality Monitoring",
+   "link_type": "DocType",
+   "link_to": "Water Quality Monitoring",
+   "hidden": 0,
+   "is_query_report": 0,
+   "onboard": 0
+  },
+  {
+   "type": "Link",
+   "label": "Feed Schedule",
+   "link_type": "DocType",
+   "link_to": "Feed Schedule",
+   "hidden": 0,
+   "is_query_report": 0,
+   "onboard": 0
+  },
+  {
+   "type": "Link",
+   "label": "Growth Monitoring",
+   "link_type": "DocType",
+   "link_to": "Growth Monitoring",
+   "hidden": 0,
+   "is_query_report": 0,
+   "onboard": 0
+  },
+  {
+   "type": "Link",
+   "label": "Fish Harvesting",
+   "link_type": "DocType",
+   "link_to": "Fish Harvesting",
+   "hidden": 0,
+   "is_query_report": 0,
+   "onboard": 0
+  },
+  {
+   "type": "Card Break",
+   "label": "LIVESTOCK MANAGEMENT",
+   "hidden": 0,
+   "is_query_report": 0,
+   "onboard": 0,
+   "link_count": 8
+  },
+  {
+   "type": "Link",
+   "label": "Animal Registry",
+   "link_type": "DocType",
+   "link_to": "Animal Registry",
+   "hidden": 0,
+   "is_query_report": 0,
+   "onboard": 0
+  },
+  {
+   "type": "Link",
+   "label": "Breed Registry",
+   "link_type": "DocType",
+   "link_to": "Breed Registry",
+   "hidden": 0,
+   "is_query_report": 0,
+   "onboard": 0
+  },
+  {
+   "type": "Link",
+   "label": "Animal Weight Tracking",
+   "link_type": "DocType",
+   "link_to": "Animal Weight Tracking",
+   "hidden": 0,
+   "is_query_report": 0,
+   "onboard": 0
+  },
+  {
+   "type": "Link",
+   "label": "Livestock Feeding",
+   "link_type": "DocType",
+   "link_to": "Livestock Feeding",
+   "hidden": 0,
+   "is_query_report": 0,
+   "onboard": 0
+  },
+  {
+   "type": "Link",
+   "label": "Breeding Record",
+   "link_type": "DocType",
+   "link_to": "Breeding Record",
+   "hidden": 0,
+   "is_query_report": 0,
+   "onboard": 0
+  },
+  {
+   "type": "Link",
+   "label": "Health Record",
+   "link_type": "DocType",
+   "link_to": "Health Record",
+   "hidden": 0,
+   "is_query_report": 0,
+   "onboard": 0
+  },
+  {
+   "type": "Link",
+   "label": "Vaccination Record",
+   "link_type": "DocType",
+   "link_to": "Vaccination Record",
+   "hidden": 0,
+   "is_query_report": 0,
+   "onboard": 0
+  },
+  {
+   "type": "Link",
+   "label": "Mortality Record",
+   "link_type": "DocType",
+   "link_to": "Mortality Record",
+   "hidden": 0,
+   "is_query_report": 0,
+   "onboard": 0
+  },
+  {
+   "type": "Card Break",
+   "label": "DAIRY MANAGEMENT",
+   "hidden": 0,
+   "is_query_report": 0,
+   "onboard": 0,
+   "link_count": 6
+  },
+  {
+   "type": "Link",
+   "label": "Dairy Herd",
+   "link_type": "DocType",
+   "link_to": "Dairy Herd",
+   "hidden": 0,
+   "is_query_report": 0,
+   "onboard": 0
+  },
+  {
+   "type": "Link",
+   "label": "Milk Production",
+   "link_type": "DocType",
+   "link_to": "Milk Production",
+   "hidden": 0,
+   "is_query_report": 0,
+   "onboard": 0
+  },
+  {
+   "type": "Link",
+   "label": "Milking Session",
+   "link_type": "DocType",
+   "link_to": "Milking Session",
+   "hidden": 0,
+   "is_query_report": 0,
+   "onboard": 0
+  },
+  {
+   "type": "Link",
+   "label": "Feed Record",
+   "link_type": "DocType",
+   "link_to": "Feed Record",
+   "hidden": 0,
+   "is_query_report": 0,
+   "onboard": 0
+  },
+  {
+   "type": "Link",
+   "label": "Lactation Tracking",
+   "link_type": "DocType",
+   "link_to": "Lactation Tracking",
+   "hidden": 0,
+   "is_query_report": 0,
+   "onboard": 0
+  },
+  {
+   "type": "Link",
+   "label": "Milk Sales",
+   "link_type": "DocType",
+   "link_to": "Milk Sales",
+   "hidden": 0,
+   "is_query_report": 0,
+   "onboard": 0
+  },
+  {
+   "type": "Card Break",
+   "label": "BIOLOGICAL ASSETS IAS 41",
+   "hidden": 0,
+   "is_query_report": 0,
+   "onboard": 0,
+   "link_count": 6
+  },
+  {
+   "type": "Link",
+   "label": "Biological Asset Register",
+   "link_type": "DocType",
+   "link_to": "Biological Asset Register",
    "hidden": 0,
    "is_query_report": 0,
    "onboard": 0
@@ -95,6 +482,24 @@
   },
   {
    "type": "Link",
+   "label": "Fair Value Measurement",
+   "link_type": "DocType",
+   "link_to": "Fair Value Measurement",
+   "hidden": 0,
+   "is_query_report": 0,
+   "onboard": 0
+  },
+  {
+   "type": "Link",
+   "label": "Asset Transformation Tracking",
+   "link_type": "DocType",
+   "link_to": "Asset Transformation Tracking",
+   "hidden": 0,
+   "is_query_report": 0,
+   "onboard": 0
+  },
+  {
+   "type": "Link",
    "label": "Biological Asset Valuation",
    "link_type": "DocType",
    "link_to": "Biological Asset Valuation",
@@ -104,342 +509,44 @@
   },
   {
    "type": "Link",
-   "label": "Harvest Transaction",
-   "link_type": "DocType",
-   "link_to": "Harvest Transaction",
+   "label": "IAS 41 Report",
+   "link_type": "Report",
+   "link_to": "IAS 41 Report",
    "hidden": 0,
-   "is_query_report": 0,
+   "is_query_report": 1,
    "onboard": 0
   },
   {
    "type": "Card Break",
-   "label": "Poultry Production",
+   "label": "FINANCIAL MANAGEMENT",
    "hidden": 0,
    "is_query_report": 0,
    "onboard": 0,
-   "link_count": 4
-  },
-  {
-   "type": "Link",
-   "label": "Poultry Flock",
-   "link_type": "DocType",
-   "link_to": "Poultry Flock",
-   "hidden": 0,
-   "is_query_report": 0,
-   "onboard": 0
-  },
-  {
-   "type": "Link",
-   "label": "Broiler Batch",
-   "link_type": "DocType",
-   "link_to": "Broiler Batch",
-   "hidden": 0,
-   "is_query_report": 0,
-   "onboard": 0
-  },
-  {
-   "type": "Link",
-   "label": "Egg Production Log",
-   "link_type": "DocType",
-   "link_to": "Egg Production Log",
-   "hidden": 0,
-   "is_query_report": 0,
-   "onboard": 0
-  },
-  {
-   "type": "Link",
-   "label": "Poultry Infrastructure",
-   "link_type": "DocType",
-   "link_to": "Poultry Infrastructure",
-   "hidden": 0,
-   "is_query_report": 0,
-   "onboard": 0
-  },
-  {
-   "type": "Card Break",
-   "label": "Crop Production",
-   "hidden": 0,
-   "is_query_report": 0,
-   "onboard": 0,
-   "link_count": 3
-  },
-  {
-   "type": "Link",
-   "label": "Crop Cycle",
-   "link_type": "DocType",
-   "link_to": "Crop Cycle",
-   "hidden": 0,
-   "is_query_report": 0,
-   "onboard": 0
-  },
-  {
-   "type": "Link",
-   "label": "Field Management",
-   "link_type": "DocType",
-   "link_to": "Field Management",
-   "hidden": 0,
-   "is_query_report": 0,
-   "onboard": 0
-  },
-  {
-   "type": "Link",
-   "label": "Harvest Log",
-   "link_type": "DocType",
-   "link_to": "Harvest Log",
-   "hidden": 0,
-   "is_query_report": 0,
-   "onboard": 0
-  },
-  {
-   "type": "Card Break",
-   "label": "Fish Farming",
-   "hidden": 0,
-   "is_query_report": 0,
-   "onboard": 0,
-   "link_count": 4
-  },
-  {
-   "type": "Link",
-   "label": "Fish Batch",
-   "link_type": "DocType",
-   "link_to": "Fish Batch",
-   "hidden": 0,
-   "is_query_report": 0,
-   "onboard": 0
-  },
-  {
-   "type": "Link",
-   "label": "Pond Management",
-   "link_type": "DocType",
-   "link_to": "Pond Management",
-   "hidden": 0,
-   "is_query_report": 0,
-   "onboard": 0
-  },
-  {
-   "type": "Link",
-   "label": "Water Quality Log",
-   "link_type": "DocType",
-   "link_to": "Water Quality Log",
-   "hidden": 0,
-   "is_query_report": 0,
-   "onboard": 0
-  },
-  {
-   "type": "Link",
-   "label": "Fish Feeding Log",
-   "link_type": "DocType",
-   "link_to": "Fish Feeding Log",
-   "hidden": 0,
-   "is_query_report": 0,
-   "onboard": 0
-  },
-  {
-   "type": "Card Break",
-   "label": "Dairy Production",
-   "hidden": 0,
-   "is_query_report": 0,
-   "onboard": 0,
-   "link_count": 4
-  },
-  {
-   "type": "Link",
-   "label": "Dairy Cow Herd",
-   "link_type": "DocType",
-   "link_to": "Dairy Cow Herd",
-   "hidden": 0,
-   "is_query_report": 0,
-   "onboard": 0
-  },
-  {
-   "type": "Link",
-   "label": "Lactation Cycle",
-   "link_type": "DocType",
-   "link_to": "Lactation Cycle",
-   "hidden": 0,
-   "is_query_report": 0,
-   "onboard": 0
-  },
-  {
-   "type": "Link",
-   "label": "Milk Yield Log",
-   "link_type": "DocType",
-   "link_to": "Milk Yield Log",
-   "hidden": 0,
-   "is_query_report": 0,
-   "onboard": 0
-  },
-  {
-   "type": "Link",
-   "label": "Dairy Infrastructure",
-   "link_type": "DocType",
-   "link_to": "Dairy Infrastructure",
-   "hidden": 0,
-   "is_query_report": 0,
-   "onboard": 0
-  },
-  {
-   "type": "Card Break",
-   "label": "Animal Husbandry",
-   "hidden": 0,
-   "is_query_report": 0,
-   "onboard": 0,
-   "link_count": 4
-  },
-  {
-   "type": "Link",
-   "label": "Cattle Herd",
-   "link_type": "DocType",
-   "link_to": "Cattle Herd",
-   "hidden": 0,
-   "is_query_report": 0,
-   "onboard": 0
-  },
-  {
-   "type": "Link",
-   "label": "Breeding Log",
-   "link_type": "DocType",
-   "link_to": "Breeding Log",
-   "hidden": 0,
-   "is_query_report": 0,
-   "onboard": 0
-  },
-  {
-   "type": "Link",
-   "label": "Meat Production Log",
-   "link_type": "DocType",
-   "link_to": "Meat Production Log",
-   "hidden": 0,
-   "is_query_report": 0,
-   "onboard": 0
-  },
-  {
-   "type": "Link",
-   "label": "Cattle Infrastructure",
-   "link_type": "DocType",
-   "link_to": "Cattle Infrastructure",
-   "hidden": 0,
-   "is_query_report": 0,
-   "onboard": 0
-  },
-  {
-   "type": "Card Break",
-   "label": "Goat Farming",
-   "hidden": 0,
-   "is_query_report": 0,
-   "onboard": 0,
-   "link_count": 3
-  },
-  {
-   "type": "Link",
-   "label": "Goat Herd",
-   "link_type": "DocType",
-   "link_to": "Goat Herd",
-   "hidden": 0,
-   "is_query_report": 0,
-   "onboard": 0
-  },
-  {
-   "type": "Link",
-   "label": "Goat Breeding Log",
-   "link_type": "DocType",
-   "link_to": "Goat Breeding Log",
-   "hidden": 0,
-   "is_query_report": 0,
-   "onboard": 0
-  },
-  {
-   "type": "Link",
-   "label": "Goat Meat Milk Log",
-   "link_type": "DocType",
-   "link_to": "Goat Meat Milk Log",
-   "hidden": 0,
-   "is_query_report": 0,
-   "onboard": 0
-  },
-  {
-   "type": "Card Break",
-   "label": "Pig Farming",
-   "hidden": 0,
-   "is_query_report": 0,
-   "onboard": 0,
-   "link_count": 3
-  },
-  {
-   "type": "Link",
-   "label": "Pig Batch",
-   "link_type": "DocType",
-   "link_to": "Pig Batch",
-   "hidden": 0,
-   "is_query_report": 0,
-   "onboard": 0
-  },
-  {
-   "type": "Link",
-   "label": "Farrowing Log",
-   "link_type": "DocType",
-   "link_to": "Farrowing Log",
-   "hidden": 0,
-   "is_query_report": 0,
-   "onboard": 0
-  },
-  {
-   "type": "Link",
-   "label": "Pig Infrastructure",
-   "link_type": "DocType",
-   "link_to": "Pig Infrastructure",
-   "hidden": 0,
-   "is_query_report": 0,
-   "onboard": 0
-  },
-  {
-   "type": "Card Break",
-   "label": "Greenhouse Farming",
-   "hidden": 0,
-   "is_query_report": 0,
-   "onboard": 0,
-   "link_count": 3
-  },
-  {
-   "type": "Link",
-   "label": "Greenhouse Cycle",
-   "link_type": "DocType",
-   "link_to": "Greenhouse Cycle",
-   "hidden": 0,
-   "is_query_report": 0,
-   "onboard": 0
-  },
-  {
-   "type": "Link",
-   "label": "Climate Control Log",
-   "link_type": "DocType",
-   "link_to": "Climate Control Log",
-   "hidden": 0,
-   "is_query_report": 0,
-   "onboard": 0
-  },
-  {
-   "type": "Link",
-   "label": "Greenhouse Harvest Log",
-   "link_type": "DocType",
-   "link_to": "Greenhouse Harvest Log",
-   "hidden": 0,
-   "is_query_report": 0,
-   "onboard": 0
-  },
-  {
-   "type": "Card Break",
-   "label": "Accounting",
-   "hidden": 0,
-   "is_query_report": 0,
-   "onboard": 0,
-   "link_count": 3
+   "link_count": 7
   },
   {
    "type": "Link",
    "label": "Farm Cashbook",
    "link_type": "DocType",
    "link_to": "Farm Cashbook",
+   "hidden": 0,
+   "is_query_report": 0,
+   "onboard": 0
+  },
+  {
+   "type": "Link",
+   "label": "Farm Expense Entry",
+   "link_type": "DocType",
+   "link_to": "Farm Expense Entry",
+   "hidden": 0,
+   "is_query_report": 0,
+   "onboard": 0
+  },
+  {
+   "type": "Link",
+   "label": "Farm Revenue Entry",
+   "link_type": "DocType",
+   "link_to": "Farm Revenue Entry",
    "hidden": 0,
    "is_query_report": 0,
    "onboard": 0
@@ -455,26 +562,159 @@
   },
   {
    "type": "Link",
-   "label": "Payment Entry",
+   "label": "Cost Center",
    "link_type": "DocType",
-   "link_to": "Payment Entry",
+   "link_to": "Cost Center",
    "hidden": 0,
    "is_query_report": 0,
+   "onboard": 0
+  },
+  {
+   "type": "Link",
+   "label": "Profitability Analysis",
+   "link_type": "Report",
+   "link_to": "Profitability Analysis",
+   "hidden": 0,
+   "is_query_report": 1,
+   "onboard": 0
+  },
+  {
+   "type": "Link",
+   "label": "Farm Budget",
+   "link_type": "DocType",
+   "link_to": "Farm Budget",
+   "hidden": 0,
+   "is_query_report": 0,
+   "onboard": 0
+  },
+  {
+   "type": "Card Break",
+   "label": "INVENTORY MANAGEMENT",
+   "hidden": 0,
+   "is_query_report": 0,
+   "onboard": 0,
+   "link_count": 5
+  },
+  {
+   "type": "Link",
+   "label": "Farm BOM",
+   "link_type": "DocType",
+   "link_to": "Farm BOM",
+   "hidden": 0,
+   "is_query_report": 0,
+   "onboard": 0
+  },
+  {
+   "type": "Link",
+   "label": "Inventory Consumption",
+   "link_type": "DocType",
+   "link_to": "Inventory Consumption",
+   "hidden": 0,
+   "is_query_report": 0,
+   "onboard": 0
+  },
+  {
+   "type": "Link",
+   "label": "Stock Issue",
+   "link_type": "DocType",
+   "link_to": "Stock Issue",
+   "hidden": 0,
+   "is_query_report": 0,
+   "onboard": 0
+  },
+  {
+   "type": "Link",
+   "label": "Stock Receipt",
+   "link_type": "DocType",
+   "link_to": "Stock Receipt",
+   "hidden": 0,
+   "is_query_report": 0,
+   "onboard": 0
+  },
+  {
+   "type": "Link",
+   "label": "Warehouse",
+   "link_type": "DocType",
+   "link_to": "Warehouse",
+   "hidden": 0,
+   "is_query_report": 0,
+   "onboard": 0
+  },
+  {
+   "type": "Card Break",
+   "label": "REPORTING & ANALYTICS",
+   "hidden": 0,
+   "is_query_report": 0,
+   "onboard": 0,
+   "link_count": 6
+  },
+  {
+   "type": "Link",
+   "label": "Production Report",
+   "link_type": "Report",
+   "link_to": "Production Report",
+   "hidden": 0,
+   "is_query_report": 1,
+   "onboard": 0
+  },
+  {
+   "type": "Link",
+   "label": "Profitability Report",
+   "link_type": "Report",
+   "link_to": "Profitability Report",
+   "hidden": 0,
+   "is_query_report": 1,
+   "onboard": 0
+  },
+  {
+   "type": "Link",
+   "label": "Yield Report",
+   "link_type": "Report",
+   "link_to": "Yield Report",
+   "hidden": 0,
+   "is_query_report": 1,
+   "onboard": 0
+  },
+  {
+   "type": "Link",
+   "label": "Expense Report",
+   "link_type": "Report",
+   "link_to": "Expense Report",
+   "hidden": 0,
+   "is_query_report": 1,
+   "onboard": 0
+  },
+  {
+   "type": "Link",
+   "label": "Asset Valuation Report",
+   "link_type": "Report",
+   "link_to": "Asset Valuation Report",
+   "hidden": 0,
+   "is_query_report": 1,
+   "onboard": 0
+  },
+  {
+   "type": "Link",
+   "label": "Forecasting Dashboard",
+   "link_type": "Report",
+   "link_to": "Forecasting Dashboard",
+   "hidden": 0,
+   "is_query_report": 1,
    "onboard": 0
   }
  ],
  "shortcuts": [
   {
-   "label": "Biological Asset",
+   "label": "Farm",
    "type": "DocType",
-   "link_to": "Biological Asset",
+   "link_to": "Farm",
    "doc_view": "List",
    "color": "Grey"
   },
   {
-   "label": "Broiler Batch",
+   "label": "Biological Asset Register",
    "type": "DocType",
-   "link_to": "Broiler Batch",
+   "link_to": "Biological Asset Register",
    "doc_view": "List",
    "color": "Grey"
   },
@@ -486,23 +726,11 @@
    "color": "Grey"
   },
   {
-   "label": "Harvest Log",
+   "label": "Farm Budget",
    "type": "DocType",
-   "link_to": "Harvest Log",
-   "doc_view": "List",
-   "color": "Grey"
-  },
-  {
-   "label": "Pig Batch",
-   "type": "DocType",
-   "link_to": "Pig Batch",
+   "link_to": "Farm Budget",
    "doc_view": "List",
    "color": "Grey"
   }
- ],
- "modified": "2024-01-01 00:00:00.000000",
- "modified_by": "Administrator",
- "owner": "Administrator",
- "sequence_id": 1.0,
- "type": "Workspace"
+ ]
 }
