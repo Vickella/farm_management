@@ -79,19 +79,85 @@ WORKSPACE_GROUPS = [
         ],
     ),
     (
-        "Farm Infrastructure",
+        "Crop Production",
         [
+            ("Crop Cycle", "DocType"),
+            ("Field Management", "DocType"),
+            ("Harvest Log", "DocType"),
             ("Farm Field", "DocType"),
-            ("Farm Pond", "DocType"),
-            ("Farm Pen", "DocType"),
+        ],
+    ),
+    (
+        "Greenhouse Farming",
+        [
+            ("Greenhouse Cycle", "DocType"),
+            ("Climate Control Log", "DocType"),
+            ("Greenhouse Harvest Log", "DocType"),
+        ],
+    ),
+    (
+        "Poultry Production",
+        [
+            ("Poultry Flock", "DocType"),
+            ("Broiler Batch", "DocType"),
+            ("Egg Production Log", "DocType"),
+            ("Poultry Infrastructure", "DocType"),
             ("Fowl Run", "DocType"),
         ],
     ),
     (
-        "Livestock Tracking",
+        "Fish Farming",
         [
-            ("Livestock Individual", "DocType"),
+            ("Fish Batch", "DocType"),
+            ("Pond Management", "DocType"),
+            ("Water Quality Log", "DocType"),
+            ("Fish Feeding Log", "DocType"),
+            ("Feeding Log", "DocType"),
+            ("Farm Pond", "DocType"),
+        ],
+    ),
+    (
+        "Animal Husbandry",
+        [
+            ("Animal Herd", "DocType"),
+            ("Cattle Herd", "DocType"),
+            ("Cattle Infrastructure", "DocType"),
+            ("Breeding Log", "DocType"),
+            ("Meat Production Log", "DocType"),
+            ("Farm Pen", "DocType"),
+        ],
+    ),
+    (
+        "Dairy Production",
+        [
+            ("Dairy Cow Herd", "DocType"),
+            ("Dairy Infrastructure", "DocType"),
+            ("Lactation Cycle", "DocType"),
+            ("Milk Yield Log", "DocType"),
+            ("Dairy Milking Cycle", "DocType"),
+        ],
+    ),
+    (
+        "Goat Farming",
+        [
+            ("Goat Herd", "DocType"),
+            ("Goat Breeding Log", "DocType"),
+            ("Goat Meat Milk Log", "DocType"),
+        ],
+    ),
+    (
+        "Pig Farming",
+        [
+            ("Pig Batch", "DocType"),
+            ("Farrowing Log", "DocType"),
+            ("Pig Infrastructure", "DocType"),
+        ],
+    ),
+    (
+        "Livestock Records",
+        [
             ("Animal Stock Entry", "DocType"),
+            ("Livestock Individual", "DocType"),
             ("Livestock Species", "DocType"),
             ("Livestock Breed", "DocType"),
             ("Livestock Health Event", "DocType"),
@@ -99,56 +165,68 @@ WORKSPACE_GROUPS = [
         ],
     ),
     (
-        "Biological Assets",
+        "IAS 41 Biological Assets",
         [
             ("Biological Asset", "DocType"),
             ("Biological Asset Capitalization", "DocType"),
             ("Biological Asset Valuation", "DocType"),
             ("Harvest Transaction", "DocType"),
+            ("Biological Asset Register", "Report"),
+            ("Animal Stock Ledger", "Report"),
         ],
     ),
     (
         "Disease and Pest Intelligence",
-        [("Disease Incident", "DocType"), ("Pest", "DocType"), ("Animal Disease", "DocType")],
+        [("Disease Incident", "DocType"), ("Animal Disease", "DocType"), ("Pest", "DocType")],
     ),
-    ("Farm BOM and Budgeting", [("Farm BOM", "DocType"), ("Farm Budget", "DocType")]),
     (
         "Contract Farming",
         [
-            ("Outgrower Farmer", "DocType"),
             ("Contract Farming Agreement", "DocType"),
+            ("Outgrower Farmer", "DocType"),
             ("Input Loan Disbursement", "DocType"),
             ("Harvest Recovery", "DocType"),
+            ("Contract Farming Statement", "Report"),
         ],
     ),
-    ("Farm Calendar", [("Farm Activity", "DocType"), ("Farm Activity Type", "DocType")]),
-    ("Weather", [("Farm Weather Forecast", "Page", "farm-weather")]),
     (
-        "Reports",
+        "Budgeting and Costing",
+        [
+            ("Farm Budget", "DocType"),
+            ("Budget Forecasting", "DocType"),
+            ("Farm BOM", "DocType"),
+            ("Standard Cost Calculation BOM", "DocType"),
+            ("Farm Budget Variance Analysis", "Report"),
+        ],
+    ),
+    ("Accounting", [("Farm Cashbook", "DocType")]),
+    (
+        "Farm Calendar",
+        [("Farm Activity", "DocType"), ("Farm Activity Type", "DocType")],
+    ),
+    (
+        "Decision Support",
         [
             ("Farm KPI Summary", "Report"),
-            ("Farm Budget Variance Analysis", "Report"),
-            ("Biological Asset Register", "Report"),
-            ("Animal Stock Ledger", "Report"),
-            ("Contract Farming Statement", "Report"),
+            ("Farm Weather Forecast", "Page", "farm-weather"),
+            ("Agri GPT", "Page", "agri-gpt"),
         ],
     ),
 ]
 
 WORKSPACE_SHORTCUTS = [
     "Farm",
-    "Biological Asset",
-    "Biological Asset Valuation",
-    "Livestock Individual",
+    "Agriculture Project Type",
+    "Crop Cycle",
+    "Poultry Flock",
+    "Fish Batch",
+    "Animal Herd",
     "Animal Stock Entry",
-    "Livestock Health Event",
-    "Disease Incident",
-    "Farm BOM",
+    "Biological Asset",
     "Farm Budget",
-    "Contract Farming Agreement",
+    ("Farm KPI Summary", "Report"),
     ("Farm Weather", "Page", "farm-weather"),
 ]
-
 
 def get_workspace_content():
     content = [{"id": "farm-shortcuts-header", "type": "header", "data": {"text": "Shortcuts", "col": 12}}]
@@ -213,10 +291,17 @@ def apply_phase2_updates():
     setup_farm_management_settings()
     setup_biological_asset_accounts()
     setup_contract_farming_accounts()
+    create_farm_workspace()
 
 
 def ensure_module_defs():
-    for module_name in ("Farm Management", "Livestock"):
+    modules_path = Path(frappe.get_app_path("farm_management")).parent / "modules.txt"
+    module_names = [
+        module_name.strip()
+        for module_name in modules_path.read_text(encoding="utf-8").splitlines()
+        if module_name.strip()
+    ]
+    for module_name in module_names:
         if not frappe.db.exists("Module Def", module_name):
             frappe.get_doc(
                 {
@@ -991,8 +1076,11 @@ def create_farm_workspace():
     ws.content = json.dumps(get_workspace_content())
 
     for shortcut in WORKSPACE_SHORTCUTS:
-        if isinstance(shortcut, tuple):
+        if isinstance(shortcut, tuple) and len(shortcut) == 3:
             label, shortcut_type, link_to = shortcut
+        elif isinstance(shortcut, tuple):
+            label, shortcut_type = shortcut
+            link_to = label
         else:
             label, shortcut_type, link_to = shortcut, "DocType", shortcut
         ws.append(
