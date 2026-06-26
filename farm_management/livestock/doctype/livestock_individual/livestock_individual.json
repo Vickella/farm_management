@@ -70,7 +70,8 @@
    "label": "Animal",
    "options": "Livestock Species",
    "reqd": 1,
-   "in_list_view": 1
+   "in_list_view": 1,
+   "fetch_from": "breed.species"
   },
   {
    "fieldname": "breed",

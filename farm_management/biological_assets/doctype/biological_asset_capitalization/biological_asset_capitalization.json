@@ -87,7 +87,8 @@
    "fieldname": "project",
    "fieldtype": "Link",
    "label": "Project",
-   "options": "Project"
+   "options": "Project",
+   "fetch_from": "biological_asset.linked_project"
   },
   {
    "fieldname": "section_accounting",

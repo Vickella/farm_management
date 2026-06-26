@@ -6,10 +6,16 @@
  "engine": "InnoDB",
  "field_order": [
   "item_category",
+  "item",
   "item_description",
   "budgeted_quantity",
+  "unit",
   "budgeted_unit_cost",
-  "budgeted_amount"
+  "budgeted_amount",
+  "actual_amount",
+  "variance",
+  "variance_percent",
+  "variance_type"
  ],
  "fields": [
   {
@@ -20,16 +26,31 @@
    "in_list_view": 1
   },
   {
+   "fieldname": "item",
+   "fieldtype": "Link",
+   "label": "Item",
+   "options": "Item",
+   "in_list_view": 1
+  },
+  {
    "fieldname": "item_description",
    "fieldtype": "Data",
    "label": "Item Description",
    "reqd": 1,
-   "in_list_view": 1
+   "in_list_view": 1,
+   "fetch_from": "item.item_name"
   },
   {
    "fieldname": "budgeted_quantity",
    "fieldtype": "Float",
    "label": "Budgeted Quantity"
+  },
+  {
+   "fieldname": "unit",
+   "fieldtype": "Link",
+   "label": "Unit",
+   "options": "UOM",
+   "fetch_from": "item.stock_uom"
   },
   {
    "fieldname": "budgeted_unit_cost",
@@ -43,6 +64,31 @@
    "label": "Budgeted Amount",
    "read_only": 1,
    "in_list_view": 1
+  },
+  {
+   "fieldname": "actual_amount",
+   "fieldtype": "Currency",
+   "label": "Actual Amount",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "variance",
+   "fieldtype": "Currency",
+   "label": "Variance",
+   "read_only": 1
+  },
+  {
+   "fieldname": "variance_percent",
+   "fieldtype": "Float",
+   "label": "Variance %",
+   "read_only": 1
+  },
+  {
+   "fieldname": "variance_type",
+   "fieldtype": "Select",
+   "label": "Variance Type",
+   "options": "Favourable\nAdverse",
+   "read_only": 1
   }
  ],
  "links": [],

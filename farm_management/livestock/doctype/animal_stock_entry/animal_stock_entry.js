@@ -49,6 +49,17 @@ frappe.ui.form.on("Animal Stock Entry", {
 	species(frm) {
 		frm.set_value("breed", null);
 		set_queries(frm);
+	},
+
+	item(frm) {
+		if (!frm.doc.item) {
+			return;
+		}
+		frappe.db.get_value("Item", frm.doc.item, "valuation_rate").then((r) => {
+			if (r.message && r.message.valuation_rate != null) {
+				frm.set_value("rate", flt(r.message.valuation_rate));
+			}
+		});
 	}
 });
 

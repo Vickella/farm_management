@@ -10,15 +10,30 @@ from farm_management.contract_farming.accounting import cancel_journal_entry, cr
 
 class InputLoanDisbursement(Document):
     def validate(self):
-        if flt(self.value) <= 0:
-            frappe.throw("Input loan value must be greater than zero.")
+        self.calculate_total_value()
+        self.validate_agreement()
+        self.validate_inputs()
+        if self.recovered and not self.recovery_date:
+            frappe.throw("Recovery Date is required when the input loan is marked recovered.")
+
+    def calculate_total_value(self):
+        self.total_value = sum(flt(row.value) for row in self.get("disbursed_inputs", []))
+
+    def validate_agreement(self):
         agreement_farmer = frappe.db.get_value("Contract Farming Agreement", self.agreement, "farmer")
         if agreement_farmer and agreement_farmer != self.farmer:
             frappe.throw("Farmer must match the selected Contract Farming Agreement.")
-        if self.input_type != "Cash" and not self.item:
-            frappe.throw("Item is required for non-cash input loan disbursements.")
-        if self.recovered and not self.recovery_date:
-            frappe.throw("Recovery Date is required when the input loan is marked recovered.")
+
+    def validate_inputs(self):
+        if not self.get("disbursed_inputs"):
+            frappe.throw("Add at least one disbursed input row.")
+        for row in self.get("disbursed_inputs", []):
+            if row.input_type != "Cash" and not row.item:
+                frappe.throw(f"Item is required for non-cash input row #{row.idx}.")
+            if flt(row.value) <= 0:
+                frappe.throw(f"Input loan value must be greater than zero on row #{row.idx}.")
+        if flt(self.total_value) <= 0:
+            frappe.throw("Input loan value must be greater than zero.")
 
     def on_submit(self):
         journal_entry = create_input_loan_journal(self)

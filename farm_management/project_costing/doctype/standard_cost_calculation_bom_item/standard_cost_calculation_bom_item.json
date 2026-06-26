@@ -7,6 +7,7 @@
  "field_order": [
   "item",
   "quantity",
+  "unit",
   "rate",
   "amount"
  ],
@@ -24,6 +25,13 @@
    "fieldtype": "Float",
    "label": "Quantity",
    "reqd": 1
+  },
+  {
+   "fieldname": "unit",
+   "fieldtype": "Link",
+   "label": "Unit",
+   "options": "UOM",
+   "fetch_from": "item.stock_uom"
   },
   {
    "fieldname": "rate",

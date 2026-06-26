@@ -27,13 +27,15 @@
    "fieldtype": "Data",
    "label": "Item Description",
    "reqd": 1,
-   "in_list_view": 1
+   "in_list_view": 1,
+   "fetch_from": "item.item_name"
   },
   {
    "fieldname": "item",
    "fieldtype": "Link",
    "label": "Item",
-   "options": "Item"
+   "options": "Item",
+   "in_list_view": 1
   },
   {
    "fieldname": "quantity",
@@ -44,9 +46,9 @@
   },
   {
    "fieldname": "unit",
-   "fieldtype": "Select",
+   "fieldtype": "Link",
    "label": "Unit",
-   "options": "kg\nKg\nLitre\nBag\nPiece\nHour\nDay",
+   "options": "UOM",
    "reqd": 1,
    "in_list_view": 1,
    "fetch_from": "item.stock_uom"

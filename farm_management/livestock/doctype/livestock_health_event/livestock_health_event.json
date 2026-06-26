@@ -50,7 +50,8 @@
    "label": "Farm",
    "options": "Farm",
    "reqd": 1,
-   "in_list_view": 1
+   "in_list_view": 1,
+   "fetch_from": "animal.farm"
   },
   {
    "fieldname": "event_date",
@@ -130,7 +131,8 @@
   {
    "fieldname": "cost",
    "fieldtype": "Currency",
-   "label": "Cost"
+   "label": "Cost",
+   "fetch_from": "product_used.valuation_rate"
   },
   {
    "fieldname": "capitalize_cost",
@@ -142,7 +144,8 @@
    "fieldtype": "Link",
    "label": "Biological Asset",
    "options": "Biological Asset",
-   "read_only": 1
+   "read_only": 1,
+   "fetch_from": "animal.biological_asset"
   },
   {
    "fieldname": "capitalization",

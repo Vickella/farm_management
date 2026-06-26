@@ -20,24 +20,14 @@ class BiologicalAssetCapitalization(Document):
 
 @frappe.whitelist()
 def calculate_amount(docname, asset):
-    # Fetch costs from linked logs that haven't been capitalized yet
-    # Example logic: Sum costs from Livestock Health Event and Feeding Log
-    total_cost = 0.0
-    
-    # 1. Health Events
-    health_events = frappe.get_all("Livestock Health Event", 
-        filters={"biological_asset": asset, "docstatus": 1, "capitalized": 0},
-        fields=["name", "cost"]
+    health_events = frappe.get_all(
+        "Livestock Health Event",
+        filters={
+            "biological_asset": asset,
+            "docstatus": 1,
+            "capitalize_cost": 1,
+            "capitalized_to_asset": 0,
+        },
+        fields=["name", "cost"],
     )
-    for ev in health_events:
-        total_cost += flt(ev.cost)
-        
-    # 2. Feeding Logs
-    feeding_logs = frappe.get_all("Feeding Log", 
-        filters={"biological_asset": asset, "docstatus": 1, "capitalized": 0},
-        fields=["name", "total_cost"]
-    )
-    for log in feeding_logs:
-        total_cost += flt(log.total_cost)
-        
-    return total_cost
+    return sum(flt(event.cost) for event in health_events)

@@ -26,7 +26,7 @@ def get_contract_account(account_name, company):
 
 
 def create_input_loan_journal(disbursement):
-    amount = flt(disbursement.value)
+    amount = flt(disbursement.total_value)
     if not amount:
         return None
 
