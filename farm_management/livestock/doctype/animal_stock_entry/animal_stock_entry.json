@@ -131,7 +131,8 @@
   {
    "fieldname": "rate",
    "fieldtype": "Currency",
-   "label": "Unit Cost / Rate"
+   "label": "Unit Cost / Rate",
+   "fetch_from": "item.valuation_rate"
   },
   {
    "fieldname": "amount",
