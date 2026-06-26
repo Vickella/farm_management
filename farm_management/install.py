@@ -210,7 +210,6 @@ def apply_phase2_updates():
     seed_livestock_breeds()
     seed_pests()
     seed_animal_diseases()
-    create_farm_workspace()
     setup_farm_management_settings()
     setup_biological_asset_accounts()
     setup_contract_farming_accounts()
