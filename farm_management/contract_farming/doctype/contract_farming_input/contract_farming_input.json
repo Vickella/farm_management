@@ -35,7 +35,8 @@
   {
    "fieldname": "unit",
    "fieldtype": "Data",
-   "label": "Unit"
+   "label": "Unit",
+   "fetch_from": "item.stock_uom"
   },
   {
    "fieldname": "value",

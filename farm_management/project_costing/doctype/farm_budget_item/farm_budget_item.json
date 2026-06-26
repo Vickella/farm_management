@@ -34,7 +34,8 @@
   {
    "fieldname": "budgeted_unit_cost",
    "fieldtype": "Currency",
-   "label": "Budgeted Unit Cost"
+   "label": "Budgeted Unit Cost",
+   "fetch_from": "item.valuation_rate"
   },
   {
    "fieldname": "budgeted_amount",

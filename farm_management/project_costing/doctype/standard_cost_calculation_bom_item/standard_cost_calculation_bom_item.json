@@ -29,7 +29,8 @@
    "fieldname": "rate",
    "fieldtype": "Currency",
    "label": "Rate",
-   "reqd": 1
+   "reqd": 1,
+   "fetch_from": "item.valuation_rate"
   },
   {
    "fieldname": "amount",
