@@ -295,7 +295,14 @@ def apply_phase2_updates():
 
 
 def ensure_module_defs():
-    modules_path = Path(frappe.get_app_path("farm_management")).parent / "modules.txt"
+    app_path = Path(frappe.get_app_path("farm_management"))
+    modules_path = app_path / "modules.txt"
+    if not modules_path.exists():
+        modules_path = app_path.parent / "modules.txt"
+
+    if not modules_path.exists():
+        frappe.throw(f"Could not find modules.txt for farm_management at {app_path}")
+
     module_names = [
         module_name.strip()
         for module_name in modules_path.read_text(encoding="utf-8").splitlines()
