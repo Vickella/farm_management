@@ -5,18 +5,27 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "section_profile",
   "pest_name",
   "scientific_name",
   "pest_type",
+  "column_break_scope",
   "affects",
   "severity_level",
+  "section_management",
   "signs_and_symptoms",
   "causes",
+  "column_break_treatments",
   "recommended_treatment",
   "chemical_treatment",
   "organic_treatment"
  ],
  "fields": [
+  {
+   "fieldname": "section_profile",
+   "fieldtype": "Section Break",
+   "label": "Pest Profile"
+  },
   {
    "fieldname": "pest_name",
    "fieldtype": "Data",
@@ -38,6 +47,10 @@
    "in_list_view": 1
   },
   {
+   "fieldname": "column_break_scope",
+   "fieldtype": "Column Break"
+  },
+  {
    "fieldname": "affects",
    "fieldtype": "Select",
    "label": "Affects",
@@ -52,6 +65,11 @@
    "in_list_view": 1
   },
   {
+   "fieldname": "section_management",
+   "fieldtype": "Section Break",
+   "label": "Management"
+  },
+  {
    "fieldname": "signs_and_symptoms",
    "fieldtype": "Text Editor",
    "label": "Signs and Symptoms"
@@ -60,6 +78,10 @@
    "fieldname": "causes",
    "fieldtype": "Small Text",
    "label": "Causes"
+  },
+  {
+   "fieldname": "column_break_treatments",
+   "fieldtype": "Column Break"
   },
   {
    "fieldname": "recommended_treatment",

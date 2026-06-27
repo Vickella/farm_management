@@ -6,21 +6,28 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "section_mating",
   "naming_series",
   "dam",
   "sire",
   "farm",
   "mating_date",
   "mating_method",
-  "column_break_1",
+  "section_outcome",
   "expected_birth_date",
   "actual_birth_date",
   "outcome",
+  "column_break_offspring",
   "litter_size",
   "offspring_born_alive",
   "offspring_stillborn"
  ],
  "fields": [
+  {
+   "fieldname": "section_mating",
+   "fieldtype": "Section Break",
+   "label": "Mating"
+  },
   {
    "fieldname": "naming_series",
    "fieldtype": "Select",
@@ -65,8 +72,9 @@
    "reqd": 1
   },
   {
-   "fieldname": "column_break_1",
-   "fieldtype": "Column Break"
+   "fieldname": "section_outcome",
+   "fieldtype": "Section Break",
+   "label": "Outcome"
   },
   {
    "fieldname": "expected_birth_date",
@@ -85,6 +93,10 @@
    "options": "Pending\nConfirmed Pregnant\nNot Pregnant\nAborted\nDelivered",
    "default": "Pending",
    "in_list_view": 1
+  },
+  {
+   "fieldname": "column_break_offspring",
+   "fieldtype": "Column Break"
   },
   {
    "fieldname": "litter_size",

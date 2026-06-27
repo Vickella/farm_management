@@ -3,19 +3,23 @@ frappe.ui.form.on('Farm Cashbook', {
         frm.set_query('project', () => ({
             filters: {status: 'Open'}
         }));
-        set_payment_account_query(frm);
+        set_account_queries(frm);
     },
     farm(frm) {
-        set_payment_account_query(frm);
+        set_account_queries(frm);
     }
 });
 
-function set_payment_account_query(frm) {
-    frm.set_query('payment_account', () => {
-        const filters = {
-            is_group: 0,
-            account_type: ['in', ['Bank', 'Cash']]
-        };
-        return {filters};
-    });
+function set_account_queries(frm) {
+    const ledger_filters = {
+        is_group: 0
+    };
+
+    frm.set_query('debit_account', () => ({
+        filters: ledger_filters
+    }));
+
+    frm.set_query('credit_account', () => ({
+        filters: ledger_filters
+    }));
 }

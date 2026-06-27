@@ -5,17 +5,24 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "section_profile",
   "farm_type_name",
   "category",
   "is_active",
   "description",
-  "section_managed_items",
-  "managed_items",
+  "column_break_classification",
   "classification",
   "parent_farm_type",
-  "applicable_to"
+  "applicable_to",
+  "section_managed_items",
+  "managed_items"
  ],
  "fields": [
+  {
+   "fieldname": "section_profile",
+   "fieldtype": "Section Break",
+   "label": "Farm Type Profile"
+  },
   {
    "fieldname": "farm_type_name",
    "fieldtype": "Data",
@@ -30,6 +37,21 @@
    "options": "\nCrop Production\nAnimal Husbandry\nHorticulture\nAquaculture\nApiculture\nPoultry\nMixed Farming\nAgroforestry\nOther",
    "reqd": 1,
    "in_list_view": 1
+  },
+  {
+   "fieldname": "is_active",
+   "fieldtype": "Check",
+   "label": "Is Active",
+   "default": "1"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Small Text",
+   "label": "Description"
+  },
+  {
+   "fieldname": "column_break_classification",
+   "fieldtype": "Column Break"
   },
   {
    "fieldname": "classification",
@@ -56,17 +78,6 @@
    "options": "\nCrop\nLivestock\nPoultry\nAquaculture\nMixed",
    "hidden": 1,
    "reqd": 0
-  },
-  {
-   "fieldname": "is_active",
-   "fieldtype": "Check",
-   "label": "Is Active",
-   "default": "1"
-  },
-  {
-   "fieldname": "description",
-   "fieldtype": "Small Text",
-   "label": "Description"
   },
   {
    "fieldname": "section_managed_items",

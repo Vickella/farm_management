@@ -462,12 +462,18 @@ def create_asset_sale_proceeds_journal_entry(
     if not company:
         frappe.throw("Set Default Company in Farm Management Settings or on the linked Project.")
 
-    receivable_account = frappe.db.get_value(
+    settings = frappe.get_single("Farm Management Settings")
+    if settings.biological_asset_sales_receivable_account:
+        validate_ledger_account(settings.biological_asset_sales_receivable_account, company, "Biological Asset Sales Receivable")
+    if settings.biological_asset_sales_income_account:
+        validate_ledger_account(settings.biological_asset_sales_income_account, company, "Biological Asset Sales Income")
+
+    receivable_account = settings.biological_asset_sales_receivable_account or frappe.db.get_value(
         "Account",
         {"account_name": "Biological Asset Sales Receivable", "company": company, "is_group": 0},
         "name",
     )
-    income_account = frappe.db.get_value(
+    income_account = settings.biological_asset_sales_income_account or frappe.db.get_value(
         "Account",
         {"account_name": "Biological Asset Sales Income", "company": company, "is_group": 0},
         "name",
@@ -578,6 +584,21 @@ def create_fair_value_journal_entry(asset, delta=None, posting_date=None):
     journal_entry.submit()
     asset.db_set("last_journal_entry", journal_entry.name, update_modified=False)
     asset.db_set("last_posted_net_fair_value", asset.net_fair_value, update_modified=False)
+
+
+def validate_ledger_account(account, company, label):
+    account_doc = frappe.db.get_value(
+        "Account",
+        account,
+        ["name", "is_group", "company"],
+        as_dict=True,
+    )
+    if not account_doc:
+        frappe.throw(f"Select a valid account for {label}.")
+    if account_doc.is_group:
+        frappe.throw(f"{label} must be a ledger account, not a group account.")
+    if account_doc.company != company:
+        frappe.throw(f"{label} must belong to company {company}.")
 
 
 def append_account(journal_entry, account, debit=0, credit=0, project=None):

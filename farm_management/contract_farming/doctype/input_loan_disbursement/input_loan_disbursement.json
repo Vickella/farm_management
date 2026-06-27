@@ -5,19 +5,26 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "section_disbursement",
   "naming_series",
   "agreement",
   "farmer",
   "disbursement_date",
-  "disbursed_inputs",
-  "total_value",
-  "column_break_1",
+  "column_break_recovery",
   "recovered",
   "recovery_date",
   "recovery_reference",
-  "journal_entry"
+  "journal_entry",
+  "section_inputs",
+  "disbursed_inputs",
+  "total_value"
  ],
  "fields": [
+  {
+   "fieldname": "section_disbursement",
+   "fieldtype": "Section Break",
+   "label": "Disbursement Details"
+  },
   {
    "fieldname": "naming_series",
    "fieldtype": "Select",
@@ -48,19 +55,7 @@
    "in_list_view": 1
   },
   {
-   "fieldname": "disbursed_inputs",
-   "fieldtype": "Table",
-   "label": "Disbursed Inputs",
-   "options": "Contract Farming Input"
-  },
-  {
-   "fieldname": "total_value",
-   "fieldtype": "Currency",
-   "label": "Total Value",
-   "read_only": 1
-  },
-  {
-   "fieldname": "column_break_1",
+   "fieldname": "column_break_recovery",
    "fieldtype": "Column Break"
   },
   {
@@ -83,6 +78,23 @@
    "fieldtype": "Link",
    "label": "Journal Entry",
    "options": "Journal Entry",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_inputs",
+   "fieldtype": "Section Break",
+   "label": "Inputs"
+  },
+  {
+   "fieldname": "disbursed_inputs",
+   "fieldtype": "Table",
+   "label": "Disbursed Inputs",
+   "options": "Contract Farming Input"
+  },
+  {
+   "fieldname": "total_value",
+   "fieldtype": "Currency",
+   "label": "Total Value",
    "read_only": 1
   }
  ],

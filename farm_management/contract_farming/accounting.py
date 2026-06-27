@@ -11,7 +11,13 @@ def get_company():
     )
 
 
-def get_contract_account(account_name, company):
+def get_contract_account(account_name, company, settings_field=None):
+    settings = frappe.get_single("Farm Management Settings")
+    configured_account = settings.get(settings_field) if settings_field else None
+    if configured_account:
+        validate_ledger_account(configured_account, company, account_name)
+        return configured_account
+
     from farm_management.install import setup_contract_farming_accounts
 
     setup_contract_farming_accounts()
@@ -25,6 +31,21 @@ def get_contract_account(account_name, company):
     return account
 
 
+def validate_ledger_account(account, company, label):
+    account_doc = frappe.db.get_value(
+        "Account",
+        account,
+        ["name", "is_group", "company"],
+        as_dict=True,
+    )
+    if not account_doc:
+        frappe.throw(f"Select a valid account for {label}.")
+    if account_doc.is_group:
+        frappe.throw(f"{label} must be a ledger account, not a group account.")
+    if account_doc.company != company:
+        frappe.throw(f"{label} must belong to company {company}.")
+
+
 def create_input_loan_journal(disbursement):
     amount = flt(disbursement.total_value)
     if not amount:
@@ -34,8 +55,16 @@ def create_input_loan_journal(disbursement):
     if not company:
         frappe.throw("Set Default Company in Farm Management Settings before posting contract farming accounting.")
 
-    receivable = get_contract_account("Contract Farming Input Loans Receivable", company)
-    clearing = get_contract_account("Contract Farming Input Clearing", company)
+    receivable = get_contract_account(
+        "Contract Farming Input Loans Receivable",
+        company,
+        "contract_input_loans_receivable_account",
+    )
+    clearing = get_contract_account(
+        "Contract Farming Input Clearing",
+        company,
+        "contract_input_clearing_account",
+    )
 
     journal_entry = frappe.new_doc("Journal Entry")
     journal_entry.voucher_type = "Journal Entry"
@@ -60,9 +89,21 @@ def create_harvest_recovery_journal(recovery):
     if not company:
         frappe.throw("Set Default Company in Farm Management Settings before posting contract farming accounting.")
 
-    purchases = get_contract_account("Contract Farming Harvest Purchases", company)
-    receivable = get_contract_account("Contract Farming Input Loans Receivable", company)
-    grower_payable = get_contract_account("Contract Farming Grower Payable", company)
+    purchases = get_contract_account(
+        "Contract Farming Harvest Purchases",
+        company,
+        "contract_harvest_purchases_account",
+    )
+    receivable = get_contract_account(
+        "Contract Farming Input Loans Receivable",
+        company,
+        "contract_input_loans_receivable_account",
+    )
+    grower_payable = get_contract_account(
+        "Contract Farming Grower Payable",
+        company,
+        "contract_grower_payable_account",
+    )
 
     journal_entry = frappe.new_doc("Journal Entry")
     journal_entry.voucher_type = "Journal Entry"

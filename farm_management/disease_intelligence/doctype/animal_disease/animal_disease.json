@@ -5,18 +5,27 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "section_profile",
   "disease_name",
   "affects",
   "mortality_risk",
+  "column_break_flags",
   "is_notifiable",
   "zoonotic_risk",
   "vaccination_available",
+  "section_guidance",
   "symptoms",
   "prevention_method",
+  "column_break_treatment",
   "vaccination_schedule",
   "treatment"
  ],
  "fields": [
+  {
+   "fieldname": "section_profile",
+   "fieldtype": "Section Break",
+   "label": "Disease Profile"
+  },
   {
    "fieldname": "disease_name",
    "fieldtype": "Data",
@@ -40,6 +49,10 @@
    "in_list_view": 1
   },
   {
+   "fieldname": "column_break_flags",
+   "fieldtype": "Column Break"
+  },
+  {
    "fieldname": "is_notifiable",
    "fieldtype": "Check",
    "label": "Is Notifiable"
@@ -55,6 +68,11 @@
    "label": "Vaccination Available"
   },
   {
+   "fieldname": "section_guidance",
+   "fieldtype": "Section Break",
+   "label": "Guidance"
+  },
+  {
    "fieldname": "symptoms",
    "fieldtype": "Text Editor",
    "label": "Symptoms",
@@ -64,6 +82,10 @@
    "fieldname": "prevention_method",
    "fieldtype": "Text Editor",
    "label": "Prevention Method"
+  },
+  {
+   "fieldname": "column_break_treatment",
+   "fieldtype": "Column Break"
   },
   {
    "fieldname": "vaccination_schedule",

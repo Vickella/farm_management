@@ -5,22 +5,30 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "section_recovery",
   "naming_series",
   "agreement",
   "farmer",
   "recovery_date",
+  "column_break_delivery",
   "quantity_delivered_kg",
   "quality_grade",
   "purchase_price_per_kg",
-  "column_break_1",
+  "section_payment",
   "gross_payment",
   "loan_recovery_amount",
   "net_payment",
+  "column_break_payment",
   "payment_status",
   "payment_reference",
   "journal_entry"
  ],
  "fields": [
+  {
+   "fieldname": "section_recovery",
+   "fieldtype": "Section Break",
+   "label": "Recovery Details"
+  },
   {
    "fieldname": "naming_series",
    "fieldtype": "Select",
@@ -51,6 +59,10 @@
    "in_list_view": 1
   },
   {
+   "fieldname": "column_break_delivery",
+   "fieldtype": "Column Break"
+  },
+  {
    "fieldname": "quantity_delivered_kg",
    "fieldtype": "Float",
    "label": "Quantity Delivered Kg",
@@ -70,8 +82,9 @@
    "reqd": 1
   },
   {
-   "fieldname": "column_break_1",
-   "fieldtype": "Column Break"
+   "fieldname": "section_payment",
+   "fieldtype": "Section Break",
+   "label": "Payment and Posting"
   },
   {
    "fieldname": "gross_payment",
@@ -89,6 +102,10 @@
    "fieldtype": "Currency",
    "label": "Net Payment",
    "read_only": 1
+  },
+  {
+   "fieldname": "column_break_payment",
+   "fieldtype": "Column Break"
   },
   {
    "fieldname": "payment_status",

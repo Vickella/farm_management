@@ -5,14 +5,22 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "column_break_company",
-  "default_cost_center",
+  "section_accounting",
   "default_company",
+  "default_cost_center",
   "default_harvest_warehouse",
   "section_contract_farming",
   "contract_farming_cost_center",
   "contract_farming_income_account",
   "contract_farming_liability_account",
+  "contract_input_loans_receivable_account",
+  "contract_input_clearing_account",
+  "column_break_contract_accounts",
+  "contract_harvest_purchases_account",
+  "contract_grower_payable_account",
+  "section_biological_asset_sales",
+  "biological_asset_sales_receivable_account",
+  "biological_asset_sales_income_account",
   "section_break_ai",
   "ai_api_key",
   "ai_provider",
@@ -27,20 +35,21 @@
  ],
  "fields": [
   {
-   "fieldname": "column_break_company",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "default_cost_center",
-   "fieldtype": "Link",
-   "label": "Default Cost Center",
-   "options": "Cost Center"
+   "fieldname": "section_accounting",
+   "fieldtype": "Section Break",
+   "label": "Accounting Defaults"
   },
   {
    "fieldname": "default_company",
    "fieldtype": "Link",
    "label": "Default Company",
    "options": "Company"
+  },
+  {
+   "fieldname": "default_cost_center",
+   "fieldtype": "Link",
+   "label": "Default Cost Center",
+   "options": "Cost Center"
   },
   {
    "fieldname": "default_harvest_warehouse",
@@ -63,12 +72,59 @@
    "fieldname": "contract_farming_income_account",
    "fieldtype": "Link",
    "label": "Contract Farming Income Account",
-   "options": "Account"
+   "options": "Account",
+   "hidden": 1
   },
   {
    "fieldname": "contract_farming_liability_account",
    "fieldtype": "Link",
    "label": "Contract Farming Liability Account",
+   "options": "Account",
+   "hidden": 1
+  },
+  {
+   "fieldname": "contract_input_loans_receivable_account",
+   "fieldtype": "Link",
+   "label": "Input Loans Receivable Account",
+   "options": "Account"
+  },
+  {
+   "fieldname": "contract_input_clearing_account",
+   "fieldtype": "Link",
+   "label": "Input Clearing Account",
+   "options": "Account"
+  },
+  {
+   "fieldname": "column_break_contract_accounts",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "contract_harvest_purchases_account",
+   "fieldtype": "Link",
+   "label": "Harvest Purchases Account",
+   "options": "Account"
+  },
+  {
+   "fieldname": "contract_grower_payable_account",
+   "fieldtype": "Link",
+   "label": "Grower Payable Account",
+   "options": "Account"
+  },
+  {
+   "fieldname": "section_biological_asset_sales",
+   "fieldtype": "Section Break",
+   "label": "Biological Asset Sales"
+  },
+  {
+   "fieldname": "biological_asset_sales_receivable_account",
+   "fieldtype": "Link",
+   "label": "Sales Receivable Account",
+   "options": "Account"
+  },
+  {
+   "fieldname": "biological_asset_sales_income_account",
+   "fieldtype": "Link",
+   "label": "Sales Income Account",
    "options": "Account"
   },
   {

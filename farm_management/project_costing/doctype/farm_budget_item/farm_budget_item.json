@@ -5,19 +5,28 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "section_item",
   "item_category",
   "item",
   "item_description",
+  "column_break_quantity",
   "budgeted_quantity",
   "unit",
   "budgeted_unit_cost",
+  "section_variance",
   "budgeted_amount",
   "actual_amount",
+  "column_break_variance",
   "variance",
   "variance_percent",
   "variance_type"
  ],
  "fields": [
+  {
+   "fieldname": "section_item",
+   "fieldtype": "Section Break",
+   "label": "Budget Item"
+  },
   {
    "fieldname": "item_category",
    "fieldtype": "Select",
@@ -41,6 +50,10 @@
    "fetch_from": "item.item_name"
   },
   {
+   "fieldname": "column_break_quantity",
+   "fieldtype": "Column Break"
+  },
+  {
    "fieldname": "budgeted_quantity",
    "fieldtype": "Float",
    "label": "Budgeted Quantity"
@@ -59,6 +72,11 @@
    "fetch_from": "item.valuation_rate"
   },
   {
+   "fieldname": "section_variance",
+   "fieldtype": "Section Break",
+   "label": "Variance"
+  },
+  {
    "fieldname": "budgeted_amount",
    "fieldtype": "Currency",
    "label": "Budgeted Amount",
@@ -70,6 +88,10 @@
    "fieldtype": "Currency",
    "label": "Actual Amount",
    "in_list_view": 1
+  },
+  {
+   "fieldname": "column_break_variance",
+   "fieldtype": "Column Break"
   },
   {
    "fieldname": "variance",

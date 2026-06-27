@@ -5,25 +5,35 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "section_incident",
   "naming_series",
   "farm",
+  "incident_date",
+  "incident_type",
+  "severity",
+  "column_break_target",
   "biological_asset",
   "livestock_individual",
   "farm_field",
-  "incident_date",
-  "incident_type",
   "pest",
   "animal_disease",
-  "severity",
+  "section_impact",
   "affected_area_or_animals",
   "treatment_applied",
+  "column_break_costs",
   "treatment_cost",
   "loss_estimate",
+  "section_resolution",
   "resolved",
   "resolution_date",
   "reported_by"
  ],
  "fields": [
+  {
+   "fieldname": "section_incident",
+   "fieldtype": "Section Break",
+   "label": "Incident"
+  },
   {
    "fieldname": "naming_series",
    "fieldtype": "Select",
@@ -37,6 +47,33 @@
    "options": "Farm",
    "reqd": 1,
    "in_list_view": 1
+  },
+  {
+   "fieldname": "incident_date",
+   "fieldtype": "Date",
+   "label": "Incident Date",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "incident_type",
+   "fieldtype": "Select",
+   "label": "Incident Type",
+   "options": "Pest\nAnimal Disease",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "severity",
+   "fieldtype": "Select",
+   "label": "Severity",
+   "options": "Low\nMedium\nHigh\nCritical",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "column_break_target",
+   "fieldtype": "Column Break"
   },
   {
    "fieldname": "biological_asset",
@@ -59,21 +96,6 @@
    "depends_on": "eval:doc.incident_type == 'Pest'"
   },
   {
-   "fieldname": "incident_date",
-   "fieldtype": "Date",
-   "label": "Incident Date",
-   "reqd": 1,
-   "in_list_view": 1
-  },
-  {
-   "fieldname": "incident_type",
-   "fieldtype": "Select",
-   "label": "Incident Type",
-   "options": "Pest\nAnimal Disease",
-   "reqd": 1,
-   "in_list_view": 1
-  },
-  {
    "fieldname": "pest",
    "fieldtype": "Link",
    "label": "Pest",
@@ -88,12 +110,9 @@
    "depends_on": "eval:doc.incident_type=='Animal Disease'"
   },
   {
-   "fieldname": "severity",
-   "fieldtype": "Select",
-   "label": "Severity",
-   "options": "Low\nMedium\nHigh\nCritical",
-   "reqd": 1,
-   "in_list_view": 1
+   "fieldname": "section_impact",
+   "fieldtype": "Section Break",
+   "label": "Impact and Treatment"
   },
   {
    "fieldname": "affected_area_or_animals",
@@ -107,6 +126,10 @@
    "label": "Treatment Applied"
   },
   {
+   "fieldname": "column_break_costs",
+   "fieldtype": "Column Break"
+  },
+  {
    "fieldname": "treatment_cost",
    "fieldtype": "Currency",
    "label": "Treatment Cost"
@@ -115,6 +138,11 @@
    "fieldname": "loss_estimate",
    "fieldtype": "Currency",
    "label": "Loss Estimate"
+  },
+  {
+   "fieldname": "section_resolution",
+   "fieldtype": "Section Break",
+   "label": "Resolution"
   },
   {
    "fieldname": "resolved",

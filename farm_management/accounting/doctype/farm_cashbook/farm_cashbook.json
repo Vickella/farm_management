@@ -1,108 +1,140 @@
 {
-    "actions":  [
-
-                ],
-    "creation":  "2024-01-01 00:00:00.000000",
-    "doctype":  "DocType",
-    "engine":  "InnoDB",
-    "field_order":  [
-                        "date",
-                        "farm",
-                        "project_type",
-                        "project",
-                        "expense_type",
-                        "amount",
-                        "payment_account",
-                        "description",
-                        "journal_entry"
-                    ],
-    "fields":  [
-                   {
-                       "fieldname":  "date",
-                       "fieldtype":  "Date",
-                       "label":  "Date",
-                       "reqd":  1,
-                       "in_list_view":  1
-                   },
-                   {
-                       "fieldname":  "farm",
-                       "fieldtype":  "Link",
-                       "label":  "Farm",
-                       "options":  "Farm",
-                       "in_list_view":  1
-                   },
-                   {
-                       "fieldname":  "project_type",
-                       "fieldtype":  "Select",
-                       "label":  "Project Type",
-                       "options":  "Crop Production\nPoultry Production\nFish Farming\nDairy Production\nGoat Farming\nPig Farming\nGreenhouse Farming",
-                       "in_list_view":  1
-                   },
-                   {
-                       "fieldname":  "project",
-                       "fieldtype":  "Link",
-                       "label":  "Project",
-                       "options":  "Project",
-                       "in_list_view":  1
-                   },
-                   {
-                       "fieldname":  "expense_type",
-                       "fieldtype":  "Data",
-                       "label":  "Expense Type",
-                       "reqd":  1
-                   },
-                   {
-                       "fieldname":  "amount",
-                       "fieldtype":  "Currency",
-                       "label":  "Amount",
-                       "reqd":  1,
-                       "in_list_view":  1
-                   },
-                   {
-                       "fieldname":  "payment_account",
-                       "fieldtype":  "Link",
-                       "label":  "Payment Account",
-                       "options":  "Account",
-                       "reqd":  1
-                   },
-                   {
-                       "fieldname":  "description",
-                       "fieldtype":  "Small Text",
-                       "label":  "Description"
-                   },
-                   {
-                       "fieldname":  "journal_entry",
-                       "fieldtype":  "Link",
-                       "label":  "Journal Entry",
-                       "options":  "Journal Entry",
-                       "read_only":  1
-                   }
-               ],
-    "links":  [
-
-              ],
-    "modified":  "2024-01-01 00:00:00.000000",
-    "modified_by":  "Administrator",
-    "module":  "Accounting",
-    "name":  "Farm Cashbook",
-    "owner":  "Administrator",
-    "permissions":  [
-                        {
-                            "create":  1,
-                            "delete":  1,
-                            "email":  1,
-                            "export":  1,
-                            "print":  1,
-                            "read":  1,
-                            "report":  1,
-                            "role":  "System Manager",
-                            "share":  1,
-                            "write":  1
-                        }
-                    ],
-    "sort_field":  "modified",
-    "sort_order":  "DESC",
-    "track_changes":  1,
-    "custom":  0,
-    "is_submittable":  1
+ "actions": [],
+ "creation": "2024-01-01 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_transaction",
+  "date",
+  "farm",
+  "column_break_transaction",
+  "project_type",
+  "project",
+  "section_accounts",
+  "debit_account",
+  "credit_account",
+  "column_break_amount",
+  "expense_type",
+  "amount",
+  "section_details",
+  "description",
+  "journal_entry"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_transaction",
+   "fieldtype": "Section Break",
+   "label": "Transaction"
+  },
+  {
+   "fieldname": "date",
+   "fieldtype": "Date",
+   "label": "Date",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "farm",
+   "fieldtype": "Link",
+   "label": "Farm",
+   "options": "Farm",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "column_break_transaction",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "project_type",
+   "fieldtype": "Link",
+   "label": "Project Type",
+   "options": "Agriculture Project Type",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "project",
+   "fieldtype": "Link",
+   "label": "Project",
+   "options": "Project",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "section_accounts",
+   "fieldtype": "Section Break",
+   "label": "Accounting Entry"
+  },
+  {
+   "fieldname": "debit_account",
+   "fieldtype": "Link",
+   "label": "Debit Account",
+   "options": "Account",
+   "reqd": 1
+  },
+  {
+   "fieldname": "credit_account",
+   "fieldtype": "Link",
+   "label": "Credit Account",
+   "options": "Account",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_amount",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "expense_type",
+   "fieldtype": "Data",
+   "label": "Expense Type",
+   "reqd": 1
+  },
+  {
+   "fieldname": "amount",
+   "fieldtype": "Currency",
+   "label": "Amount",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "section_details",
+   "fieldtype": "Section Break",
+   "label": "Details"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Small Text",
+   "label": "Description"
+  },
+  {
+   "fieldname": "journal_entry",
+   "fieldtype": "Link",
+   "label": "Journal Entry",
+   "options": "Journal Entry",
+   "read_only": 1
+  }
+ ],
+ "links": [],
+ "modified": "2024-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Accounting",
+ "name": "Farm Cashbook",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1,
+ "custom": 0,
+ "is_submittable": 1
 }
