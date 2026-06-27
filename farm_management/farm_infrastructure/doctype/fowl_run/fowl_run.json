@@ -54,9 +54,10 @@
   },
   {
    "fieldname": "managed_species",
-   "fieldtype": "Data",
+   "fieldtype": "Select",
    "label": "Managed Poultry Type",
-   "in_list_view": 1
+   "in_list_view": 1,
+   "options": "Broilers\nLayers\nBreeders\nPullets\nChicks\nDual Purpose\nOther"
   },
   {
    "fieldname": "current_status",

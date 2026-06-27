@@ -1,0 +1,83 @@
+{
+ "actions": [],
+ "creation": "2024-01-01 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "expense_type",
+  "debit_account",
+  "credit_account",
+  "amount",
+  "project",
+  "cost_center",
+  "description"
+ ],
+ "fields": [
+  {
+   "fieldname": "expense_type",
+   "fieldtype": "Select",
+   "label": "Transaction Type",
+   "in_list_view": 1,
+   "columns": 2,
+   "options": "Fuel and Lubricants\nSeed and Planting Materials\nFertilizer and Soil Amendments\nChemicals and Pesticides\nAnimal Feed\nVeterinary and Medication\nLabour and Wages\nMachinery Repairs and Maintenance\nIrrigation and Water\nElectricity and Utilities\nTransport and Logistics\nPackaging and Storage\nEquipment and Tools\nLand Preparation\nHarvesting Costs\nInsurance\nLicences and Levies\nProfessional Fees\nSales Income\nOther Income\nOther Expense",
+   "reqd": 1
+  },
+  {
+   "fieldname": "debit_account",
+   "fieldtype": "Link",
+   "label": "Debit Account",
+   "options": "Account",
+   "reqd": 1,
+   "in_list_view": 1,
+   "columns": 2
+  },
+  {
+   "fieldname": "credit_account",
+   "fieldtype": "Link",
+   "label": "Credit Account",
+   "options": "Account",
+   "reqd": 1,
+   "in_list_view": 1,
+   "columns": 2
+  },
+  {
+   "fieldname": "amount",
+   "fieldtype": "Currency",
+   "label": "Amount",
+   "reqd": 1,
+   "in_list_view": 1,
+   "columns": 1
+  },
+  {
+   "fieldname": "project",
+   "fieldtype": "Link",
+   "label": "Project",
+   "options": "Project"
+  },
+  {
+   "fieldname": "cost_center",
+   "fieldtype": "Link",
+   "label": "Cost Center",
+   "options": "Cost Center"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Small Text",
+   "label": "Description",
+   "in_list_view": 1,
+   "columns": 2
+  }
+ ],
+ "istable": 1,
+ "links": [],
+ "modified": "2024-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Accounting",
+ "name": "Farm Cashbook Entry",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

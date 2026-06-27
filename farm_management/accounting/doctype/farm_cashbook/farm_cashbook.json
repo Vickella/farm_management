@@ -10,15 +10,17 @@
   "column_break_transaction",
   "project_type",
   "project",
-  "section_accounts",
-  "debit_account",
-  "credit_account",
-  "column_break_amount",
-  "expense_type",
-  "amount",
+  "section_entries",
+  "entries",
+  "total_amount",
   "section_details",
   "description",
-  "journal_entry"
+  "journal_entry",
+  "section_legacy_entry",
+  "debit_account",
+  "credit_account",
+  "expense_type",
+  "amount"
  ],
  "fields": [
   {
@@ -59,39 +61,22 @@
    "in_list_view": 1
   },
   {
-   "fieldname": "section_accounts",
+   "fieldname": "section_entries",
    "fieldtype": "Section Break",
-   "label": "Accounting Entry"
+   "label": "Accounting Entries"
   },
   {
-   "fieldname": "debit_account",
-   "fieldtype": "Link",
-   "label": "Debit Account",
-   "options": "Account",
+   "fieldname": "entries",
+   "fieldtype": "Table",
+   "label": "Transactions",
+   "options": "Farm Cashbook Entry",
    "reqd": 1
   },
   {
-   "fieldname": "credit_account",
-   "fieldtype": "Link",
-   "label": "Credit Account",
-   "options": "Account",
-   "reqd": 1
-  },
-  {
-   "fieldname": "column_break_amount",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "expense_type",
-   "fieldtype": "Data",
-   "label": "Expense Type",
-   "reqd": 1
-  },
-  {
-   "fieldname": "amount",
+   "fieldname": "total_amount",
    "fieldtype": "Currency",
-   "label": "Amount",
-   "reqd": 1,
+   "label": "Total Amount",
+   "read_only": 1,
    "in_list_view": 1
   },
   {
@@ -109,6 +94,43 @@
    "fieldtype": "Link",
    "label": "Journal Entry",
    "options": "Journal Entry",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_legacy_entry",
+   "fieldtype": "Section Break",
+   "label": "Legacy Single Entry",
+   "hidden": 1
+  },
+  {
+   "fieldname": "debit_account",
+   "fieldtype": "Link",
+   "label": "Debit Account",
+   "options": "Account",
+   "hidden": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "credit_account",
+   "fieldtype": "Link",
+   "label": "Credit Account",
+   "options": "Account",
+   "hidden": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "expense_type",
+   "fieldtype": "Data",
+   "label": "Expense Type",
+   "hidden": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "amount",
+   "fieldtype": "Currency",
+   "label": "Amount",
+   "in_list_view": 1,
+   "hidden": 1,
    "read_only": 1
   }
  ],
