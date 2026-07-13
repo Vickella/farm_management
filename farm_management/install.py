@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 
 import frappe
+from frappe.utils import flt
 
 
 FIXTURE_UNIQUE_FIELDS = {
@@ -17,9 +18,12 @@ FIXTURE_LOAD_ORDER = [
     "farm_activity_type.json",
     "pest.json",
     "animal_disease.json",
-    "farm_bom.json",
     "custom_field.json",
 ]
+
+# Farm BOMs are operational templates with site-specific Project, Item, and
+# UOM links. They must never be installed as global master data.
+EXCLUDED_INSTALL_FIXTURES = {"farm_bom.json"}
 
 LEGACY_DOCTYPES = [
     "Agri AI Farm Management Settings Legacy",
@@ -172,6 +176,7 @@ WORKSPACE_GROUPS = [
             ("Biological Asset Valuation", "DocType"),
             ("Harvest Transaction", "DocType"),
             ("Biological Asset Register", "Report"),
+            ("Biological Asset GL Reconciliation", "Report"),
             ("Animal Stock Ledger", "Report"),
         ],
     ),
@@ -279,19 +284,72 @@ def after_install():
 
 
 def apply_phase2_updates():
+    ensure_erpnext_dependency()
     ensure_module_defs()
+    seed_agricultural_uoms()
+    seed_erpnext_operational_masters()
     remove_legacy_project_custom_fields()
     seed_fixture_data()
-    seed_agriculture_project_types()
     retire_legacy_flat_farm_types()
     normalize_existing_farm_type_links()
+    seed_missing_crop_types()
     seed_livestock_breeds()
+    normalize_managed_item_master_links()
+    normalize_legacy_harvest_recovery_units()
+    seed_agriculture_project_types()
     seed_pests()
     seed_animal_diseases()
     setup_farm_management_settings()
     setup_biological_asset_accounts()
     setup_contract_farming_accounts()
     create_farm_workspace()
+
+
+def ensure_erpnext_dependency():
+    missing = [
+        doctype
+        for doctype in ("Company", "Project", "Item", "UOM", "Account")
+        if not frappe.db.exists("DocType", doctype)
+    ]
+    if missing:
+        frappe.throw(
+            "Farm Management requires ERPNext before migration. Missing DocTypes: "
+            + ", ".join(missing)
+        )
+
+
+def seed_agricultural_uoms():
+    whole_number_uoms = {"Head", "Bird", "Fingerling", "Colony"}
+    for uom_name in (
+        "Head",
+        "Bird",
+        "Fingerling",
+        "Colony",
+        "Hectare",
+        "Kg",
+        "Tonne",
+        "Bag",
+        "Crate",
+        "Litre",
+    ):
+        if frappe.db.exists("UOM", uom_name):
+            continue
+        uom = frappe.new_doc("UOM")
+        uom.uom_name = uom_name
+        uom.must_be_whole_number = uom_name in whole_number_uoms
+        uom.insert(ignore_permissions=True)
+
+
+def seed_erpnext_operational_masters():
+    # ERPNext uses this master while creating a Company's default transit
+    # warehouse. Older/partial sites can be missing it and then fail both
+    # company creation and Frappe's integration-test setup.
+    if frappe.db.exists("DocType", "Warehouse Type") and not frappe.db.exists(
+        "Warehouse Type", "Transit"
+    ):
+        frappe.get_doc(
+            {"doctype": "Warehouse Type", "name": "Transit"}
+        ).insert(ignore_permissions=True)
 
 
 def ensure_module_defs():
@@ -400,9 +458,9 @@ def setup_biological_asset_accounts():
         frappe.db.set_value("Farm Management Settings", "Farm Management Settings", updates, update_modified=False)
 
 
-def setup_contract_farming_accounts():
+def setup_contract_farming_accounts(company=None):
     settings = frappe.get_single("Farm Management Settings")
-    company = settings.default_company or frappe.defaults.get_user_default("Company") or frappe.db.get_single_value(
+    company = company or settings.default_company or frappe.defaults.get_user_default("Company") or frappe.db.get_single_value(
         "Global Defaults", "default_company"
     )
     if not company:
@@ -419,6 +477,13 @@ def setup_contract_farming_accounts():
         company,
         root_type="Income",
         report_type="Profit and Loss",
+    )
+    ensure_account(
+        "Biological Asset Cost of Sales",
+        company,
+        root_type="Expense",
+        report_type="Profit and Loss",
+        account_type="Cost of Goods Sold",
     )
     ensure_account(
         "Contract Farming Input Loans Receivable",
@@ -443,6 +508,25 @@ def setup_contract_farming_accounts():
         company,
         root_type="Liability",
         report_type="Balance Sheet",
+    )
+    ensure_account(
+        "Contract Farming Deferred Liability",
+        company,
+        root_type="Liability",
+        report_type="Balance Sheet",
+    )
+    ensure_account(
+        "Contract Farming Inputs Received Expense",
+        company,
+        root_type="Expense",
+        report_type="Profit and Loss",
+        account_type="Expense Account",
+    )
+    ensure_account(
+        "Contract Farming Income",
+        company,
+        root_type="Income",
+        report_type="Profit and Loss",
     )
 
 
@@ -534,10 +618,19 @@ def seed_fixture_data():
 
     fixture_paths = sorted(fixtures_dir.glob("*.json"), key=get_fixture_sort_key)
     for fixture_path in fixture_paths:
+        if fixture_path.name in EXCLUDED_INSTALL_FIXTURES:
+            continue
         with fixture_path.open(encoding="utf-8") as fixture_file:
             records = json.load(fixture_file)
 
         for record in records:
+            doctype = record.get("doctype")
+            if not doctype or not frappe.db.exists("DocType", doctype):
+                frappe.log_error(
+                    title="Farm Management fixture skipped",
+                    message=f"Skipped {fixture_path.name}: DocType {doctype or '<missing>'} is unavailable.",
+                )
+                continue
             if is_legacy_project_custom_field(record):
                 continue
 
@@ -635,11 +728,12 @@ def get_fixture_existing_name(record):
 
 def update_existing_fixture_record(record, existing_name):
     doctype = record.get("doctype")
-    if doctype not in ("Custom Field", "Farm Type", "Crop Type"):
+    # Reference masters become user-owned after installation. Never overwrite
+    # Farm Types, Crop Types, BOMs, pests, or diseases during later migrations.
+    if doctype != "Custom Field":
         return
 
-    if doctype == "Custom Field":
-        force_update_custom_field_type(record, existing_name)
+    force_update_custom_field_type(record, existing_name)
 
     doc = frappe.get_doc(doctype, existing_name)
     for key, value in record.items():
@@ -800,6 +894,11 @@ def seed_livestock_breeds():
         ("Layers", "Poultry", "Poultry", ["Hy-Line Brown", "Lohmann Brown", "ISA Brown"]),
         ("Tilapia", "Aquaculture", "Aquaculture", ["Nile Tilapia", "Red Tilapia"]),
         ("Catfish", "Aquaculture", "Aquaculture", ["African Catfish"]),
+        ("Trout", "Aquaculture", "Aquaculture", []),
+        ("Shrimp", "Aquaculture", "Aquaculture", []),
+        ("Road Runners", "Poultry", "Poultry", []),
+        ("Turkey", "Poultry", "Poultry", []),
+        ("Ducks", "Poultry", "Poultry", []),
     ]
     for species_name, farm_type, species_group, breeds in species_rows:
         if not frappe.db.exists("Livestock Species", species_name):
@@ -816,6 +915,72 @@ def seed_livestock_breeds():
                 breed.species = species_name
                 breed.is_active = 1
                 breed.insert(ignore_permissions=True)
+
+
+def seed_missing_crop_types():
+    crop_categories = {
+        "Sugar Beans": "Crop Production",
+        "Groundnuts": "Crop Production",
+        "Onions": "Horticulture",
+        "Cabbage": "Horticulture",
+        "Peppers": "Horticulture",
+        "Flowers": "Horticulture",
+        "Greenhouse Vegetables": "Horticulture",
+    }
+    for crop_name, category in crop_categories.items():
+        if frappe.db.exists("Crop Type", crop_name):
+            continue
+        crop = frappe.new_doc("Crop Type")
+        crop.crop_name = crop_name
+        crop.category = category if frappe.db.exists("Farm Type", category) else None
+        crop.insert(ignore_permissions=True)
+
+
+def normalize_managed_item_master_links():
+    for farm_type_name in frappe.get_all("Farm Type", pluck="name"):
+        farm_type = frappe.get_doc("Farm Type", farm_type_name)
+        changed = False
+        for row in farm_type.get("managed_items", []):
+            if row.managed_item_type == "Crop" and not row.crop_type:
+                row.crop_type = frappe.db.exists("Crop Type", row.managed_item_name)
+                changed = changed or bool(row.crop_type)
+            elif row.managed_item_type in ("Animal Species", "Poultry", "Aquaculture Species") and not row.livestock_species:
+                row.livestock_species = frappe.db.exists(
+                    "Livestock Species", row.managed_item_name
+                )
+                changed = changed or bool(row.livestock_species)
+            elif row.managed_item_type in ("Apiary", "Other") and not row.other_managed_item_name:
+                row.other_managed_item_name = row.managed_item_name
+                changed = True
+        if changed:
+            farm_type.save(ignore_permissions=True)
+
+
+def normalize_legacy_harvest_recovery_units():
+    if not frappe.db.exists("DocType", "Harvest Recovery"):
+        return
+    for row in frappe.get_all(
+        "Harvest Recovery",
+        fields=[
+            "name",
+            "quantity_delivered",
+            "unit",
+            "purchase_price_per_unit",
+            "quantity_delivered_kg",
+            "purchase_price_per_kg",
+        ],
+    ):
+        updates = {}
+        if not flt(row.quantity_delivered) and flt(row.quantity_delivered_kg):
+            updates["quantity_delivered"] = row.quantity_delivered_kg
+        if not row.unit and (row.quantity_delivered_kg or row.purchase_price_per_kg):
+            updates["unit"] = "Kg"
+        if not flt(row.purchase_price_per_unit) and flt(row.purchase_price_per_kg):
+            updates["purchase_price_per_unit"] = row.purchase_price_per_kg
+        if updates:
+            frappe.db.set_value(
+                "Harvest Recovery", row.name, updates, update_modified=False
+            )
 
 
 def seed_pests():
@@ -919,12 +1084,7 @@ def seed_pests():
     ]
     for pest in pests:
         name = pest.get("pest_name")
-        if frappe.db.exists("Pest", name):
-            doc = frappe.get_doc("Pest", name)
-            for key, value in pest.items():
-                doc.set(key, value)
-            doc.save(ignore_permissions=True)
-        else:
+        if not frappe.db.exists("Pest", name):
             frappe.get_doc({"doctype": "Pest", **pest}).insert(ignore_permissions=True)
 
 
@@ -1041,12 +1201,7 @@ def seed_animal_diseases():
     ]
     for disease in diseases:
         name = disease.get("disease_name")
-        if frappe.db.exists("Animal Disease", name):
-            doc = frappe.get_doc("Animal Disease", name)
-            for key, value in disease.items():
-                doc.set(key, value)
-            doc.save(ignore_permissions=True)
-        else:
+        if not frappe.db.exists("Animal Disease", name):
             frappe.get_doc({"doctype": "Animal Disease", **disease}).insert(ignore_permissions=True)
 
 

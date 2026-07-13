@@ -19,6 +19,7 @@
   "previous_net_fair_value",
   "previous_current_fair_value",
   "previous_cost_to_sell",
+  "valuation_snapshot",
   "fair_value_movement",
   "section_basis",
   "valuation_basis",
@@ -106,6 +107,13 @@
    "fieldname": "fair_value_movement",
    "fieldtype": "Currency",
    "label": "Fair Value Movement",
+   "read_only": 1
+  },
+  {
+   "fieldname": "valuation_snapshot",
+   "fieldtype": "Long Text",
+   "hidden": 1,
+   "label": "Valuation Snapshot",
    "read_only": 1
   },
   {

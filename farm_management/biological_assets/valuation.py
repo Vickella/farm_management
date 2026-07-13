@@ -5,12 +5,17 @@ from frappe.utils import flt, today
 def create_capitalization_document(
     biological_asset,
     amount=0,
+    posting_date=None,
     capitalization_type="Other",
     source_doctype=None,
     source_name=None,
     remarks=None,
     quantity_delta=0,
     project=None,
+    post_gl_entry=True,
+    credit_account=None,
+    accounting_source_doctype=None,
+    accounting_source_name=None,
     submit=True,
 ):
     if not biological_asset or (not flt(amount) and not flt(quantity_delta)):
@@ -33,13 +38,17 @@ def create_capitalization_document(
 
     doc = frappe.new_doc("Biological Asset Capitalization")
     doc.biological_asset = biological_asset
-    doc.posting_date = today()
+    doc.posting_date = posting_date or today()
     doc.capitalization_type = capitalization_type
     doc.amount = flt(amount)
     doc.quantity_delta = flt(quantity_delta)
     doc.source_doctype = source_doctype
     doc.source_name = source_name
     doc.project = project
+    doc.post_gl_entry = 1 if post_gl_entry else 0
+    doc.credit_account = credit_account
+    doc.accounting_source_doctype = accounting_source_doctype
+    doc.accounting_source_name = accounting_source_name
     doc.remarks = remarks
     doc.insert(ignore_permissions=True)
     if submit:
@@ -96,6 +105,7 @@ def get_or_create_biological_asset_for_livestock(livestock):
     asset.asset_category = get_asset_category_for_species(species)
     asset.farm_type = farm_type
     asset.managed_item = species.name
+    asset.livestock_breed = livestock.breed
     asset.status = "Active"
     asset.growth_stage = "Immature"
     asset.valuation_method = "Cost Accumulation"
@@ -109,17 +119,17 @@ def get_or_create_biological_asset_for_livestock(livestock):
 
 
 def find_farm_type_for_managed_item(managed_item):
-    matches = frappe.get_all(
-        "Farm Type",
-        filters={"is_active": 1},
-        fields=["name"],
+    farm_type = frappe.db.get_value(
+        "Farm Type Managed Item",
+        {
+            "managed_item_name": managed_item,
+            "is_active": 1,
+            "parenttype": "Farm Type",
+        },
+        "parent",
     )
-    managed_item_key = (managed_item or "").strip().lower()
-    for row in matches:
-        doc = frappe.get_doc("Farm Type", row.name)
-        for item in doc.get("managed_items", []):
-            if item.is_active and (item.managed_item_name or "").strip().lower() == managed_item_key:
-                return doc.name
+    if farm_type and frappe.db.get_value("Farm Type", farm_type, "is_active"):
+        return farm_type
     return frappe.db.get_value("Farm Type", {"category": "Animal Husbandry", "is_active": 1}, "name")
 
 
@@ -133,6 +143,7 @@ def get_asset_category_for_species(species):
 
 @frappe.whitelist()
 def repair_missing_livestock_assets():
+    frappe.only_for("System Manager")
     repaired = []
     skipped = []
     livestock_records = frappe.get_all(
@@ -184,7 +195,12 @@ def apply_capitalization(capitalization):
         ),
     )
     asset.save(ignore_permissions=True)
-    create_capitalization_journal_entry(capitalization, asset)
+    if capitalization.get("post_gl_entry"):
+        create_capitalization_journal_entry(capitalization, asset)
+    if flt(capitalization.amount):
+        # The carrying amount is now represented in GL either by the generated
+        # transfer journal or by the validated source invoice.
+        asset.db_set("last_posted_net_fair_value", asset.net_fair_value, update_modified=False)
 
 
 def reverse_capitalization(capitalization):
@@ -227,10 +243,18 @@ def create_capitalization_journal_entry(capitalization, asset=None):
 
     asset = asset or frappe.get_doc("Biological Asset", capitalization.biological_asset)
     biological_asset_account = get_biological_asset_account(asset)
-    cwip_account = get_capital_work_in_progress_account(asset)
-    if not biological_asset_account or not cwip_account:
+    if capitalization.capitalization_type == "Birth":
+        default_credit_account = get_fair_value_gain_loss_account(asset)
+    elif capitalization.capitalization_type == "Opening":
+        default_credit_account = get_temporary_opening_account(asset)
+    else:
+        default_credit_account = get_capital_work_in_progress_account(asset)
+    credit_account = capitalization.get("credit_account") or default_credit_account
+    if capitalization.get("credit_account"):
+        validate_ledger_account(credit_account, get_company(asset), "Capitalization Credit Account")
+    if not biological_asset_account or not credit_account:
         frappe.throw(
-            "Set Biological Asset Account and Capital Work In Progress Account on the managed item row in Farm Type."
+            "Configure the Biological Asset and capitalization credit accounts for this managed item."
         )
 
     company = get_company(asset)
@@ -238,7 +262,9 @@ def create_capitalization_journal_entry(capitalization, asset=None):
         frappe.throw("Set Default Company in Farm Management Settings or on the linked Project.")
 
     journal_entry = frappe.new_doc("Journal Entry")
-    journal_entry.voucher_type = "Journal Entry"
+    journal_entry.voucher_type = (
+        "Opening Entry" if capitalization.capitalization_type == "Opening" else "Journal Entry"
+    )
     journal_entry.company = company
     journal_entry.posting_date = capitalization.posting_date or today()
     journal_entry.user_remark = (
@@ -255,7 +281,7 @@ def create_capitalization_journal_entry(capitalization, asset=None):
     )
     append_account(
         journal_entry,
-        cwip_account,
+        credit_account,
         credit=amount,
         project=capitalization.project or asset.linked_project,
     )
@@ -362,12 +388,80 @@ def reduce_asset_quantity(biological_asset, quantity, source_doctype=None, sourc
     return value_before - flt(asset.net_fair_value)
 
 
-def restore_asset_quantity(biological_asset, quantity, asset_value_reduction=0, source_doctype=None, source_name=None):
+def get_asset_valuation_snapshot(biological_asset):
+    asset = frappe.get_doc("Biological Asset", biological_asset)
+    return frappe.as_json(
+        {
+            fieldname: asset.get(fieldname)
+            for fieldname in (
+                "quantity",
+                "initial_cost",
+                "capitalized_cost",
+                "current_fair_value",
+                "cost_to_sell",
+                "net_fair_value",
+                "accumulated_gain_loss",
+                "previous_quantity",
+                "status",
+                "last_valuation_date",
+                "last_posted_net_fair_value",
+                "last_journal_entry",
+            )
+        }
+    )
+
+
+def restore_asset_quantity(
+    biological_asset,
+    quantity,
+    asset_value_reduction=0,
+    source_doctype=None,
+    source_name=None,
+    valuation_snapshot=None,
+):
     quantity = flt(quantity)
     if not biological_asset or not quantity:
         return
 
     asset = frappe.get_doc("Biological Asset", biological_asset)
+    if valuation_snapshot:
+        snapshot = (
+            frappe.parse_json(valuation_snapshot)
+            if isinstance(valuation_snapshot, str)
+            else valuation_snapshot
+        )
+        for fieldname in (
+            "quantity",
+            "initial_cost",
+            "capitalized_cost",
+            "current_fair_value",
+            "cost_to_sell",
+            "net_fair_value",
+            "accumulated_gain_loss",
+            "previous_quantity",
+            "status",
+            "last_valuation_date",
+            "last_posted_net_fair_value",
+            "last_journal_entry",
+        ):
+            if fieldname in snapshot:
+                asset.set(fieldname, snapshot[fieldname])
+        asset.add_comment(
+            "Info",
+            get_capitalization_comment(
+                0, source_doctype, source_name, "Quantity cancellation restored exact valuation snapshot", quantity
+            ),
+        )
+        asset.flags.ignore_validate = True
+        asset.save(ignore_permissions=True)
+        if "last_valuation_date" in snapshot:
+            asset.db_set(
+                "last_valuation_date",
+                snapshot["last_valuation_date"],
+                update_modified=False,
+            )
+        return
+
     asset.quantity = flt(asset.quantity) + quantity
     if asset.status in ("Harvested", "Sold", "Dead Loss"):
         asset.status = "Active"
@@ -393,6 +487,7 @@ def create_asset_outflow_journal_entry(
     source_doctype=None,
     source_name=None,
     remarks=None,
+    debit_account=None,
 ):
     amount = flt(amount)
     if not biological_asset or not amount:
@@ -404,8 +499,8 @@ def create_asset_outflow_journal_entry(
 
     asset = frappe.get_doc("Biological Asset", biological_asset)
     biological_asset_account = get_biological_asset_account(asset)
-    gain_loss_account = get_fair_value_gain_loss_account(asset)
-    if not biological_asset_account or not gain_loss_account:
+    outflow_account = debit_account or get_fair_value_gain_loss_account(asset)
+    if not biological_asset_account or not outflow_account:
         frappe.throw(
             "Set Biological Asset Account and Fair Value Gain/Loss Account on the managed item row in Farm Type."
         )
@@ -425,7 +520,7 @@ def create_asset_outflow_journal_entry(
 
     append_account(
         journal_entry,
-        gain_loss_account,
+        outflow_account,
         debit=amount,
         project=project or asset.linked_project,
     )
@@ -438,7 +533,103 @@ def create_asset_outflow_journal_entry(
     journal_entry.insert(ignore_permissions=True)
     journal_entry.submit()
     asset.db_set("last_journal_entry", journal_entry.name, update_modified=False)
+    asset.db_set("last_posted_net_fair_value", asset.net_fair_value, update_modified=False)
     return journal_entry.name
+
+
+def get_biological_asset_cost_of_sales_account(asset):
+    if isinstance(asset, str):
+        asset = frappe.get_doc("Biological Asset", asset)
+    company = get_company(asset)
+    settings = frappe.get_single("Farm Management Settings")
+    configured = settings.get("biological_asset_cost_of_sales_account")
+    if configured:
+        validate_ledger_account(configured, company, "Biological Asset Cost of Sales")
+        return configured
+    return frappe.db.get_value(
+        "Account",
+        {"account_name": "Biological Asset Cost of Sales", "company": company, "is_group": 0},
+        "name",
+    )
+
+
+def get_temporary_opening_account(asset):
+    company = get_company(asset)
+    if not company:
+        return None
+    return frappe.db.get_value(
+        "Account",
+        {"company": company, "account_type": "Temporary", "is_group": 0},
+        "name",
+    )
+
+
+def get_capitalization_source_account(
+    biological_asset,
+    source_doctype,
+    source_name,
+    amount,
+    project=None,
+):
+    """Return one posted debit account with enough uncapitalized source value."""
+    if not source_doctype or not source_name:
+        frappe.throw("Select a submitted accounting source before capitalizing this cost.")
+    source = frappe.get_doc(source_doctype, source_name)
+    if source.docstatus != 1:
+        frappe.throw(f"{source_doctype} {source_name} must be submitted.")
+    asset = frappe.get_doc("Biological Asset", biological_asset)
+    company = get_company(asset)
+    if source.get("company") and source.company != company:
+        frappe.throw(f"{source_doctype} {source_name} must belong to company {company}.")
+
+    filters = {
+        "company": company,
+        "voucher_type": source_doctype,
+        "voucher_no": source_name,
+        "is_cancelled": 0,
+    }
+    if project:
+        filters["project"] = project
+    debit_rows = frappe.get_all(
+        "GL Entry",
+        filters=filters,
+        fields=["account", "sum(debit - credit) as net_debit"],
+        group_by="account",
+    )
+    candidates = []
+    for row in debit_rows:
+        net_debit = flt(row.net_debit)
+        if net_debit <= 0:
+            continue
+        used = flt(
+            frappe.db.get_value(
+                "Biological Asset Capitalization",
+                {
+                    "accounting_source_doctype": source_doctype,
+                    "accounting_source_name": source_name,
+                    "credit_account": row.account,
+                    "docstatus": 1,
+                },
+                "sum(amount)",
+            )
+        )
+        available = net_debit - used
+        if available + 0.005 >= flt(amount):
+            candidates.append((row.account, available))
+    exact = [row for row in candidates if abs(row[1] - flt(amount)) < 0.01]
+    if len(exact) == 1:
+        return exact[0][0]
+    if len(candidates) == 1:
+        return candidates[0][0]
+    if not candidates:
+        frappe.throw(
+            f"{source_doctype} {source_name} has no uncapitalized posted debit of {flt(amount)} "
+            f"for company {company}" + (f" and project {project}" if project else "") + "."
+        )
+    frappe.throw(
+        f"{source_doctype} {source_name} has multiple eligible debit accounts. "
+        "Use a source document/project combination with one identifiable cost debit."
+    )
 
 
 def create_asset_sale_proceeds_journal_entry(
@@ -524,6 +715,18 @@ def sync_project_material_issue(stock_entry, method=None):
             )
         asset_name = assets[0] if assets else None
         if asset_name and amount:
+            asset = frappe.get_doc("Biological Asset", asset_name)
+            cwip_account = get_capital_work_in_progress_account(asset)
+            project_rows = [
+                row for row in stock_entry.get("items", [])
+                if (row.get("project") or stock_entry.get("project")) == project
+            ]
+            invalid_rows = [row.idx for row in project_rows if row.get("expense_account") != cwip_account]
+            if invalid_rows:
+                frappe.throw(
+                    "Material Issue rows capitalized to a Biological Asset must post to its Capital Work In Progress "
+                    f"account. Correct rows: {', '.join(str(idx) for idx in invalid_rows)}."
+                )
             create_capitalization_document(
                 biological_asset=asset_name,
                 amount=amount,
@@ -586,6 +789,78 @@ def create_fair_value_journal_entry(asset, delta=None, posting_date=None):
     asset.db_set("last_posted_net_fair_value", asset.net_fair_value, update_modified=False)
 
 
+@frappe.whitelist()
+def get_biological_asset_gl_reconciliation(company=None, posting_date=None, throw_on_difference=False):
+    """Reconcile each IAS 41 subledger account to posted ERPNext GL entries."""
+    frappe.has_permission("Biological Asset", ptype="read", throw=True)
+    company = company or frappe.get_single("Farm Management Settings").default_company
+    if not company:
+        frappe.throw("Select a company for Biological Asset GL reconciliation.")
+
+    configured_accounts = frappe.get_all(
+            "Farm Type Managed Item",
+            filters={"is_active": 1, "biological_asset_account": ["is", "set"]},
+            pluck="biological_asset_account",
+        )
+    accounts = set(
+        frappe.get_all(
+            "Account",
+            filters={"name": ["in", configured_accounts or [""]], "company": company, "is_group": 0},
+            pluck="name",
+        )
+    )
+    accounts.update(
+        frappe.get_all(
+            "Account",
+            filters={
+                "company": company,
+                "is_group": 0,
+                "account_name": ["like", "Biological Asset - %"],
+            },
+            pluck="name",
+        )
+    )
+    assets = frappe.get_all(
+        "Biological Asset",
+        filters={"status": ["not in", ["Cancelled"]]},
+        fields=["name", "net_fair_value"],
+    )
+    subledger = {}
+    for row in assets:
+        asset = frappe.get_doc("Biological Asset", row.name)
+        if get_company(asset) != company:
+            continue
+        account = get_biological_asset_account(asset)
+        if not account:
+            frappe.throw(f"Biological Asset {asset.name} has no configured ledger account.")
+        accounts.add(account)
+        subledger[account] = subledger.get(account, 0) + flt(asset.net_fair_value)
+
+    filters = {"company": company, "is_cancelled": 0, "account": ["in", list(accounts) or [""]]}
+    gl_rows = frappe.get_all(
+        "GL Entry",
+        filters=filters,
+        fields=["account", "sum(debit - credit) as balance"],
+        group_by="account",
+    )
+    gl_balances = {row.account: flt(row.balance) for row in gl_rows}
+    rows = []
+    for account in sorted(accounts):
+        difference = flt(subledger.get(account)) - flt(gl_balances.get(account))
+        rows.append(
+            {
+                "account": account,
+                "subledger_value": subledger.get(account, 0),
+                "gl_balance": gl_balances.get(account, 0),
+                "difference": difference,
+                "status": "Reconciled" if abs(difference) < 0.01 else "Mismatch",
+            }
+        )
+    if throw_on_difference and any(row["status"] == "Mismatch" for row in rows):
+        frappe.throw("Biological Asset subledger does not reconcile to the General Ledger.")
+    return rows
+
+
 def validate_ledger_account(account, company, label):
     account_doc = frappe.db.get_value(
         "Account",
@@ -601,7 +876,7 @@ def validate_ledger_account(account, company, label):
         frappe.throw(f"{label} must belong to company {company}.")
 
 
-def append_account(journal_entry, account, debit=0, credit=0, project=None):
+def append_account(journal_entry, account, debit=0, credit=0, project=None, party_type=None, party=None):
     settings = frappe.get_single("Farm Management Settings")
     row = {
         "account": account,
@@ -612,6 +887,9 @@ def append_account(journal_entry, account, debit=0, credit=0, project=None):
         row["cost_center"] = settings.default_cost_center
     if project:
         row["project"] = project
+    if party_type and party:
+        row["party_type"] = party_type
+        row["party"] = party
     journal_entry.append("accounts", row)
 
 

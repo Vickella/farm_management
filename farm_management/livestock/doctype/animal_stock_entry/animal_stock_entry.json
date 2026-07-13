@@ -25,10 +25,16 @@
   "rate",
   "amount",
   "section_cost",
+  "purchase_invoice",
+  "supplier",
+  "purchase_expense_account",
+  "sales_invoice",
+  "customer",
   "sale_amount",
   "item",
   "capitalization",
   "asset_value_reduction",
+  "valuation_snapshot",
   "journal_entry",
   "sale_journal_entry",
   "amended_from"
@@ -133,9 +139,9 @@
   },
   {
    "fieldname": "unit",
-   "fieldtype": "Select",
+   "fieldtype": "Link",
    "label": "Unit",
-   "options": "Head\nBird\nKg\nFingerling\nColony",
+   "options": "UOM",
    "reqd": 1,
    "fetch_from": "biological_asset.unit"
   },
@@ -143,6 +149,7 @@
    "fieldname": "rate",
    "fieldtype": "Currency",
    "label": "Unit Cost / Rate",
+   "description": "For asset outflows, defaults to current carrying value divided by asset quantity.",
    "fetch_from": "item.valuation_rate"
   },
   {
@@ -160,13 +167,57 @@
    "fieldname": "sale_amount",
    "fieldtype": "Currency",
    "label": "Sale Proceeds Amount",
-   "depends_on": "eval:doc.entry_type == 'Sale'"
+   "depends_on": "eval:doc.entry_type == 'Sale'",
+   "read_only": 1
+  },
+  {
+   "depends_on": "eval:doc.entry_type == 'Purchase'",
+   "fieldname": "purchase_invoice",
+   "fieldtype": "Link",
+   "label": "Purchase Invoice",
+   "mandatory_depends_on": "eval:doc.entry_type == 'Purchase'",
+   "options": "Purchase Invoice"
+  },
+  {
+   "depends_on": "eval:doc.entry_type == 'Purchase'",
+   "fetch_from": "purchase_invoice.supplier",
+   "fieldname": "supplier",
+   "fieldtype": "Link",
+   "label": "Supplier",
+   "options": "Supplier",
+   "read_only": 1
+  },
+  {
+   "fieldname": "purchase_expense_account",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Purchase Expense Account",
+   "options": "Account",
+   "read_only": 1
+  },
+  {
+   "depends_on": "eval:doc.entry_type == 'Sale'",
+   "fieldname": "sales_invoice",
+   "fieldtype": "Link",
+   "label": "Sales Invoice",
+   "mandatory_depends_on": "eval:doc.entry_type == 'Sale'",
+   "options": "Sales Invoice"
+  },
+  {
+   "depends_on": "eval:doc.entry_type == 'Sale'",
+   "fetch_from": "sales_invoice.customer",
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "label": "Customer",
+   "options": "Customer",
+   "read_only": 1
   },
   {
    "fieldname": "item",
    "fieldtype": "Link",
    "label": "Item / Input",
-   "options": "Item"
+   "options": "Item",
+   "mandatory_depends_on": "eval:doc.entry_type == 'Purchase' || doc.entry_type == 'Sale'"
   },
   {
    "fieldname": "capitalization",
@@ -179,6 +230,14 @@
    "fieldname": "asset_value_reduction",
    "fieldtype": "Currency",
    "label": "Asset Value Reduction",
+   "description": "Proportional carrying value removed from the Biological Asset; this is not the sale price.",
+   "read_only": 1
+  },
+  {
+   "fieldname": "valuation_snapshot",
+   "fieldtype": "Long Text",
+   "hidden": 1,
+   "label": "Valuation Snapshot",
    "read_only": 1
   },
   {
@@ -194,7 +253,7 @@
    "label": "Sale Proceeds Journal Entry",
    "options": "Journal Entry",
    "read_only": 1,
-   "depends_on": "eval:doc.entry_type == 'Sale' || doc.sale_journal_entry"
+   "hidden": 1
   },
   {
    "fieldname": "amended_from",

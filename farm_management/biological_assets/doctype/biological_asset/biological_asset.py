@@ -5,6 +5,7 @@ from frappe.utils import flt, today
 class BiologicalAsset(Document):
     def validate(self):
         self.validate_managed_item()
+        self.validate_livestock_breed()
         self.validate_mandatory_fields()
         self.recalculate_valuation()
         self.validate_quantity()
@@ -29,6 +30,13 @@ class BiologicalAsset(Document):
             frappe.throw(
                 f"Managed item '{self.managed_item}' is not listed under Farm Type '{self.farm_type}'."
             )
+
+    def validate_livestock_breed(self):
+        if not self.livestock_breed:
+            return
+        breed_species = frappe.db.get_value("Livestock Breed", self.livestock_breed, "species")
+        if breed_species and self.managed_item and breed_species != self.managed_item:
+            frappe.throw("Breed must belong to the selected managed animal species.")
 
     def recalculate_valuation(self, scale_by_quantity=False):
         if scale_by_quantity and flt(self.previous_quantity):
@@ -63,4 +71,13 @@ def update_fair_values():
     cutoff = add_days(today(), -30)
     overdue = frappe.get_all("Biological Asset", filters={"status": "Active", "last_valuation_date": ["<", cutoff]}, fields=["name", "farm", "asset_name"])
     for asset in overdue:
+        if frappe.db.exists(
+            "ToDo",
+            {
+                "reference_type": "Biological Asset",
+                "reference_name": asset.name,
+                "status": "Open",
+            },
+        ):
+            continue
         frappe.get_doc({"doctype": "ToDo", "description": f"Biological Asset valuation overdue: {asset.asset_name}", "reference_type": "Biological Asset", "reference_name": asset.name, "priority": "Medium"}).insert(ignore_permissions=True)

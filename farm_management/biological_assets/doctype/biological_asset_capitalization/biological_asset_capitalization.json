@@ -18,6 +18,10 @@
   "source_doctype",
   "source_name",
   "project",
+  "post_gl_entry",
+  "credit_account",
+  "accounting_source_doctype",
+  "accounting_source_name",
   "section_accounting",
   "remarks",
   "journal_entry"
@@ -53,7 +57,7 @@
    "fieldname": "capitalization_type",
    "fieldtype": "Select",
    "label": "Capitalization Type",
-   "options": "Purchase\nBirth\nMaterial Issue\nHealth Cost\nFarm Activity\nManual Adjustment\nOther",
+   "options": "Opening\nReceipt\nPurchase\nBirth\nMaterial Issue\nHealth Cost\nFarm Activity\nManual Adjustment\nOther",
    "reqd": 1,
    "in_list_view": 1
   },
@@ -89,6 +93,38 @@
    "label": "Project",
    "options": "Project",
    "fetch_from": "biological_asset.linked_project"
+  },
+  {
+   "default": "1",
+   "fieldname": "post_gl_entry",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Post GL Entry",
+   "read_only": 1
+  },
+  {
+   "fieldname": "credit_account",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Capitalization Credit Account",
+   "options": "Account",
+   "read_only": 1
+  },
+  {
+   "fieldname": "accounting_source_doctype",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Accounting Source DocType",
+   "options": "DocType",
+   "read_only": 1
+  },
+  {
+   "fieldname": "accounting_source_name",
+   "fieldtype": "Dynamic Link",
+   "hidden": 1,
+   "label": "Accounting Source",
+   "options": "accounting_source_doctype",
+   "read_only": 1
   },
   {
    "fieldname": "section_accounting",

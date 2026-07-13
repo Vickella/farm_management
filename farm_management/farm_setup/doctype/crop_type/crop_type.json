@@ -43,9 +43,9 @@
   },
   {
    "fieldname": "yield_unit",
-   "fieldtype": "Select",
+   "fieldtype": "Link",
    "label": "Yield Unit",
-   "options": "\nkg\nTonne\nBag\nCrate"
+   "options": "UOM"
   }
  ],
  "links": [],

@@ -1,5 +1,5 @@
-frappe.ui.form.on('Greenhouse Cycle', {
-	refresh: function(frm) {
-
-	}
+frappe.ui.form.on("Greenhouse Cycle", {
+    setup(frm) {
+        frm.set_query("crop", () => ({}));
+    },
 });

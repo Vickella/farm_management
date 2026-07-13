@@ -17,6 +17,7 @@
   "valuation_method",
   "linked_project",
   "managed_item",
+  "livestock_breed",
   "section_quantity",
   "acquisition_date",
   "quantity",
@@ -109,6 +110,13 @@
    "reqd": 1
   },
   {
+   "depends_on": "eval:doc.asset_category == 'Livestock' || doc.asset_category == 'Poultry'",
+   "fieldname": "livestock_breed",
+   "fieldtype": "Link",
+   "label": "Breed",
+   "options": "Livestock Breed"
+  },
+  {
    "fieldname": "section_break_quantity",
    "fieldtype": "Section Break",
    "label": "Quantity"
@@ -127,9 +135,9 @@
   },
   {
    "fieldname": "unit",
-   "fieldtype": "Select",
+   "fieldtype": "Link",
    "label": "Unit",
-   "options": "Head\nBird\nKg\nHectare\nFingerling",
+   "options": "UOM",
    "depends_on": "eval:doc.asset_category != 'Crops in Growth'"
   },
   {

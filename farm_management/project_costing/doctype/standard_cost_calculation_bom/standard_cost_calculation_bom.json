@@ -9,7 +9,9 @@
   "item",
   "target_quantity",
   "unit",
-  "standard_costs"
+  "standard_costs",
+  "total_standard_cost",
+  "standard_cost_per_unit"
  ],
  "fields": [
   {
@@ -33,8 +35,9 @@
   },
   {
    "fieldname": "unit",
-   "fieldtype": "Data",
+   "fieldtype": "Link",
    "label": "Unit",
+   "options": "UOM",
    "fetch_from": "item.stock_uom"
   },
   {
@@ -42,6 +45,18 @@
    "fieldtype": "Table",
    "label": "Standard Costs",
    "options": "Standard Cost Calculation BOM Item"
+  },
+  {
+   "fieldname": "total_standard_cost",
+   "fieldtype": "Currency",
+   "label": "Total Standard Cost",
+   "read_only": 1
+  },
+  {
+   "fieldname": "standard_cost_per_unit",
+   "fieldtype": "Currency",
+   "label": "Standard Cost Per Target Unit",
+   "read_only": 1
   }
  ],
  "links": [],

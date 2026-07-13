@@ -66,8 +66,9 @@
   },
   {
    "fieldname": "managed_species",
-   "fieldtype": "Data",
+   "fieldtype": "Link",
    "label": "Managed Aquaculture Species",
+   "options": "Livestock Species",
    "in_list_view": 1
   },
   {

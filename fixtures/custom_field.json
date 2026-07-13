@@ -443,9 +443,10 @@
     "dt": "Project",
     "module": "Farm Management",
     "fieldname": "managed_crop_animal_species",
-    "fieldtype": "Data",
+    "fieldtype": "Select",
     "label": "Managed Crop / Animal / Species",
     "insert_after": "agriculture_farm_type",
+    "mandatory_depends_on": "eval:doc.agriculture_project_type",
     "depends_on": "eval:doc.agriculture_project_type"
   },
   {
@@ -474,10 +475,10 @@
     "dt": "Project",
     "module": "Farm Management",
     "fieldname": "project_unit",
-    "fieldtype": "Select",
+    "fieldtype": "Link",
     "label": "Project Unit",
     "insert_after": "project_quantity",
-    "options": "\nHead\nBird\nKg\nHectare\nFingerling\nColony",
+    "options": "UOM",
     "depends_on": "eval:doc.agriculture_project_type"
   }
 ]

@@ -8,8 +8,17 @@ app_color = "green"
 app_email = "dev@veritycore.co.zw"
 app_license = "MIT"
 
+# Farm Management links to ERPNext accounting, stock, project, UOM, Item, and
+# company DocTypes throughout its schema. Declaring this dependency prevents
+# installation or migration against a Frappe-only site.
+required_apps = ["erpnext"]
+
 after_install = "farm_management.install.after_install"
 after_migrate = ["farm_management.install.apply_phase2_updates"]
+
+doctype_js = {
+    "Project": "public/js/project.js",
+}
 
 fixtures = [
     {"dt": "Custom Field", "filters": [["module", "=", "Farm Management"]]},

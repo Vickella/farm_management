@@ -1,4 +1,5 @@
 import frappe
+from farm_management.permissions import apply_farm_permission_filter
 
 
 def execute(filters=None):
@@ -26,9 +27,10 @@ def execute(filters=None):
 def get_data(filters):
     conditions = []
     values = {}
-    if filters.get("farm"):
-        conditions.append("farm = %(farm)s")
-        values["farm"] = filters.get("farm")
+    if not apply_farm_permission_filter(
+        conditions, values, requested_farm=filters.get("farm")
+    ):
+        return []
     if filters.get("farm_type"):
         conditions.append("farm_type = %(farm_type)s")
         values["farm_type"] = filters.get("farm_type")

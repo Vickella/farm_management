@@ -61,8 +61,9 @@
   },
   {
    "fieldname": "breed",
-   "fieldtype": "Data",
-   "label": "Primary Breed"
+   "fieldtype": "Link",
+   "label": "Primary Breed",
+   "options": "Livestock Breed"
   },
   {
    "fieldname": "head_count",

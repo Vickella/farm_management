@@ -4,10 +4,22 @@ from frappe import _
 
 @frappe.whitelist()
 def get_agri_response(question, context_farm=None):
+    frappe.only_for(("System Manager", "Farm Manager", "Agronomist"))
+    settings = frappe.get_single("Farm Management Settings")
+    if not settings.enable_ai_assistant:
+        frappe.throw(_("AI Assistant is disabled in Farm Management Settings."))
+    question = (question or "").strip()
+    if not question:
+        frappe.throw(_("Enter a question."))
+    if len(question) > 4000:
+        frappe.throw(_("Question must not exceed 4,000 characters."))
+    if context_farm:
+        frappe.get_doc("Farm", context_farm).check_permission("read")
+
     system_prompt = _build_system_prompt(context_farm)
     api_key = frappe.conf.get("openai_api_key")
     if not api_key:
-        api_key = frappe.get_single("Farm Management Settings").get_password("ai_api_key")
+        api_key = settings.get_password("ai_api_key")
     if not api_key:
         frappe.throw(
             _("AI API key not configured. Please set it in Farm Management Settings.")

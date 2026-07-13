@@ -4,11 +4,12 @@ from frappe.utils import flt
 from farm_management.biological_assets.valuation import append_account
 
 
-def get_company():
-    settings = frappe.get_single("Farm Management Settings")
-    return settings.default_company or frappe.defaults.get_user_default("Company") or frappe.db.get_single_value(
-        "Global Defaults", "default_company"
-    )
+def get_contract_company(agreement):
+    agreement = agreement if hasattr(agreement, "farm") else frappe.get_doc("Contract Farming Agreement", agreement)
+    company = frappe.db.get_value("Farm", agreement.farm, "owner_name")
+    if not company:
+        frappe.throw(f"Set Farm Owner Company on Farm {agreement.farm}.")
+    return company
 
 
 def get_contract_account(account_name, company, settings_field=None):
@@ -20,7 +21,7 @@ def get_contract_account(account_name, company, settings_field=None):
 
     from farm_management.install import setup_contract_farming_accounts
 
-    setup_contract_farming_accounts()
+    setup_contract_farming_accounts(company)
     account = frappe.db.get_value(
         "Account",
         {"account_name": account_name, "company": company, "is_group": 0},
@@ -51,9 +52,11 @@ def create_input_loan_journal(disbursement):
     if not amount:
         return None
 
-    company = get_company()
-    if not company:
-        frappe.throw("Set Default Company in Farm Management Settings before posting contract farming accounting.")
+    agreement = frappe.get_doc("Contract Farming Agreement", disbursement.agreement)
+    company = get_contract_company(agreement)
+
+    if agreement.contract_type == "Receiving Contract (Liability)":
+        return create_received_input_journal(disbursement, agreement, company, amount)
 
     receivable = get_contract_account(
         "Contract Farming Input Loans Receivable",
@@ -78,6 +81,29 @@ def create_input_loan_journal(disbursement):
     return journal_entry.name
 
 
+def create_received_input_journal(disbursement, agreement, company, amount):
+    input_expense = get_contract_account(
+        "Contract Farming Inputs Received Expense",
+        company,
+        "contract_inputs_received_expense_account",
+    )
+    liability = get_contract_account(
+        "Contract Farming Deferred Liability",
+        company,
+        "contract_farming_liability_account",
+    )
+    journal_entry = frappe.new_doc("Journal Entry")
+    journal_entry.voucher_type = "Journal Entry"
+    journal_entry.company = company
+    journal_entry.posting_date = disbursement.disbursement_date
+    journal_entry.user_remark = f"Inputs received under contract {agreement.name}"
+    append_account(journal_entry, input_expense, debit=amount, project=agreement.linked_project)
+    append_account(journal_entry, liability, credit=amount, project=agreement.linked_project)
+    journal_entry.insert(ignore_permissions=True)
+    journal_entry.submit()
+    return journal_entry.name
+
+
 def create_harvest_recovery_journal(recovery):
     gross_payment = flt(recovery.gross_payment)
     loan_recovery = flt(recovery.loan_recovery_amount)
@@ -85,9 +111,11 @@ def create_harvest_recovery_journal(recovery):
     if not gross_payment:
         return None
 
-    company = get_company()
-    if not company:
-        frappe.throw("Set Default Company in Farm Management Settings before posting contract farming accounting.")
+    agreement = frappe.get_doc("Contract Farming Agreement", recovery.agreement)
+    company = get_contract_company(agreement)
+
+    if agreement.contract_type == "Receiving Contract (Liability)":
+        return create_receiving_harvest_journal(recovery, agreement, company)
 
     purchases = get_contract_account(
         "Contract Farming Harvest Purchases",
@@ -115,6 +143,44 @@ def create_harvest_recovery_journal(recovery):
         append_account(journal_entry, receivable, credit=loan_recovery)
     if net_payment:
         append_account(journal_entry, grower_payable, credit=net_payment)
+    journal_entry.insert(ignore_permissions=True)
+    journal_entry.submit()
+    return journal_entry.name
+
+
+def create_receiving_harvest_journal(recovery, agreement, company):
+    from erpnext.accounts.party import get_party_account
+
+    if not agreement.sponsor_customer:
+        frappe.throw("Sponsor Customer is required for a Receiving Contract.")
+    income = get_contract_account(
+        "Contract Farming Income", company, "contract_farming_income_account"
+    )
+    liability = get_contract_account(
+        "Contract Farming Deferred Liability", company, "contract_farming_liability_account"
+    )
+    receivable = get_party_account("Customer", agreement.sponsor_customer, company)
+    gross_payment = flt(recovery.gross_payment)
+    loan_recovery = flt(recovery.loan_recovery_amount)
+    net_payment = flt(recovery.net_payment)
+
+    journal_entry = frappe.new_doc("Journal Entry")
+    journal_entry.voucher_type = "Journal Entry"
+    journal_entry.company = company
+    journal_entry.posting_date = recovery.recovery_date
+    journal_entry.user_remark = f"Harvest delivered under receiving contract {agreement.name}"
+    if net_payment:
+        append_account(
+            journal_entry,
+            receivable,
+            debit=net_payment,
+            project=agreement.linked_project,
+            party_type="Customer",
+            party=agreement.sponsor_customer,
+        )
+    if loan_recovery:
+        append_account(journal_entry, liability, debit=loan_recovery, project=agreement.linked_project)
+    append_account(journal_entry, income, credit=gross_payment, project=agreement.linked_project)
     journal_entry.insert(ignore_permissions=True)
     journal_entry.submit()
     return journal_entry.name

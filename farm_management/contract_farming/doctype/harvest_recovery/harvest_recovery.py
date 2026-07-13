@@ -10,14 +10,50 @@ from farm_management.contract_farming.accounting import cancel_journal_entry, cr
 class HarvestRecovery(Document):
     def validate(self):
         self.validate_agreement()
-        self.gross_payment = flt(self.quantity_delivered_kg) * flt(self.purchase_price_per_kg)
+        self.quantity_delivered = flt(self.quantity_delivered) or flt(
+            self.quantity_delivered_kg
+        )
+        self.purchase_price_per_unit = flt(self.purchase_price_per_unit) or flt(
+            self.purchase_price_per_kg
+        )
+        if flt(self.quantity_delivered) <= 0:
+            frappe.throw("Quantity Delivered must be greater than zero.")
+        if flt(self.purchase_price_per_unit) < 0:
+            frappe.throw("Purchase Price Per Unit cannot be negative.")
+        self.gross_payment = flt(self.quantity_delivered) * flt(
+            self.purchase_price_per_unit
+        )
         self.net_payment = flt(self.gross_payment) - flt(self.loan_recovery_amount)
         if flt(self.net_payment) < 0:
             frappe.throw("Net Payment cannot be negative.")
+        disbursed = flt(
+            frappe.db.get_value(
+                "Input Loan Disbursement",
+                {"agreement": self.agreement, "docstatus": 1},
+                "sum(total_value)",
+            )
+        )
+        recovered = flt(
+            frappe.db.get_value(
+                "Harvest Recovery",
+                {
+                    "agreement": self.agreement,
+                    "docstatus": 1,
+                    "name": ["!=", self.name or ""],
+                },
+                "sum(loan_recovery_amount)",
+            )
+        )
+        if flt(self.loan_recovery_amount) > max(disbursed - recovered, 0):
+            frappe.throw("Loan Recovery Amount exceeds the outstanding contract input balance.")
 
     def validate_agreement(self):
-        agreement_farmer = frappe.db.get_value("Contract Farming Agreement", self.agreement, "farmer")
-        if agreement_farmer and agreement_farmer != self.farmer:
+        agreement = frappe.db.get_value(
+            "Contract Farming Agreement", self.agreement, ["farmer", "status"], as_dict=True
+        )
+        if not agreement or agreement.status != "Active":
+            frappe.throw("Harvest accounting requires an Active Contract Farming Agreement.")
+        if agreement.farmer and agreement.farmer != self.farmer:
             frappe.throw("Farmer must match the selected Contract Farming Agreement.")
 
     def on_submit(self):

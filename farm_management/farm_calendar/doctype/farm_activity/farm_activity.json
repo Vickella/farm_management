@@ -21,6 +21,10 @@
   "actual_cost",
   "capitalizable",
   "biological_asset",
+  "capitalization_source_doctype",
+  "capitalization_source",
+  "capitalization_credit_account",
+  "capitalization",
   "capitalized_to_asset"
  ],
  "fields": [
@@ -121,6 +125,37 @@
    "label": "Biological Asset",
    "options": "Biological Asset",
    "depends_on": "eval:doc.capitalizable"
+  },
+  {
+   "depends_on": "eval:doc.capitalizable",
+   "fieldname": "capitalization_source_doctype",
+   "fieldtype": "Select",
+   "label": "Accounting Source Type",
+   "mandatory_depends_on": "eval:doc.capitalizable && doc.status == 'Completed'",
+   "options": "Purchase Invoice\nStock Entry\nJournal Entry"
+  },
+  {
+   "depends_on": "eval:doc.capitalizable",
+   "fieldname": "capitalization_source",
+   "fieldtype": "Dynamic Link",
+   "label": "Submitted Accounting Source",
+   "mandatory_depends_on": "eval:doc.capitalizable && doc.status == 'Completed'",
+   "options": "capitalization_source_doctype"
+  },
+  {
+   "fieldname": "capitalization_credit_account",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Capitalization Credit Account",
+   "options": "Account",
+   "read_only": 1
+  },
+  {
+   "fieldname": "capitalization",
+   "fieldtype": "Link",
+   "label": "Biological Asset Capitalization",
+   "options": "Biological Asset Capitalization",
+   "read_only": 1
   },
   {
    "fieldname": "capitalized_to_asset",

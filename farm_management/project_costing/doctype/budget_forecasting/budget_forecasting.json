@@ -8,7 +8,8 @@
   "project",
   "farm_bom",
   "year",
-  "expected_expenses"
+  "expected_expenses",
+  "total_forecast"
  ],
  "fields": [
   {
@@ -36,6 +37,12 @@
    "fieldtype": "Table",
    "label": "Expected Expenses",
    "options": "Budget Forecasting Expense"
+  },
+  {
+   "fieldname": "total_forecast",
+   "fieldtype": "Currency",
+   "label": "Total Forecast",
+   "read_only": 1
   }
  ],
  "links": [],

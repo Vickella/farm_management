@@ -54,10 +54,10 @@
   },
   {
    "fieldname": "managed_species",
-   "fieldtype": "Select",
+   "fieldtype": "Link",
    "label": "Managed Poultry Type",
    "in_list_view": 1,
-   "options": "Broilers\nLayers\nBreeders\nPullets\nChicks\nDual Purpose\nOther"
+   "options": "Livestock Species"
   },
   {
    "fieldname": "current_status",

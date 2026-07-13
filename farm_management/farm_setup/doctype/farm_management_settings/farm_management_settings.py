@@ -1,6 +1,44 @@
-import frappe
 from frappe.model.document import Document
+
+import frappe
 
 
 class FarmManagementSettings(Document):
-    pass
+    def validate(self):
+        if not self.default_company:
+            return
+        for fieldname in (
+            "default_cost_center",
+            "contract_farming_cost_center",
+        ):
+            self.validate_company_link(fieldname, "Cost Center")
+        self.validate_company_link("default_harvest_warehouse", "Warehouse")
+        for fieldname in (
+            "contract_farming_income_account",
+            "contract_farming_liability_account",
+            "contract_input_loans_receivable_account",
+            "contract_input_clearing_account",
+            "contract_harvest_purchases_account",
+            "contract_grower_payable_account",
+            "biological_asset_sales_receivable_account",
+            "biological_asset_sales_income_account",
+        ):
+            self.validate_company_link(fieldname, "Account", reject_groups=True)
+
+    def validate_company_link(self, fieldname, doctype, reject_groups=False):
+        value = self.get(fieldname)
+        if not value:
+            return
+        label = self.meta.get_field(fieldname).label
+        fields = ["company"]
+        if reject_groups:
+            fields.append("is_group")
+        linked = frappe.db.get_value(doctype, value, fields, as_dict=True)
+        if not linked:
+            frappe.throw(f"Select a valid {label}.")
+        if linked.company != self.default_company:
+            frappe.throw(
+                f"{label} must belong to company {self.default_company}."
+            )
+        if reject_groups and linked.is_group:
+            frappe.throw(f"{label} must be a ledger account.")

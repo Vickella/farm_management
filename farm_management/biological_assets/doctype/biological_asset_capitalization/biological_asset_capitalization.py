@@ -20,6 +20,10 @@ class BiologicalAssetCapitalization(Document):
 
 @frappe.whitelist()
 def calculate_amount(docname, asset):
+    frappe.has_permission(
+        "Biological Asset Capitalization", ptype="write", throw=True
+    )
+    frappe.get_doc("Biological Asset", asset).check_permission("read")
     health_events = frappe.get_all(
         "Livestock Health Event",
         filters={

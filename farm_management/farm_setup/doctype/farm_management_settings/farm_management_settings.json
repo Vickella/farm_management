@@ -13,6 +13,7 @@
   "contract_farming_cost_center",
   "contract_farming_income_account",
   "contract_farming_liability_account",
+  "contract_inputs_received_expense_account",
   "contract_input_loans_receivable_account",
   "contract_input_clearing_account",
   "column_break_contract_accounts",
@@ -21,6 +22,7 @@
   "section_biological_asset_sales",
   "biological_asset_sales_receivable_account",
   "biological_asset_sales_income_account",
+  "biological_asset_cost_of_sales_account",
   "section_break_ai",
   "ai_api_key",
   "ai_provider",
@@ -72,15 +74,19 @@
    "fieldname": "contract_farming_income_account",
    "fieldtype": "Link",
    "label": "Contract Farming Income Account",
-   "options": "Account",
-   "hidden": 1
+   "options": "Account"
   },
   {
    "fieldname": "contract_farming_liability_account",
    "fieldtype": "Link",
    "label": "Contract Farming Liability Account",
-   "options": "Account",
-   "hidden": 1
+   "options": "Account"
+  },
+  {
+   "fieldname": "contract_inputs_received_expense_account",
+   "fieldtype": "Link",
+   "label": "Contract Inputs Received Expense Account",
+   "options": "Account"
   },
   {
    "fieldname": "contract_input_loans_receivable_account",
@@ -128,6 +134,12 @@
    "options": "Account"
   },
   {
+   "fieldname": "biological_asset_cost_of_sales_account",
+   "fieldtype": "Link",
+   "label": "Biological Asset Cost of Sales Account",
+   "options": "Account"
+  },
+  {
    "fieldname": "section_break_ai",
    "fieldtype": "Section Break",
    "label": "AI Configuration"
@@ -141,7 +153,8 @@
    "fieldname": "ai_provider",
    "fieldtype": "Select",
    "label": "AI Provider",
-   "options": "\nOpenAI\nAnthropic\nLocal"
+   "options": "OpenAI",
+   "default": "OpenAI"
   },
   {
    "fieldname": "section_break_flags",
@@ -206,18 +219,6 @@
    "read": 1,
    "report": 1,
    "role": "System Manager",
-   "share": 1,
-   "write": 1
-  },
-  {
-   "create": 1,
-   "delete": 0,
-   "email": 1,
-   "export": 1,
-   "print": 1,
-   "read": 1,
-   "report": 1,
-   "role": "Farm Manager",
    "share": 1,
    "write": 1
   }

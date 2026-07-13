@@ -55,7 +55,8 @@
    "fieldtype": "Link",
    "label": "Project",
    "options": "Project",
-   "in_list_view": 1
+   "in_list_view": 1,
+   "reqd": 1
   },
   {
    "fieldname": "column_break_1",
@@ -69,9 +70,9 @@
   },
   {
    "fieldname": "planned_quantity_unit",
-   "fieldtype": "Select",
+   "fieldtype": "Link",
    "label": "Planned Quantity Unit",
-   "options": "Birds\nHead\nHectare\nKg\nUnits"
+   "options": "UOM"
   },
   {
    "fieldname": "production_cycle_days",

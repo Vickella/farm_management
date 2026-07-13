@@ -1,5 +1,6 @@
 import frappe
 from frappe.utils import flt
+from farm_management.permissions import apply_farm_permission_filter
 
 
 def execute(filters=None):
@@ -20,9 +21,13 @@ def execute(filters=None):
 def get_data(filters):
     conditions = []
     values = {}
-    if filters.get("farm"):
-        conditions.append("fb.farm = %(farm)s")
-        values["farm"] = filters.get("farm")
+    if not apply_farm_permission_filter(
+        conditions,
+        values,
+        sql_field="fb.farm",
+        requested_farm=filters.get("farm"),
+    ):
+        return []
     if filters.get("project"):
         conditions.append("fb.project = %(project)s")
         values["project"] = filters.get("project")
@@ -36,10 +41,26 @@ def get_data(filters):
             fbi.item_category,
             fbi.item_description,
             fbi.budgeted_amount,
-            fbi.actual_amount,
-            fbi.variance,
-            fbi.variance_percent,
-            fbi.variance_type
+            case
+                when ifnull(fbi.item, '') != '' then (
+                    select coalesce(sum(pii.base_net_amount), 0)
+                    from `tabPurchase Invoice Item` pii
+                    inner join `tabPurchase Invoice` pi on pi.name = pii.parent
+                    where pi.docstatus = 1
+                      and pii.project = fb.project
+                      and pii.item_code = fbi.item
+                      and pi.posting_date between fb.budget_period_start and fb.budget_period_end
+                )
+                when ifnull(fbi.expense_account, '') != '' then (
+                    select coalesce(sum(gl.debit - gl.credit), 0)
+                    from `tabGL Entry` gl
+                    where gl.is_cancelled = 0
+                      and gl.project = fb.project
+                      and gl.account = fbi.expense_account
+                      and gl.posting_date between fb.budget_period_start and fb.budget_period_end
+                )
+                else 0
+            end as actual_amount
         from `tabFarm Budget` fb
         inner join `tabFarm Budget Item` fbi on fbi.parent = fb.name
         {where}
@@ -47,4 +68,24 @@ def get_data(filters):
         """,
         values,
     )
-    return [[*row[:6], flt(row[6]), flt(row[7]), row[8]] for row in rows]
+    data = []
+    for farm, project, category, description, budgeted, actual in rows:
+        budgeted = flt(budgeted)
+        actual = flt(actual)
+        variance = actual - budgeted
+        variance_percent = flt(variance / budgeted * 100, 2) if budgeted else 0
+        variance_type = "Adverse" if variance > 0 else "Favourable"
+        data.append(
+            [
+                farm,
+                project,
+                category,
+                description,
+                budgeted,
+                actual,
+                variance,
+                variance_percent,
+                variance_type,
+            ]
+        )
+    return data

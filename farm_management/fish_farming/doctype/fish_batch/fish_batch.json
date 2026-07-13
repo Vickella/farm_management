@@ -61,9 +61,9 @@
   },
   {
    "fieldname": "species",
-   "fieldtype": "Select",
+   "fieldtype": "Link",
    "label": "Species",
-   "options": "Tilapia\nCatfish\nTrout"
+   "options": "Livestock Species"
   },
   {
    "fieldname": "initial_fingerlings",

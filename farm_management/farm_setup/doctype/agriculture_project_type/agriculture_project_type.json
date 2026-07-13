@@ -35,7 +35,7 @@
   },
   {
    "fieldname": "managed_item",
-   "fieldtype": "Data",
+   "fieldtype": "Select",
    "label": "Managed Crop / Animal / Species"
   },
   {

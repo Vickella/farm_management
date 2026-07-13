@@ -11,6 +11,21 @@ class BiologicalAssetValuation(Document):
         self.previous_net_fair_value = flt(asset.net_fair_value)
         self.previous_current_fair_value = flt(asset.current_fair_value)
         self.previous_cost_to_sell = flt(asset.cost_to_sell)
+        self.valuation_snapshot = frappe.as_json(
+            {
+                fieldname: asset.get(fieldname)
+                for fieldname in (
+                    "valuation_method",
+                    "current_fair_value",
+                    "cost_to_sell",
+                    "net_fair_value",
+                    "accumulated_gain_loss",
+                    "last_posted_net_fair_value",
+                    "last_valuation_date",
+                    "last_journal_entry",
+                )
+            }
+        )
         self.net_fair_value = flt(self.current_fair_value) - flt(self.cost_to_sell)
         self.fair_value_movement = flt(self.net_fair_value) - flt(self.previous_net_fair_value)
 
@@ -32,13 +47,30 @@ class BiologicalAssetValuation(Document):
             self.db_set("journal_entry", asset.last_journal_entry, update_modified=False)
 
     def on_cancel(self):
+        newer = frappe.db.exists(
+            "Biological Asset Valuation",
+            {
+                "biological_asset": self.biological_asset,
+                "docstatus": 1,
+                "creation": [">", self.creation],
+            },
+        )
+        if newer:
+            frappe.throw("Cancel later Biological Asset Valuations before cancelling this valuation.")
         if self.journal_entry and frappe.db.exists("Journal Entry", self.journal_entry):
             journal_entry = frappe.get_doc("Journal Entry", self.journal_entry)
             if journal_entry.docstatus == 1:
                 journal_entry.cancel()
 
         asset = frappe.get_doc("Biological Asset", self.biological_asset)
-        asset.current_fair_value = self.previous_current_fair_value
-        asset.cost_to_sell = self.previous_cost_to_sell
-        asset.recalculate_valuation()
+        snapshot = frappe.parse_json(self.valuation_snapshot or "{}")
+        for fieldname, value in snapshot.items():
+            asset.set(fieldname, value)
+        asset.flags.ignore_validate = True
         asset.save(ignore_permissions=True)
+        if "last_valuation_date" in snapshot:
+            asset.db_set(
+                "last_valuation_date",
+                snapshot["last_valuation_date"],
+                update_modified=False,
+            )

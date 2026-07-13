@@ -20,8 +20,12 @@ class InputLoanDisbursement(Document):
         self.total_value = sum(flt(row.value) for row in self.get("disbursed_inputs", []))
 
     def validate_agreement(self):
-        agreement_farmer = frappe.db.get_value("Contract Farming Agreement", self.agreement, "farmer")
-        if agreement_farmer and agreement_farmer != self.farmer:
+        agreement = frappe.db.get_value(
+            "Contract Farming Agreement", self.agreement, ["farmer", "status"], as_dict=True
+        )
+        if not agreement or agreement.status != "Active":
+            frappe.throw("Input accounting requires an Active Contract Farming Agreement.")
+        if agreement.farmer and agreement.farmer != self.farmer:
             frappe.throw("Farmer must match the selected Contract Farming Agreement.")
 
     def validate_inputs(self):

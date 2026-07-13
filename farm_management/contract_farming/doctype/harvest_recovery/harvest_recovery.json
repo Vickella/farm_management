@@ -11,9 +11,10 @@
   "farmer",
   "recovery_date",
   "column_break_delivery",
-  "quantity_delivered_kg",
+  "quantity_delivered",
+  "unit",
   "quality_grade",
-  "purchase_price_per_kg",
+  "purchase_price_per_unit",
   "section_payment",
   "gross_payment",
   "loan_recovery_amount",
@@ -21,7 +22,9 @@
   "column_break_payment",
   "payment_status",
   "payment_reference",
-  "journal_entry"
+  "journal_entry",
+  "quantity_delivered_kg",
+  "purchase_price_per_kg"
  ],
  "fields": [
   {
@@ -63,9 +66,17 @@
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "quantity_delivered_kg",
+   "fieldname": "quantity_delivered",
    "fieldtype": "Float",
-   "label": "Quantity Delivered Kg",
+   "label": "Quantity Delivered",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "agreement.unit",
+   "fieldname": "unit",
+   "fieldtype": "Link",
+   "label": "Unit",
+   "options": "UOM",
    "reqd": 1
   },
   {
@@ -76,9 +87,10 @@
    "in_list_view": 1
   },
   {
-   "fieldname": "purchase_price_per_kg",
+   "fetch_from": "agreement.agreed_purchase_price_per_unit",
+   "fieldname": "purchase_price_per_unit",
    "fieldtype": "Currency",
-   "label": "Purchase Price Per Kg",
+   "label": "Purchase Price Per Unit",
    "reqd": 1
   },
   {
@@ -125,6 +137,20 @@
    "fieldtype": "Link",
    "label": "Journal Entry",
    "options": "Journal Entry",
+   "read_only": 1
+  },
+  {
+   "fieldname": "quantity_delivered_kg",
+   "fieldtype": "Float",
+   "hidden": 1,
+   "label": "Legacy Quantity Delivered Kg",
+   "read_only": 1
+  },
+  {
+   "fieldname": "purchase_price_per_kg",
+   "fieldtype": "Currency",
+   "hidden": 1,
+   "label": "Legacy Purchase Price Per Kg",
    "read_only": 1
   }
  ],

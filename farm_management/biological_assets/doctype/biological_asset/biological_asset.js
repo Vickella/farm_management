@@ -11,8 +11,13 @@ frappe.ui.form.on("Biological Asset", {
     farm_type: function(frm) {
         set_managed_item_options(frm);
     },
+    managed_item: function(frm) {
+        frm.set_value("livestock_breed", null);
+        set_breed_query(frm);
+    },
     refresh: function(frm) {
         set_managed_item_options(frm);
+        set_breed_query(frm);
     }
 });
 
@@ -33,4 +38,12 @@ function set_managed_item_options(frm) {
     } else {
         frm.set_df_property("managed_item", "options", "");
     }
+}
+
+function set_breed_query(frm) {
+    frm.set_query("livestock_breed", () => ({
+        filters: frm.doc.managed_item
+            ? {species: frm.doc.managed_item, is_active: 1}
+            : {is_active: 1},
+    }));
 }

@@ -14,6 +14,8 @@ def validate_agriculture_project(doc, method=None):
     else:
         frappe.throw("Agriculture Project Type must be an active Agriculture Project Type record.")
 
+    validate_managed_item(project_type.farm_type, doc.get("managed_crop_animal_species"))
+
     if doc.get("project_quantity") and flt(doc.get("project_quantity")) < 0:
         frappe.throw("Project Quantity cannot be negative.")
 
@@ -52,6 +54,7 @@ def sync_biological_asset_for_project(doc, method=None):
     asset.asset_category = profile["asset_category"]
     asset.farm_type = profile["farm_type"]
     asset.managed_item = profile["managed_item"]
+    asset.livestock_breed = doc.get("animal_breed")
     asset.linked_project = doc.name
     asset.status = "Active"
     asset.growth_stage = profile.get("growth_stage") or "Immature"
@@ -93,6 +96,32 @@ def get_agriculture_project_type(project_type):
     if project_type and frappe.db.exists("Agriculture Project Type", project_type):
         return frappe.get_doc("Agriculture Project Type", project_type)
     return None
+
+
+@frappe.whitelist()
+def get_managed_item_options(farm_type):
+    """Return active managed masters for a Farm Type in deterministic order."""
+    if not farm_type or not frappe.db.exists("Farm Type", farm_type):
+        return []
+    farm_type_doc = frappe.get_doc("Farm Type", farm_type)
+    farm_type_doc.check_permission("read")
+    return list(
+        dict.fromkeys(
+            row.managed_item_name.strip()
+            for row in farm_type_doc.get("managed_items", [])
+            if row.is_active and (row.managed_item_name or "").strip()
+        )
+    )
+
+
+def validate_managed_item(farm_type, managed_item):
+    if not managed_item:
+        return
+    options = get_managed_item_options(farm_type)
+    if options and managed_item not in options:
+        frappe.throw(
+            f"Managed Crop / Animal / Species must be selected from the active items on Farm Type {farm_type}."
+        )
 
 
 def get_asset_category_from_farm_type(farm_category):

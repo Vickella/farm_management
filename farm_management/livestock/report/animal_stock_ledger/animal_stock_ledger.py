@@ -1,8 +1,9 @@
 import frappe
+from farm_management.permissions import apply_farm_permission_filter
 
 
-INCREASE_TYPES = ("Opening", "Receipt", "Purchase", "Birth", "Transfer In", "Adjustment Increase")
-DECREASE_TYPES = ("Issue", "Sale", "Death", "Transfer Out", "Adjustment Decrease")
+INCREASE_TYPES = ("Opening", "Receipt", "Purchase", "Birth")
+DECREASE_TYPES = ("Issue", "Sale", "Death", "Transfer")
 
 
 def execute(filters=None):
@@ -30,9 +31,10 @@ def execute(filters=None):
 def get_data(filters):
     conditions = ["docstatus = 1"]
     values = {}
-    if filters.get("farm"):
-        conditions.append("farm = %(farm)s")
-        values["farm"] = filters.get("farm")
+    if not apply_farm_permission_filter(
+        conditions, values, requested_farm=filters.get("farm")
+    ):
+        return []
     if filters.get("biological_asset"):
         conditions.append("biological_asset = %(biological_asset)s")
         values["biological_asset"] = filters.get("biological_asset")

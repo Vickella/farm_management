@@ -24,12 +24,13 @@ frappe.ui.form.on("Animal Stock Entry", {
 		frappe.db.get_value(
 			"Biological Asset",
 			frm.doc.biological_asset,
-			["farm", "linked_project", "unit", "managed_item", "net_fair_value", "quantity"]
+            ["farm", "linked_project", "unit", "managed_item", "livestock_breed", "net_fair_value", "quantity"]
 		).then((r) => {
 			const asset = r.message || {};
 			frm.set_value("farm", asset.farm || frm.doc.farm);
 			frm.set_value("project", asset.linked_project || frm.doc.project);
-			frm.set_value("unit", asset.unit || frm.doc.unit);
+            frm.set_value("unit", asset.unit || frm.doc.unit);
+            frm.set_value("breed", asset.livestock_breed || null);
 
 			if (["Sale", "Issue", "Transfer"].includes(frm.doc.entry_type)) {
 				if (asset.managed_item) {
@@ -64,6 +65,15 @@ frappe.ui.form.on("Animal Stock Entry", {
 });
 
 function set_queries(frm) {
+	frm.set_query("item", () => ({
+		filters: { is_stock_item: 0, disabled: 0 }
+	}));
+	frm.set_query("purchase_invoice", () => ({
+		filters: { docstatus: 1, is_return: 0 }
+	}));
+	frm.set_query("sales_invoice", () => ({
+		filters: { docstatus: 1, is_return: 0 }
+	}));
 	frm.set_query("breed", () => {
 		return {
 			filters: {

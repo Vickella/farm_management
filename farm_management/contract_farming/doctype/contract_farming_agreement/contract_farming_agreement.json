@@ -141,9 +141,9 @@
   },
   {
    "fieldname": "unit",
-   "fieldtype": "Select",
+   "fieldtype": "Link",
    "label": "Unit",
-   "options": "kg\nTonne\nBag\nHead\nBird",
+   "options": "UOM",
    "reqd": 1
   },
   {

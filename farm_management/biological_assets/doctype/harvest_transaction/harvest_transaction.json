@@ -14,10 +14,12 @@
   "quantity_harvested",
   "asset_quantity_before",
   "asset_quantity_after",
+  "asset_quantity_reduction",
   "unit",
   "quality_grade",
   "harvest_value",
   "asset_value_reduction",
+  "valuation_snapshot",
   "section_stock",
   "conversion_item",
   "target_warehouse",
@@ -86,9 +88,9 @@
   },
   {
    "fieldname": "unit",
-   "fieldtype": "Select",
+   "fieldtype": "Link",
    "label": "Unit",
-   "options": "kg\nTonne\nBag\nHead\nBird",
+   "options": "UOM",
    "reqd": 1,
    "fetch_from": "biological_asset.unit"
   },
@@ -120,6 +122,20 @@
    "fieldname": "asset_value_reduction",
    "fieldtype": "Currency",
    "label": "Asset Value Reduction",
+   "read_only": 1
+  },
+  {
+   "fieldname": "asset_quantity_reduction",
+   "fieldtype": "Float",
+   "hidden": 1,
+   "label": "Asset Quantity Reduction",
+   "read_only": 1
+  },
+  {
+   "fieldname": "valuation_snapshot",
+   "fieldtype": "Long Text",
+   "hidden": 1,
+   "label": "Valuation Snapshot",
    "read_only": 1
   },
   {

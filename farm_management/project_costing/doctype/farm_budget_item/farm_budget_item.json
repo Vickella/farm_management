@@ -9,17 +9,12 @@
   "item_category",
   "item",
   "item_description",
+  "expense_account",
   "column_break_quantity",
   "budgeted_quantity",
   "unit",
   "budgeted_unit_cost",
-  "section_variance",
-  "budgeted_amount",
-  "actual_amount",
-  "column_break_variance",
-  "variance",
-  "variance_percent",
-  "variance_type"
+  "budgeted_amount"
  ],
  "fields": [
   {
@@ -50,6 +45,12 @@
    "fetch_from": "item.item_name"
   },
   {
+   "fieldname": "expense_account",
+   "fieldtype": "Link",
+   "label": "Expense Account",
+   "options": "Account"
+  },
+  {
    "fieldname": "column_break_quantity",
    "fieldtype": "Column Break"
   },
@@ -72,45 +73,11 @@
    "fetch_from": "item.valuation_rate"
   },
   {
-   "fieldname": "section_variance",
-   "fieldtype": "Section Break",
-   "label": "Variance"
-  },
-  {
    "fieldname": "budgeted_amount",
    "fieldtype": "Currency",
    "label": "Budgeted Amount",
    "read_only": 1,
    "in_list_view": 1
-  },
-  {
-   "fieldname": "actual_amount",
-   "fieldtype": "Currency",
-   "label": "Actual Amount",
-   "in_list_view": 1
-  },
-  {
-   "fieldname": "column_break_variance",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "variance",
-   "fieldtype": "Currency",
-   "label": "Variance",
-   "read_only": 1
-  },
-  {
-   "fieldname": "variance_percent",
-   "fieldtype": "Float",
-   "label": "Variance %",
-   "read_only": 1
-  },
-  {
-   "fieldname": "variance_type",
-   "fieldtype": "Select",
-   "label": "Variance Type",
-   "options": "Favourable\nAdverse",
-   "read_only": 1
   }
  ],
  "links": [],

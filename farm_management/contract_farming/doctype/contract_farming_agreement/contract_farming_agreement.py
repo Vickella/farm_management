@@ -5,7 +5,19 @@ from frappe.utils import flt
 class ContractFarmingAgreement(Document):
     def validate(self):
         self.validate_dates()
+        self.validate_accounting_context()
         self.calculate_totals()
+
+    def validate_accounting_context(self):
+        farm_company = frappe.db.get_value("Farm", self.farm, "owner_name")
+        if not farm_company:
+            frappe.throw("The selected Farm must have a Farm Owner Company.")
+        if self.linked_project:
+            project_company = frappe.db.get_value("Project", self.linked_project, "company")
+            if project_company and project_company != farm_company:
+                frappe.throw("Linked Project company must match the Farm Owner Company.")
+        if self.contract_type == "Receiving Contract (Liability)" and not self.sponsor_customer:
+            frappe.throw("Sponsor Customer is required for a Receiving Contract.")
 
     def validate_dates(self):
         if self.contract_end_date and self.contract_start_date and self.contract_end_date <= self.contract_start_date:

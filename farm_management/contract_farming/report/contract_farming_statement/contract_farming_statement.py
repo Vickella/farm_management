@@ -1,4 +1,5 @@
 import frappe
+from farm_management.permissions import apply_farm_permission_filter
 
 
 def execute(filters=None):
@@ -9,7 +10,8 @@ def execute(filters=None):
         "Farm:Link/Farm:150",
         "Status::100",
         "Crop:Link/Crop Type:140",
-        "Production Target Kg:Float:150",
+        "Production Target:Float:130",
+        "Unit:Link/UOM:90",
         "Expected Purchase:Currency:150",
         "Inputs Disbursed:Currency:150",
         "Harvest Recovery:Currency:150",
@@ -21,9 +23,10 @@ def execute(filters=None):
 def get_data(filters):
     conditions = []
     values = {}
-    if filters.get("farm"):
-        conditions.append("farm = %(farm)s")
-        values["farm"] = filters.get("farm")
+    if not apply_farm_permission_filter(
+        conditions, values, requested_farm=filters.get("farm")
+    ):
+        return []
     if filters.get("farmer"):
         conditions.append("farmer = %(farmer)s")
         values["farmer"] = filters.get("farmer")
@@ -40,7 +43,8 @@ def get_data(filters):
             farm,
             status,
             crop_type,
-            production_target_kg,
+            production_target,
+            unit,
             total_expected_purchase,
             actual_inputs_disbursed,
             harvest_recovery_value,

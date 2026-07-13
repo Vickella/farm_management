@@ -57,9 +57,6 @@ frappe.ui.form.on('Farm Budget Item', {
     budgeted_unit_cost(frm, cdt, cdn) {
         calculate_budget_row(frm, cdt, cdn);
     },
-    actual_amount(frm, cdt, cdn) {
-        calculate_budget_row(frm, cdt, cdn);
-    },
     budget_items_remove(frm) {
         calculate_budget_totals(frm);
     }
@@ -68,19 +65,12 @@ frappe.ui.form.on('Farm Budget Item', {
 function calculate_budget_row(frm, cdt, cdn) {
     const row = frappe.get_doc(cdt, cdn);
     const budgeted = flt(row.budgeted_quantity) * flt(row.budgeted_unit_cost);
-    const variance = flt(row.actual_amount) - budgeted;
     frappe.model.set_value(cdt, cdn, 'budgeted_amount', budgeted);
-    frappe.model.set_value(cdt, cdn, 'variance', variance);
-    frappe.model.set_value(cdt, cdn, 'variance_percent', budgeted ? flt((variance / budgeted) * 100, 2) : 0);
-    frappe.model.set_value(cdt, cdn, 'variance_type', variance > 0 ? 'Adverse' : 'Favourable');
     calculate_budget_totals(frm);
 }
 
 function calculate_budget_totals(frm) {
     const rows = frm.doc.budget_items || [];
     const totalBudget = rows.reduce((sum, row) => sum + flt(row.budgeted_amount), 0);
-    const totalActual = rows.reduce((sum, row) => sum + flt(row.actual_amount), 0);
     frm.set_value('total_budget', totalBudget);
-    frm.set_value('total_actual', totalActual);
-    frm.set_value('total_variance', totalActual - totalBudget);
 }
