@@ -24,9 +24,9 @@ class FarmPen(Document):
 def validate_managed_item(farm_type_name, managed_item):
     farm_type = frappe.get_doc("Farm Type", farm_type_name)
     managed_items = {
-        (row.managed_item_name or "").strip().lower()
+        (row.farm_produce or "").strip().lower()
         for row in farm_type.get("managed_items", [])
-        if row.is_active
+        if row.farm_produce
     }
     if managed_items and managed_item.strip().lower() not in managed_items:
         frappe.throw(f"Managed species '{managed_item}' is not listed under Farm Type '{farm_type_name}'.")

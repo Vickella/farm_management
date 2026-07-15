@@ -26,6 +26,10 @@ fixtures = [
 ]
 
 doc_events = {
+    "*": {
+        "on_submit": "farm_management.lifecycle.sync_status_on_submit",
+        "on_cancel": "farm_management.lifecycle.sync_status_on_cancel",
+    },
     "Project": {
         "validate": "farm_management.farm_projects.agriculture_project.validate_agriculture_project",
         "after_insert": "farm_management.farm_projects.agriculture_project.sync_biological_asset_for_project",

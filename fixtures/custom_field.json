@@ -480,5 +480,16 @@
     "insert_after": "project_quantity",
     "options": "UOM",
     "depends_on": "eval:doc.agriculture_project_type"
+  },
+  {
+    "doctype": "Custom Field",
+    "dt": "Project",
+    "module": "Farm Management",
+    "fieldname": "initial_asset_cost",
+    "fieldtype": "Currency",
+    "label": "Initial Biological Asset Cost",
+    "insert_after": "project_unit",
+    "depends_on": "eval:doc.agriculture_project_type && !['Crop Production', 'Horticulture', 'Agroforestry'].includes(doc.agriculture_farm_type)",
+    "mandatory_depends_on": "eval:doc.agriculture_project_type && !['Crop Production', 'Horticulture', 'Agroforestry'].includes(doc.agriculture_farm_type)"
   }
 ]

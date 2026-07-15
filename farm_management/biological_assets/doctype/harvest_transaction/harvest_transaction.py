@@ -42,6 +42,7 @@ class HarvestTransaction(Document):
         if self.conversion_item and not self.target_warehouse:
             frappe.throw("Set Target Warehouse or configure Default Harvest Warehouse in Farm Management Settings.")
         if self.conversion_item:
+            self.unit = frappe.db.get_value("Item", self.conversion_item, "stock_uom")
             self.validate_stock_conversion()
 
     def validate_stock_conversion(self):

@@ -9,6 +9,7 @@
  "field_order": [
   "section_valuation",
   "naming_series",
+  "amended_from",
   "biological_asset",
   "valuation_date",
   "valuation_method",
@@ -38,6 +39,15 @@
    "fieldtype": "Select",
    "label": "Series",
    "options": "BAV-.####"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Biological Asset Valuation",
+   "print_hide": 1,
+   "read_only": 1
   },
   {
    "fieldname": "biological_asset",

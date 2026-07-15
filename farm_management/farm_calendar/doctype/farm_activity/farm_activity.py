@@ -134,7 +134,13 @@ def get_farm_activity_categories(farm):
     )
     categories = set()
     for farm_type in farm_types:
-        category = frappe.db.get_value("Farm Type", farm_type, "category")
-        if category in category_map:
-            categories.add(category_map[category])
+        activities = frappe.get_all(
+            "Farm Type Managed Item",
+            filters={"parent": farm_type, "parenttype": "Farm Type"},
+            pluck="farm_activity",
+        )
+        for activity in activities:
+            category = "Poultry" if activity == "Poultry Production" else activity
+            if category in category_map:
+                categories.add(category_map[category])
     return categories

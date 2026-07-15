@@ -9,6 +9,7 @@
  "field_order": [
   "section_capitalization",
   "naming_series",
+  "amended_from",
   "biological_asset",
   "posting_date",
   "capitalization_type",
@@ -37,6 +38,15 @@
    "fieldtype": "Select",
    "label": "Series",
    "options": "BAC-.####"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Biological Asset Capitalization",
+   "print_hide": 1,
+   "read_only": 1
   },
   {
    "fieldname": "biological_asset",

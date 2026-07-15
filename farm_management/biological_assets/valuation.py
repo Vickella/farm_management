@@ -114,6 +114,7 @@ def get_or_create_biological_asset_for_livestock(livestock):
     asset.unit = "Bird" if asset.asset_category == "Poultry" else "Head"
     asset.initial_cost = 0
     asset.current_fair_value = 0
+    asset.flags.allow_zero_initial_cost = True
     asset.insert(ignore_permissions=True)
     return asset.name
 
@@ -122,15 +123,14 @@ def find_farm_type_for_managed_item(managed_item):
     farm_type = frappe.db.get_value(
         "Farm Type Managed Item",
         {
-            "managed_item_name": managed_item,
-            "is_active": 1,
+            "farm_produce": managed_item,
             "parenttype": "Farm Type",
         },
         "parent",
     )
     if farm_type and frappe.db.get_value("Farm Type", farm_type, "is_active"):
         return farm_type
-    return frappe.db.get_value("Farm Type", {"category": "Animal Husbandry", "is_active": 1}, "name")
+    return frappe.db.get_value("Farm Type", {"name": "Animal Husbandry", "is_active": 1}, "name")
 
 
 def get_asset_category_for_species(species):
@@ -177,7 +177,10 @@ def apply_capitalization(capitalization):
     asset = frappe.get_doc("Biological Asset", capitalization.biological_asset)
 
     if flt(capitalization.amount):
-        asset.capitalized_cost = flt(asset.capitalized_cost) + flt(capitalization.amount)
+        if capitalization.capitalization_type == "Opening":
+            asset.initial_cost = flt(asset.initial_cost) + flt(capitalization.amount)
+        else:
+            asset.capitalized_cost = flt(asset.capitalized_cost) + flt(capitalization.amount)
 
     if flt(capitalization.quantity_delta):
         asset.quantity = flt(asset.quantity) + flt(capitalization.quantity_delta)
@@ -208,7 +211,10 @@ def reverse_capitalization(capitalization):
         return
 
     asset = frappe.get_doc("Biological Asset", capitalization.biological_asset)
-    asset.capitalized_cost = flt(asset.capitalized_cost) - flt(capitalization.amount)
+    if capitalization.capitalization_type == "Opening":
+        asset.initial_cost = flt(asset.initial_cost) - flt(capitalization.amount)
+    else:
+        asset.capitalized_cost = flt(asset.capitalized_cost) - flt(capitalization.amount)
     asset.quantity = flt(asset.quantity) - flt(capitalization.quantity_delta)
     if flt(asset.quantity) < 0:
         asset.quantity = 0
@@ -349,7 +355,7 @@ def get_managed_item_account(asset, fieldname):
     farm_type = frappe.get_doc("Farm Type", asset.farm_type)
     managed_item_key = (asset.managed_item or "").strip().lower()
     for row in farm_type.get("managed_items", []):
-        if (row.managed_item_name or "").strip().lower() == managed_item_key:
+        if (row.farm_produce or "").strip().lower() == managed_item_key:
             return row.get(fieldname)
     return None
 
@@ -597,9 +603,13 @@ def get_capitalization_source_account(
         group_by="account",
     )
     candidates = []
+    stock_accounts = []
     for row in debit_rows:
         net_debit = flt(row.net_debit)
         if net_debit <= 0:
+            continue
+        if frappe.db.get_value("Account", row.account, "account_type") == "Stock":
+            stock_accounts.append(row.account)
             continue
         used = flt(
             frappe.db.get_value(
@@ -622,6 +632,12 @@ def get_capitalization_source_account(
     if len(candidates) == 1:
         return candidates[0][0]
     if not candidates:
+        if stock_accounts:
+            frappe.throw(
+                "Stock In Hand accounts can only be changed by Stock Transactions. "
+                "Issue the consumed Item with a submitted Material Issue against this Project; "
+                "Farm Management will capitalize that issue automatically."
+            )
         frappe.throw(
             f"{source_doctype} {source_name} has no uncapitalized posted debit of {flt(amount)} "
             f"for company {company}" + (f" and project {project}" if project else "") + "."
@@ -799,7 +815,7 @@ def get_biological_asset_gl_reconciliation(company=None, posting_date=None, thro
 
     configured_accounts = frappe.get_all(
             "Farm Type Managed Item",
-            filters={"is_active": 1, "biological_asset_account": ["is", "set"]},
+            filters={"biological_asset_account": ["is", "set"]},
             pluck="biological_asset_account",
         )
     accounts = set(

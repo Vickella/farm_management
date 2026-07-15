@@ -18,9 +18,9 @@ class FowlRun(Document):
             return
         farm_type = frappe.get_doc("Farm Type", self.bird_type)
         managed_items = {
-            (row.managed_item_name or "").strip().lower()
+            (row.farm_produce or "").strip().lower()
             for row in farm_type.get("managed_items", [])
-            if row.is_active
+            if row.farm_produce
         }
         if managed_items and self.managed_species.strip().lower() not in managed_items:
             frappe.throw(f"Managed poultry type '{self.managed_species}' is not listed under Farm Type '{self.bird_type}'.")

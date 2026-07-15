@@ -11,10 +11,16 @@
   "col_break_1",
   "status",
   "sec_harvest",
+  "biological_asset",
+  "conversion_item",
   "total_yield_tons",
+  "harvest_uom",
+  "harvest_fair_value",
   "moisture_content",
   "col_break_2",
-  "storage_location"
+  "target_warehouse",
+  "harvest_transaction",
+  "biological_asset_valuation"
  ],
  "fields": [
   {
@@ -29,19 +35,22 @@
    "fieldtype": "Link",
    "label": "Farm",
    "options": "Farm",
-   "in_list_view": 1
+   "in_list_view": 1,
+   "reqd": 1
   },
   {
    "fieldname": "project",
    "fieldtype": "Link",
    "label": "Project",
-   "options": "Project"
+   "options": "Project",
+   "reqd": 1
   },
   {
    "fieldname": "date",
    "fieldtype": "Date",
    "label": "Date",
-   "in_list_view": 1
+   "in_list_view": 1,
+   "reqd": 1
   },
   {
    "fieldname": "col_break_1",
@@ -60,9 +69,37 @@
    "label": "Harvest Details"
   },
   {
+   "fieldname": "biological_asset",
+   "fieldtype": "Link",
+   "label": "Biological Asset",
+   "options": "Biological Asset",
+   "read_only": 1
+  },
+  {
+   "fieldname": "conversion_item",
+   "fieldtype": "Link",
+   "label": "Harvested Item",
+   "options": "Item",
+   "reqd": 1
+  },
+  {
    "fieldname": "total_yield_tons",
    "fieldtype": "Float",
-   "label": "Total Yield (Tons)"
+   "label": "Harvested Quantity",
+   "reqd": 1
+  },
+  {
+   "fieldname": "harvest_uom",
+   "fieldtype": "Link",
+   "label": "Harvest UOM",
+   "options": "UOM",
+   "read_only": 1
+  },
+  {
+   "fieldname": "harvest_fair_value",
+   "fieldtype": "Currency",
+   "label": "Harvest Fair Value",
+   "reqd": 1
   },
   {
    "fieldname": "moisture_content",
@@ -74,9 +111,24 @@
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "storage_location",
-   "fieldtype": "Data",
-   "label": "Storage Location"
+   "fieldname": "target_warehouse",
+   "fieldtype": "Link",
+   "label": "Target Warehouse",
+   "options": "Warehouse"
+  },
+  {
+   "fieldname": "harvest_transaction",
+   "fieldtype": "Link",
+   "label": "Harvest Transaction",
+   "options": "Harvest Transaction",
+   "read_only": 1
+  },
+  {
+   "fieldname": "biological_asset_valuation",
+   "fieldtype": "Link",
+   "label": "Harvest Valuation",
+   "options": "Biological Asset Valuation",
+   "read_only": 1
   }
  ],
  "links": [],

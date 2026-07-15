@@ -76,6 +76,66 @@ class TestRepositoryContracts(unittest.TestCase):
         ).read_text(encoding="utf-8")
         self.assertNotIn("DEFAULT_OPENWEATHER_API_KEY", weather)
 
+    def test_farm_type_uses_activity_and_produce_rows(self):
+        farm_type = get_doctype("Farm Type")
+        self.assertNotIn("category", {field["fieldname"] for field in farm_type["fields"]})
+        row = get_doctype("Farm Type Managed Item")
+        fields = {field["fieldname"]: field for field in row["fields"]}
+        self.assertEqual(fields["farm_activity"]["label"], "Farm Activity")
+        self.assertEqual(fields["farm_produce"]["label"], "Farm Produce")
+        self.assertEqual(fields["farm_produce"]["fieldtype"], "Dynamic Link")
+        for legacy in (
+            "managed_item_name",
+            "managed_item_type",
+            "crop_type",
+            "livestock_species",
+            "other_managed_item_name",
+        ):
+            self.assertNotIn(legacy, fields)
+
+    def test_field_management_requirements_drive_estimate(self):
+        field_management = get_doctype("Field Management")
+        fields = {field["fieldname"]: field for field in field_management["fields"]}
+        self.assertEqual(fields["details"]["label"], "Details")
+        self.assertIn("Weeding", fields["activity_type"]["options"])
+        self.assertEqual(fields["requirements"]["options"], "Field Management Requirement")
+        self.assertTrue(fields["total_estimated_cost"]["read_only"])
+        controller = (
+            APP_ROOT / "crop_production" / "doctype" / "field_management" / "field_management.py"
+        ).read_text(encoding="utf-8")
+        self.assertIn("valuation_rate", controller)
+        self.assertIn("estimated_amount", controller)
+
+    def test_harvest_log_orchestrates_valuation_transaction_and_stock_uom(self):
+        harvest = get_doctype("Harvest Log")
+        fields = {field["fieldname"]: field for field in harvest["fields"]}
+        self.assertEqual(fields["harvest_uom"]["options"], "UOM")
+        self.assertEqual(fields["conversion_item"]["options"], "Item")
+        controller = (
+            APP_ROOT / "crop_production" / "doctype" / "harvest_log" / "harvest_log.py"
+        ).read_text(encoding="utf-8")
+        self.assertIn('"doctype": "Harvest Transaction"', controller)
+        self.assertIn("transaction.submit()", controller)
+        transaction = get_doctype("Harvest Transaction")
+        unit = next(field for field in transaction["fields"] if field["fieldname"] == "unit")
+        self.assertNotIn("fetch_from", unit)
+
+    def test_cancelable_doctypes_are_amendable_and_statuses_are_synchronized(self):
+        for doctype in ("Biological Asset Valuation", "Biological Asset Capitalization"):
+            fields = {field["fieldname"] for field in get_doctype(doctype)["fields"]}
+            self.assertIn("amended_from", fields)
+        hooks = (APP_ROOT / "hooks.py").read_text(encoding="utf-8")
+        self.assertIn("sync_status_on_submit", hooks)
+        install = (APP_ROOT / "install.py").read_text(encoding="utf-8")
+        self.assertIn("ensure_amendable_doctypes", install)
+
+    def test_workspace_contains_core_farm_accounting_reports(self):
+        install = (APP_ROOT / "install.py").read_text(encoding="utf-8")
+        self.assertIn('"Profit and Loss Statement", "Report"', install)
+        self.assertIn('"Accounts Receivable Summary", "Report"', install)
+        self.assertIn('"Accounts Payable Summary", "Report"', install)
+        self.assertNotIn('("Poultry Infrastructure", "DocType")', install)
+
     def test_live_animal_sales_and_purchases_require_standard_invoices(self):
         doc = get_doctype("Animal Stock Entry")
         fields = {row["fieldname"]: row for row in doc["fields"]}

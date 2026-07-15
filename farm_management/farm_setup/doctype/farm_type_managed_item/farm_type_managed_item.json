@@ -5,12 +5,9 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "managed_item_name",
-  "managed_item_type",
-  "crop_type",
-  "livestock_species",
-  "other_managed_item_name",
-  "is_active",
+  "farm_activity",
+  "farm_produce_doctype",
+  "farm_produce",
   "section_accounting",
   "biological_asset_account",
   "capital_work_in_progress_account",
@@ -18,47 +15,29 @@
  ],
  "fields": [
   {
-   "fieldname": "managed_item_name",
-   "fieldtype": "Data",
-   "label": "Managed Crop / Animal / Species",
-   "reqd": 1,
-   "read_only": 1,
-   "in_list_view": 1
-  },
-  {
-   "fieldname": "managed_item_type",
+   "fieldname": "farm_activity",
    "fieldtype": "Select",
-   "label": "Managed Item Type",
-   "options": "Crop\nAnimal Species\nPoultry\nAquaculture Species\nApiary\nOther",
+   "label": "Farm Activity",
+   "options": "Crop Production\nAnimal Husbandry\nPoultry Production\nAquaculture\nApiculture\nAgroforestry",
    "reqd": 1,
    "in_list_view": 1
   },
   {
-   "fieldname": "crop_type",
+   "fieldname": "farm_produce_doctype",
    "fieldtype": "Link",
-   "label": "Crop Type",
-   "options": "Crop Type",
-   "depends_on": "eval:doc.managed_item_type == 'Crop'"
+   "label": "Farm Produce DocType",
+   "options": "DocType",
+   "read_only": 1,
+   "hidden": 1
   },
   {
-   "depends_on": "eval:['Animal Species', 'Poultry', 'Aquaculture Species'].includes(doc.managed_item_type)",
-   "fieldname": "livestock_species",
-   "fieldtype": "Link",
-   "label": "Animal / Species",
-   "options": "Livestock Species"
-  },
-  {
-   "depends_on": "eval:['Apiary', 'Other'].includes(doc.managed_item_type)",
-   "fieldname": "other_managed_item_name",
-   "fieldtype": "Data",
-   "label": "Other Managed Item"
-  },
-  {
-   "default": "1",
-   "fieldname": "is_active",
-   "fieldtype": "Check",
+   "fieldname": "farm_produce",
+   "fieldtype": "Dynamic Link",
+   "label": "Farm Produce",
+   "options": "farm_produce_doctype",
+   "reqd": 1,
    "in_list_view": 1,
-   "label": "Is Active"
+   "columns": 4
   },
   {
    "fieldname": "section_accounting",

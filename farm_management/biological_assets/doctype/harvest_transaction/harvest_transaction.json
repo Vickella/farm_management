@@ -24,6 +24,7 @@
   "conversion_item",
   "target_warehouse",
   "stock_entry"
+  ,"source_harvest_log"
  ],
  "fields": [
   {
@@ -91,8 +92,7 @@
    "fieldtype": "Link",
    "label": "Unit",
    "options": "UOM",
-   "reqd": 1,
-   "fetch_from": "biological_asset.unit"
+   "reqd": 1
   },
   {
    "fieldname": "quality_grade",
@@ -142,6 +142,13 @@
    "fieldname": "section_stock",
    "fieldtype": "Section Break",
    "label": "Stock Conversion"
+  },
+  {
+   "fieldname": "source_harvest_log",
+   "fieldtype": "Link",
+   "label": "Source Harvest Log",
+   "options": "Harvest Log",
+   "read_only": 1
   },
   {
    "fieldname": "stock_entry",

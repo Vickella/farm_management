@@ -18,6 +18,9 @@ def validate_agriculture_project(doc, method=None):
 
     if doc.get("project_quantity") and flt(doc.get("project_quantity")) < 0:
         frappe.throw("Project Quantity cannot be negative.")
+    activity = get_primary_farm_activity(project_type.farm_type)
+    if activity not in ("Crop Production", "Agroforestry") and flt(doc.get("initial_asset_cost")) <= 0:
+        frappe.throw("Initial Biological Asset Cost must be greater than zero for this project.")
 
 
 def on_project_submit(doc, method=None):
@@ -72,7 +75,7 @@ def get_project_asset_profile(doc):
     project_type = get_agriculture_project_type(doc.get("agriculture_project_type"))
     if project_type:
         farm_type = project_type.farm_type
-        farm_category = frappe.db.get_value("Farm Type", farm_type, "category") or farm_type
+        farm_category = get_primary_farm_activity(farm_type) or farm_type
         managed_item = (
             doc.get("managed_crop_animal_species")
             or project_type.managed_item
@@ -87,13 +90,16 @@ def get_project_asset_profile(doc):
             "quantity": quantity,
             "unit": doc.get("project_unit") or get_default_unit_from_farm_type(farm_category),
             "acquisition_date": get_legacy_acquisition_date(doc),
+            "initial_cost": flt(doc.get("initial_asset_cost")),
         }
 
     return None
 
 
 def get_agriculture_project_type(project_type):
-    if project_type and frappe.db.exists("Agriculture Project Type", project_type):
+    if project_type and frappe.db.exists(
+        "Agriculture Project Type", {"name": project_type, "is_active": 1}
+    ):
         return frappe.get_doc("Agriculture Project Type", project_type)
     return None
 
@@ -107,9 +113,9 @@ def get_managed_item_options(farm_type):
     farm_type_doc.check_permission("read")
     return list(
         dict.fromkeys(
-            row.managed_item_name.strip()
+            row.farm_produce.strip()
             for row in farm_type_doc.get("managed_items", [])
-            if row.is_active and (row.managed_item_name or "").strip()
+            if (row.farm_produce or "").strip()
         )
     )
 
@@ -127,15 +133,24 @@ def validate_managed_item(farm_type, managed_item):
 def get_asset_category_from_farm_type(farm_category):
     if farm_category in ("Crop Production", "Horticulture", "Agroforestry"):
         return "Crops in Growth"
-    if farm_category == "Poultry":
+    if farm_category in ("Poultry", "Poultry Production"):
         return "Poultry"
     if farm_category == "Aquaculture":
         return "Aquaculture"
     return "Livestock"
 
 
+def get_primary_farm_activity(farm_type):
+    return frappe.db.get_value(
+        "Farm Type Managed Item",
+        {"parent": farm_type, "parenttype": "Farm Type"},
+        "farm_activity",
+        order_by="idx asc",
+    )
+
+
 def get_default_unit_from_farm_type(farm_category):
-    if farm_category == "Poultry":
+    if farm_category in ("Poultry", "Poultry Production"):
         return "Bird"
     if farm_category == "Aquaculture":
         return "Fingerling"
@@ -181,7 +196,7 @@ def get_legacy_acquisition_date(doc):
 
 
 def get_farm_type(category):
-    return frappe.db.get_value("Farm Type", {"category": category, "is_active": 1}, "name")
+    return frappe.db.get_value("Farm Type", {"name": category, "is_active": 1}, "name")
 
 
 def get_field_area(field_allocation):

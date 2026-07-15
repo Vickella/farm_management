@@ -13,8 +13,9 @@
   "sec_field",
   "activity_type",
   "details",
+  "requirements",
   "col_break_2",
-  "cost_estimate"
+  "total_estimated_cost"
  ],
  "fields": [
   {
@@ -63,21 +64,28 @@
    "fieldname": "activity_type",
    "fieldtype": "Select",
    "label": "Activity Type",
-   "options": "Soil Prep\nSeeding\nIrrigation\nFertilizer Application\nPesticide Application"
+   "options": "Soil Preparation\nSeeding\nWeeding\nIrrigation\nFertilizer Application\nPesticide Application\nHarvesting"
   },
   {
    "fieldname": "details",
    "fieldtype": "Text",
-   "label": "Details/Chemicals Used"
+   "label": "Details"
+  },
+  {
+   "fieldname": "requirements",
+   "fieldtype": "Table",
+   "label": "Requirements",
+   "options": "Field Management Requirement"
   },
   {
    "fieldname": "col_break_2",
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "cost_estimate",
+   "fieldname": "total_estimated_cost",
    "fieldtype": "Currency",
-   "label": "Estimated Cost"
+   "label": "Total Estimated Cost",
+   "read_only": 1
   }
  ],
  "links": [],

@@ -1,4 +1,7 @@
 frappe.ui.form.on("Project", {
+    setup(frm) {
+        frm.set_query("agriculture_project_type", () => ({filters: {is_active: 1}}));
+    },
     refresh(frm) {
         configure_managed_item(frm);
         configure_breed_query(frm);
