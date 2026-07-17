@@ -21,6 +21,11 @@ frappe.query_reports["Animal Stock Ledger"] = {
 			label: __("Biological Asset"),
 			fieldtype: "Link",
 			options: "Biological Asset"
+		},
+		{
+			fieldname: "batch_reference",
+			label: __("Batch / Cohort Reference"),
+			fieldtype: "Data"
 		}
 	]
 };

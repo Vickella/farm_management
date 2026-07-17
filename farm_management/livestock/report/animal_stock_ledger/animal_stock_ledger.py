@@ -16,6 +16,7 @@ def execute(filters=None):
         "Biological Asset:Link/Biological Asset:160",
         "Animal:Link/Livestock Species:140",
         "Breed:Link/Livestock Breed:140",
+        "Batch / Cohort Reference::170",
         "In Qty:Float:90",
         "Out Qty:Float:90",
         "Unit::80",
@@ -38,6 +39,9 @@ def get_data(filters):
     if filters.get("biological_asset"):
         conditions.append("biological_asset = %(biological_asset)s")
         values["biological_asset"] = filters.get("biological_asset")
+    if filters.get("batch_reference"):
+        conditions.append("batch_reference = %(batch_reference)s")
+        values["batch_reference"] = filters.get("batch_reference")
     if filters.get("from_date"):
         conditions.append("posting_date >= %(from_date)s")
         values["from_date"] = filters.get("from_date")
@@ -55,6 +59,7 @@ def get_data(filters):
             biological_asset,
             species,
             breed,
+            batch_reference,
             quantity,
             unit,
             rate,
@@ -83,6 +88,7 @@ def get_data(filters):
                 row.biological_asset,
                 row.species,
                 row.breed,
+                row.batch_reference,
                 in_qty,
                 out_qty,
                 row.unit,

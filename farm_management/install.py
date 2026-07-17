@@ -361,8 +361,14 @@ def apply_phase2_updates():
     normalize_existing_farm_type_links()
     seed_missing_crop_types()
     seed_livestock_breeds()
+    seed_live_animal_invoice_items()
     seed_agriculture_project_types()
+    # Configure master output mappings before legacy Projects are repaired and
+    # their missing Biological Assets are created.
+    configure_farm_output_items()
     repair_existing_project_contexts()
+    repair_placeholder_livestock_asset_quantities()
+    backfill_animal_stock_batch_references()
     configure_farm_output_items()
     seed_pests()
     seed_animal_diseases()
@@ -734,6 +740,16 @@ def retire_removed_fish_masters():
             "is_active",
             0,
             update_modified=False,
+        )
+        # Child configuration is not transactional history and must not keep
+        # retired fish species selectable or block the production smoke gate.
+        frappe.db.delete(
+            "Farm Type Managed Item",
+            {"parent": "Aquaculture", "parenttype": "Farm Type"},
+        )
+        frappe.db.delete(
+            "Farm Type Multiselect",
+            {"farm_type": "Aquaculture", "parenttype": "Farm"},
         )
     for activity in frappe.get_all(
         "Farm Activity Type",
@@ -1119,6 +1135,95 @@ def repair_existing_project_contexts():
             farm = frappe.get_doc("Farm", project.farm)
             farm.append("farm_type", {"farm_type": project_type.farm_type})
             farm.save(ignore_permissions=True)
+
+        if not project.biological_asset:
+            from farm_management.farm_projects.agriculture_project import (
+                sync_biological_asset_for_project,
+            )
+
+            sync_biological_asset_for_project(frappe.get_doc("Project", project.name))
+
+
+def repair_placeholder_livestock_asset_quantities():
+    """Remove planned Project capacity mistakenly stored as recognized animal quantity."""
+    required = ("asset_category", "quantity", "capitalized_cost", "current_fair_value")
+    if not all(frappe.db.has_column("Biological Asset", field) for field in required):
+        return
+
+    assets = frappe.get_all(
+        "Biological Asset",
+        filters={
+            "asset_category": ["in", ["Livestock", "Poultry"]],
+            "status": "Active",
+            "quantity": [">", 0],
+        },
+        fields=[
+            "name",
+            "initial_cost",
+            "capitalized_cost",
+            "current_fair_value",
+            "net_fair_value",
+        ],
+    )
+    for asset in assets:
+        has_recognition = frappe.db.exists(
+            "Biological Asset Capitalization",
+            {
+                "biological_asset": asset.name,
+                "docstatus": 1,
+                "quantity_delta": [">", 0],
+            },
+        ) or frappe.db.exists(
+            "Animal Stock Entry",
+            {
+                "biological_asset": asset.name,
+                "docstatus": 1,
+                "entry_type": ["in", ["Opening", "Receipt", "Purchase", "Birth"]],
+            },
+        )
+        has_carrying_value = any(
+            abs(flt(asset.get(field))) > 0.000001
+            for field in (
+                "initial_cost",
+                "capitalized_cost",
+                "current_fair_value",
+                "net_fair_value",
+            )
+        )
+        if not has_recognition and not has_carrying_value:
+            frappe.db.set_value(
+                "Biological Asset",
+                asset.name,
+                {"quantity": 0, "previous_quantity": 0},
+                update_modified=False,
+            )
+
+
+def seed_live_animal_invoice_items():
+    from farm_management.livestock.doctype.animal_stock_entry.animal_stock_entry import (
+        get_or_create_live_animal_invoice_item,
+    )
+
+    for species in frappe.get_all(
+        "Livestock Species",
+        filters={"is_active": 1},
+        fields=["name", "species_group"],
+    ):
+        unit = "Bird" if species.species_group == "Poultry" else "Head"
+        get_or_create_live_animal_invoice_item(species.name, unit)
+
+
+def backfill_animal_stock_batch_references():
+    if not frappe.db.has_column("Animal Stock Entry", "batch_reference"):
+        return
+    frappe.db.sql(
+        """
+        update `tabAnimal Stock Entry`
+        set batch_reference = name
+        where entry_type in ('Opening', 'Receipt', 'Purchase', 'Birth')
+          and ifnull(batch_reference, '') = ''
+        """
+    )
 
 
 def get_fixture_sort_key(fixture_path):

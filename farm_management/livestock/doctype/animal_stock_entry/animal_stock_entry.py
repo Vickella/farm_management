@@ -25,6 +25,8 @@ class AnimalStockEntry(Document):
 
         self.set_project_defaults()
         self.validate_biological_asset()
+        self.set_batch_reference()
+        self.set_invoice_item_default()
         self.validate_standard_invoice()
         if self.entry_type in ("Opening", "Receipt", "Birth") and flt(self.rate) <= 0:
             frappe.throw(
@@ -51,8 +53,19 @@ class AnimalStockEntry(Document):
         if not project or project.managed_item_doctype != "Livestock Species":
             frappe.throw("Animal Stock Entry requires an animal or poultry Agriculture Project.")
         if not project.biological_asset:
+            from farm_management.farm_projects.agriculture_project import (
+                sync_biological_asset_for_project,
+            )
+
+            project_doc = frappe.get_doc("Project", self.project)
+            sync_biological_asset_for_project(project_doc)
+            project.biological_asset = frappe.db.get_value(
+                "Project", self.project, "biological_asset"
+            )
+        if not project.biological_asset:
             frappe.throw(
-                f"Project {self.project} has no linked Biological Asset. Save the Project again."
+                f"Could not create the Biological Asset for Project {self.project}. "
+                "Check its Farm Type, managed animal, output Item, and UOM."
             )
         if self.biological_asset and self.biological_asset != project.biological_asset:
             frappe.throw("Biological Asset must be the asset linked to the selected Project.")
@@ -64,12 +77,48 @@ class AnimalStockEntry(Document):
         if not self.unit:
             self.unit = project.project_unit
 
+    def set_batch_reference(self):
+        if self.entry_type in ("Opening", "Receipt", "Purchase", "Birth"):
+            self.batch_reference = self.batch_reference or self.name
+
+    def set_invoice_item_default(self):
+        if self.entry_type not in ("Purchase", "Sale") or self.item:
+            return
+        invoice_doctype = (
+            "Purchase Invoice" if self.entry_type == "Purchase" else "Sales Invoice"
+        )
+        invoice_field = (
+            "purchase_invoice" if self.entry_type == "Purchase" else "sales_invoice"
+        )
+        invoice_name = self.get(invoice_field)
+        if invoice_name:
+            invoice = frappe.get_doc(invoice_doctype, invoice_name)
+            candidate_rows = [
+                row
+                for row in invoice.get("items", [])
+                if not self.project or row.project == self.project
+            ]
+            non_stock_items = {
+                row.item_code
+                for row in candidate_rows
+                if row.item_code
+                and not frappe.db.get_value("Item", row.item_code, "is_stock_item")
+            }
+            if len(non_stock_items) == 1:
+                self.item = non_stock_items.pop()
+                return
+            if len(non_stock_items) > 1:
+                frappe.throw(
+                    f"{invoice_doctype} {invoice_name} has multiple non-stock Items for "
+                    f"Project {self.project}. Keep one live-animal Item on the Project row."
+                )
+        if not self.species:
+            frappe.throw("Animal is required before the live-animal invoice Item can be selected.")
+        self.item = get_or_create_live_animal_invoice_item(self.species, self.unit)
+
     def validate_standard_invoice(self):
         if self.entry_type not in ("Purchase", "Sale"):
             return
-        if not self.item:
-            frappe.throw("Item is required for a live-animal purchase or sale.")
-
         invoice_doctype = "Purchase Invoice" if self.entry_type == "Purchase" else "Sales Invoice"
         invoice_field = "purchase_invoice" if self.entry_type == "Purchase" else "sales_invoice"
         invoice_name = self.get(invoice_field)
@@ -145,10 +194,9 @@ class AnimalStockEntry(Document):
         if self.entry_type in ("Issue", "Sale", "Death", "Transfer") and flt(self.quantity) > flt(asset.quantity):
             frappe.throw("Movement Quantity cannot exceed the Biological Asset quantity.")
         if self.entry_type == "Opening" and flt(asset.quantity) > 0:
-            frappe.throw(
-                "This Biological Asset already has recognized quantity. "
-                "Use Receipt or Purchase for later additions instead of another Opening."
-            )
+            # A Project has only one opening balance. Later additions are receipts into
+            # the same herd/flock asset, even when the user starts from the Opening action.
+            self.entry_type = "Receipt"
 
         if not self.species and asset.managed_item:
             self.species = frappe.db.get_value(
@@ -295,3 +343,39 @@ def get_empty_asset_status(entry_type):
     if entry_type == "Death":
         return "Dead Loss"
     return "Harvested"
+
+
+def get_or_create_live_animal_invoice_item(species_name, stock_uom=None):
+    """Return the deterministic non-stock invoice Item for a live animal species."""
+    species = frappe.get_doc("Livestock Species", species_name)
+    key = frappe.scrub(species.species_name or species.name).upper().replace("_", "-")
+    item_code = f"LIVE-ANIMAL-{key}"
+    existing = frappe.db.get_value(
+        "Item", item_code, ["name", "disabled", "is_stock_item"], as_dict=True
+    )
+    if existing:
+        if existing.disabled or existing.is_stock_item:
+            frappe.throw(
+                f"Automatic live-animal Item {item_code} must be enabled and non-stock."
+            )
+        return existing.name
+
+    from farm_management.install import ensure_farm_produce_item_group
+
+    item = frappe.new_doc("Item")
+    item.item_code = item_code
+    item.item_name = f"Live {species.species_name or species.name}"
+    item.item_group = ensure_farm_produce_item_group()
+    item.stock_uom = stock_uom or (
+        "Bird" if species.species_group == "Poultry" else "Head"
+    )
+    item.is_stock_item = 0
+    item.is_sales_item = 1
+    item.is_purchase_item = 1
+    item.disabled = 0
+    item.description = (
+        "Non-stock invoice Item for live biological-asset purchases and sales. "
+        "Quantity and carrying value are controlled by Animal Stock Entry and IAS 41."
+    )
+    item.insert(ignore_permissions=True)
+    return item.name

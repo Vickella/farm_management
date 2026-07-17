@@ -19,6 +19,7 @@
   "species",
   "breed",
   "livestock_individual",
+  "batch_reference",
   "column_break_2",
   "quantity",
   "unit",
@@ -95,7 +96,6 @@
    "label": "Biological Asset",
    "options": "Biological Asset",
    "read_only": 1,
-   "reqd": 1,
    "description": "Automatically selected from the Agriculture Project."
   },
   {
@@ -129,6 +129,12 @@
    "options": "Livestock Individual"
   },
   {
+   "description": "Automatically defaults to this inbound entry number. Use it to trace poultry batches, purchased groups, litters, or other animal cohorts separately while their value remains aggregated in one Project Biological Asset.",
+   "fieldname": "batch_reference",
+   "fieldtype": "Data",
+   "label": "Batch / Cohort Reference"
+  },
+  {
    "fieldname": "column_break_2",
    "fieldtype": "Column Break"
   },
@@ -160,6 +166,7 @@
    "read_only": 1
   },
   {
+   "depends_on": "eval:doc.entry_type == 'Purchase' || doc.entry_type == 'Sale' || doc.capitalization || doc.journal_entry",
    "fieldname": "section_cost",
    "fieldtype": "Section Break",
    "label": "Cost and Accounting"
@@ -214,12 +221,13 @@
    "read_only": 1
   },
   {
+   "depends_on": "eval:doc.entry_type == 'Purchase' || doc.entry_type == 'Sale'",
    "fieldname": "item",
    "fieldtype": "Link",
    "label": "Invoice Item (Live Animal)",
    "description": "Non-stock Item used on the submitted Purchase or Sales Invoice. This is separate from the farm output stock Item.",
    "options": "Item",
-   "mandatory_depends_on": "eval:doc.entry_type == 'Purchase' || doc.entry_type == 'Sale'"
+   "read_only": 1
   },
   {
    "fieldname": "capitalization",

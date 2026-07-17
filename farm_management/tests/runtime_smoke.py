@@ -18,6 +18,7 @@ def run():
         "sales_invoice",
         "purchase_expense_account",
         "asset_value_reduction",
+        "batch_reference",
     ):
         if not animal_entry.has_field(fieldname):
             frappe.throw(f"Animal Stock Entry is missing field: {fieldname}")
@@ -36,9 +37,13 @@ def run():
         for item_code in FARM_OUTPUT_ITEMS
         if not frappe.db.exists("Item", item_code)
     ]
+    active_farm_types = frappe.get_all(
+        "Farm Type", filters={"is_active": 1}, pluck="name"
+    )
     unmapped_farm_produce = frappe.get_all(
         "Farm Type Managed Item",
         filters={
+            "parent": ["in", active_farm_types],
             "farm_produce": ["is", "set"],
             "default_output_item": ["is", "not set"],
         },
@@ -67,6 +72,19 @@ def run():
         filters={"output_item": ["is", "not set"]},
         pluck="name",
     )
+    missing_live_animal_items = []
+    for species in frappe.get_all(
+        "Livestock Species",
+        filters={"is_active": 1},
+        fields=["name", "species_name"],
+    ):
+        key = frappe.scrub(species.species_name or species.name).upper().replace("_", "-")
+        item_code = f"LIVE-ANIMAL-{key}"
+        item = frappe.db.get_value(
+            "Item", item_code, ["disabled", "is_stock_item"], as_dict=True
+        )
+        if not item or item.disabled or item.is_stock_item:
+            missing_live_animal_items.append(item_code)
 
     for doctype in (
         "Biological Asset",
@@ -110,6 +128,7 @@ def run():
             "agriculture_farm_type",
             "managed_item_doctype",
             "managed_crop_animal_species",
+            "biological_asset",
         ],
     ):
         project_type = frappe.db.get_value(
@@ -123,6 +142,23 @@ def run():
             reasons.append("inactive or missing Project Type")
         if not project.managed_item_doctype or not project.managed_crop_animal_species:
             reasons.append("missing managed produce context")
+        if not project.biological_asset:
+            reasons.append("missing Biological Asset")
+        else:
+            asset = frappe.db.get_value(
+                "Biological Asset",
+                project.biological_asset,
+                ["linked_project", "farm", "managed_item"],
+                as_dict=True,
+            )
+            if not asset:
+                reasons.append("linked Biological Asset does not exist")
+            elif (
+                asset.linked_project != project.name
+                or asset.farm != project.farm
+                or asset.managed_item != project.managed_crop_animal_species
+            ):
+                reasons.append("Biological Asset context does not match Project")
         if project_type and project.farm and not frappe.db.exists(
             "Farm Type Multiselect",
             {
@@ -141,6 +177,30 @@ def run():
         filters={"docstatus": 1, "harvested_quantity": ["<=", 0]},
         pluck="name",
     )
+    animal_entries_without_asset = frappe.get_all(
+        "Animal Stock Entry",
+        filters={"docstatus": ["<", 2], "biological_asset": ["is", "not set"]},
+        pluck="name",
+    )
+    inbound_entries_without_batch = frappe.get_all(
+        "Animal Stock Entry",
+        filters={
+            "docstatus": 1,
+            "entry_type": ["in", ["Opening", "Receipt", "Purchase", "Birth"]],
+            "batch_reference": ["is", "not set"],
+        },
+        pluck="name",
+    )
+    duplicate_project_assets = frappe.db.sql(
+        """
+        select linked_project
+        from `tabBiological Asset`
+        where status = 'Active' and ifnull(linked_project, '') != ''
+        group by linked_project
+        having count(*) > 1
+        """,
+        pluck=True,
+    )
     return {
         "installed_apps": sorted(required_apps),
         "companies": companies,
@@ -150,19 +210,27 @@ def run():
         "project_issues": project_issues,
         "submitted_harvests_without_quantity": submitted_harvests_without_quantity,
         "missing_output_items": missing_output_items,
+        "missing_live_animal_items": missing_live_animal_items,
         "unmapped_farm_produce": unmapped_farm_produce,
         "farm_types_without_produce": farm_types_without_produce,
         "unmapped_assets": unmapped_assets,
+        "animal_entries_without_asset": animal_entries_without_asset,
+        "inbound_entries_without_batch": inbound_entries_without_batch,
+        "duplicate_project_assets": duplicate_project_assets,
         "status": (
             "passed"
             if not (
                 mismatches
                 or missing_output_items
+                or missing_live_animal_items
                 or unmapped_farm_produce
                 or farm_types_without_produce
                 or unmapped_assets
                 or project_issues
                 or submitted_harvests_without_quantity
+                or animal_entries_without_asset
+                or inbound_entries_without_batch
+                or duplicate_project_assets
             )
             else "blocked"
         ),

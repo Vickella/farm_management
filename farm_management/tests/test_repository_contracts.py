@@ -358,6 +358,9 @@ class TestRepositoryContracts(unittest.TestCase):
         fields = {row["fieldname"]: row for row in doc["fields"]}
         self.assertTrue(fields["project"].get("reqd"))
         self.assertTrue(fields["biological_asset"].get("read_only"))
+        self.assertFalse(fields["biological_asset"].get("reqd", 0))
+        self.assertTrue(fields["item"].get("read_only"))
+        self.assertIn("batch_reference", fields)
         self.assertLess(
             doc["field_order"].index("project"),
             doc["field_order"].index("biological_asset"),
@@ -372,6 +375,9 @@ class TestRepositoryContracts(unittest.TestCase):
         self.assertIn("base_net_amount", controller)
         self.assertIn("self.set_project_defaults()", controller)
         self.assertIn("project.biological_asset", controller)
+        self.assertIn("sync_biological_asset_for_project", controller)
+        self.assertIn("get_or_create_live_animal_invoice_item", controller)
+        self.assertIn('self.entry_type = "Receipt"', controller)
         self.assertIn('self.entry_type == "Opening"', controller)
         self.assertIn('"Opening", "Receipt", "Birth"', controller)
 
@@ -383,6 +389,22 @@ class TestRepositoryContracts(unittest.TestCase):
             if row.get("dt") == "Project"
         }
         self.assertNotIn("mandatory_depends_on", project_fields["initial_asset_cost"])
+
+        install = (APP_ROOT / "install.py").read_text(encoding="utf-8")
+        self.assertIn("seed_live_animal_invoice_items()", install)
+        self.assertIn("repair_placeholder_livestock_asset_quantities()", install)
+        self.assertIn("backfill_animal_stock_batch_references()", install)
+
+        smoke = (APP_ROOT / "tests" / "runtime_smoke.py").read_text(
+            encoding="utf-8"
+        )
+        for diagnostic in (
+            "missing_live_animal_items",
+            "animal_entries_without_asset",
+            "inbound_entries_without_batch",
+            "duplicate_project_assets",
+        ):
+            self.assertIn(diagnostic, smoke)
 
     def test_removed_feature_doctypes_do_not_return(self):
         removed = {
@@ -404,6 +426,12 @@ class TestRepositoryContracts(unittest.TestCase):
             for path in APP_ROOT.glob("**/doctype/**/*.json")
         }
         self.assertFalse(removed & present)
+        install = (APP_ROOT / "install.py").read_text(encoding="utf-8")
+        fish_cleanup = install.split("def retire_removed_fish_masters():", 1)[1].split(
+            "\ndef ", 1
+        )[0]
+        self.assertIn('"Farm Type Managed Item"', fish_cleanup)
+        self.assertIn('"Farm Type Multiselect"', fish_cleanup)
 
     def test_ias41_reconciliation_report_is_installed(self):
         report = APP_ROOT / "biological_assets" / "report" / "biological_asset_gl_reconciliation"

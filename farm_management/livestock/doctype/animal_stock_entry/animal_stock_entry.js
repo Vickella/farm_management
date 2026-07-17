@@ -27,6 +27,14 @@ frappe.ui.form.on("Animal Stock Entry", {
 		});
 	},
 
+	purchase_invoice(frm) {
+		set_item_from_invoice(frm, "Purchase Invoice", frm.doc.purchase_invoice);
+	},
+
+	sales_invoice(frm) {
+		set_item_from_invoice(frm, "Sales Invoice", frm.doc.sales_invoice);
+	},
+
 	quantity(frm) {
 		update_amount(frm);
 	},
@@ -101,10 +109,24 @@ function set_queries(frm) {
 	frm.set_query("project", () => ({
 		filters: {
 			status: "Open",
-			farm: frm.doc.farm || undefined,
-			biological_asset: ["is", "set"]
+			farm: frm.doc.farm || undefined
 		}
 	}));
+}
+
+function set_item_from_invoice(frm, doctype, name) {
+	if (!name) {
+		return;
+	}
+	frappe.db.get_doc(doctype, name).then((invoice) => {
+		const rows = (invoice.items || []).filter((row) =>
+			!frm.doc.project || row.project === frm.doc.project
+		);
+		const item_codes = [...new Set(rows.map((row) => row.item_code).filter(Boolean))];
+		if (item_codes.length === 1) {
+			frm.set_value("item", item_codes[0]);
+		}
+	});
 }
 
 function update_amount(frm) {

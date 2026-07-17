@@ -70,14 +70,17 @@ class BiologicalAsset(Document):
         )
 
         activity = get_primary_farm_activity(project_type.farm_type)
+        asset_category = get_asset_category_from_farm_type(activity)
         defaults = {
             "farm": project.farm,
             "farm_type": project_type.farm_type,
             "managed_item": project.managed_crop_animal_species or project_type.managed_item,
             "output_item": project.expected_output_item or project_type.output_item,
             "livestock_breed": project.animal_breed,
-            "asset_category": get_asset_category_from_farm_type(activity),
-            "quantity": project.project_quantity,
+            "asset_category": asset_category,
+            # Livestock Project Quantity is planned capacity, not recognized animals.
+            # Animal Stock Entry establishes and subsequently changes the actual count.
+            "quantity": project.project_quantity if asset_category == "Crops in Growth" else 0,
             "unit": project.project_unit,
             "initial_cost": project.initial_asset_cost,
             "acquisition_date": project.expected_start_date,
