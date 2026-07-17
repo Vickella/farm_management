@@ -23,7 +23,7 @@
    "fieldname": "farm_category",
    "fieldtype": "Select",
    "label": "Farm Category",
-   "options": "Crop Farming\nPoultry\nLivestock\nAquaculture",
+   "options": "Crop Farming\nPoultry\nLivestock",
    "reqd": 1,
    "in_list_view": 1
   },

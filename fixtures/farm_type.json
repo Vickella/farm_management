@@ -181,39 +181,6 @@
   },
   {
     "doctype": "Farm Type",
-    "farm_type_name": "Aquaculture",
-    "category": "Aquaculture",
-    "is_active": 1,
-    "description": "Fish and aquatic species farming enterprise.",
-    "managed_items": [
-      {
-        "doctype": "Farm Type Managed Item",
-        "managed_item_name": "Tilapia",
-        "managed_item_type": "Aquaculture Species",
-        "is_active": 1
-      },
-      {
-        "doctype": "Farm Type Managed Item",
-        "managed_item_name": "Catfish",
-        "managed_item_type": "Aquaculture Species",
-        "is_active": 1
-      },
-      {
-        "doctype": "Farm Type Managed Item",
-        "managed_item_name": "Trout",
-        "managed_item_type": "Aquaculture Species",
-        "is_active": 1
-      },
-      {
-        "doctype": "Farm Type Managed Item",
-        "managed_item_name": "Shrimp",
-        "managed_item_type": "Aquaculture Species",
-        "is_active": 1
-      }
-    ]
-  },
-  {
-    "doctype": "Farm Type",
     "farm_type_name": "Apiculture",
     "category": "Apiculture",
     "is_active": 1,
@@ -238,7 +205,7 @@
     "farm_type_name": "Mixed Farming",
     "category": "Mixed Farming",
     "is_active": 1,
-    "description": "Integrated farm enterprise combining crops, livestock, poultry, aquaculture, or apiculture.",
+    "description": "Integrated farm enterprise combining crops, livestock, poultry, or apiculture.",
     "managed_items": []
   },
   {

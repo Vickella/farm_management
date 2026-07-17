@@ -9,10 +9,6 @@
   "farm_type_name",
   "is_active",
   "description",
-  "column_break_classification",
-  "classification",
-  "parent_farm_type",
-  "applicable_to",
   "section_managed_items",
   "managed_items"
  ],
@@ -39,36 +35,6 @@
    "fieldname": "description",
    "fieldtype": "Small Text",
    "label": "Description"
-  },
-  {
-   "fieldname": "column_break_classification",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "classification",
-   "fieldtype": "Select",
-   "label": "Classification",
-   "options": "Enterprise\nCrop\nSpecies\nBreed\nProduction System",
-   "default": "Enterprise",
-   "reqd": 0,
-   "in_list_view": 1,
-   "hidden": 1
-  },
-  {
-   "fieldname": "parent_farm_type",
-   "fieldtype": "Link",
-   "label": "Parent Farm Type",
-   "options": "Farm Type",
-   "hidden": 1,
-   "reqd": 0
-  },
-  {
-   "fieldname": "applicable_to",
-   "fieldtype": "Select",
-   "label": "Applicable To",
-   "options": "\nCrop\nLivestock\nPoultry\nAquaculture\nMixed",
-   "hidden": 1,
-   "reqd": 0
   },
   {
    "fieldname": "section_managed_items",

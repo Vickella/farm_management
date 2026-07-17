@@ -6,12 +6,9 @@ frappe.ui.form.on('Farm Management Settings', {
 
 function set_account_queries(frm) {
     const account_fields = [
-        'contract_input_loans_receivable_account',
-        'contract_input_clearing_account',
-        'contract_harvest_purchases_account',
-        'contract_grower_payable_account',
         'biological_asset_sales_receivable_account',
-        'biological_asset_sales_income_account'
+        'biological_asset_sales_income_account',
+        'biological_asset_cost_of_sales_account'
     ];
 
     account_fields.forEach((fieldname) => {

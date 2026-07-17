@@ -54,7 +54,7 @@
    "fieldname": "affects",
    "fieldtype": "Select",
    "label": "Affects",
-   "options": "Crops\nLivestock\nPoultry\nAquaculture\nAll"
+   "options": "Crops\nLivestock\nPoultry\nAll"
   },
   {
    "fieldname": "severity_level",

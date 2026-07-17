@@ -65,7 +65,7 @@
    "fieldname": "asset_category",
    "fieldtype": "Select",
    "label": "Asset Category",
-   "options": "Livestock\nPoultry\nCrops in Growth\nAquaculture",
+   "options": "Livestock\nPoultry\nCrops in Growth",
    "reqd": 1,
    "in_list_view": 1
   },

@@ -11,7 +11,6 @@ class TestAnimalStockEntry(unittest.TestCase):
         doc = json.loads(path.read_text(encoding="utf-8"))
         fieldnames = {field["fieldname"] for field in doc["fields"]}
         self.assertIn("sale_amount", fieldnames)
-        self.assertIn("sale_journal_entry", fieldnames)
         self.assertIn("journal_entry", fieldnames)
 
     def test_empty_asset_status_by_entry_type(self):

@@ -9,7 +9,6 @@ def execute(filters=None):
         "Total Biological Asset Value:Currency:180",
         "Budget Utilisation %:Float:160",
         "Incidents This Month:Int:150",
-        "Contracts Active:Int:130",
     ]
     return columns, get_data()
 
@@ -82,15 +81,6 @@ def get_data():
         """,
         {"month_start": month_start},
     )
-    contracts = get_grouped_values(
-        """
-        select farm, count(*) as value
-        from `tabContract Farming Agreement`
-        where status = 'Active'
-        group by farm
-        """
-    )
-
     rows = []
     for farm in farms:
         budget = flt(budgets.get(farm))
@@ -102,7 +92,6 @@ def get_data():
                 assets.get(farm, 0),
                 utilisation,
                 incidents.get(farm, 0),
-                contracts.get(farm, 0),
             ]
         )
     return rows

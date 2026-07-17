@@ -1,26 +1,30 @@
 import frappe
 from frappe.model.document import Document
 from frappe.utils import flt
+from farm_management.server_validation import apply_project_context, validate_asset_context, validate_date_order
 
 
 class HarvestLog(Document):
     def validate(self):
         self.set_project_defaults()
         self.set_item_defaults()
-        if flt(self.total_yield_tons) <= 0:
+        if flt(self.harvested_quantity) <= 0:
             frappe.throw("Harvested Quantity must be greater than zero.")
         if flt(self.harvest_fair_value) <= 0:
             frappe.throw("Harvest Fair Value must be greater than zero.")
+        asset = validate_asset_context(self.biological_asset, farm=self.farm, project=self.project, active=True)
+        validate_date_order(asset.acquisition_date, self.date, "Asset Acquisition Date", "Harvest Date")
+        if self.harvest_transaction and frappe.db.exists(
+            "Harvest Transaction", {"name": self.harvest_transaction, "docstatus": ["<", 2]}
+        ):
+            frappe.throw("This Harvest Log already has an active Harvest Transaction.")
 
     def set_project_defaults(self):
         if not self.project:
             return
-        project = frappe.db.get_value(
-            "Project", self.project, ["farm", "biological_asset"], as_dict=True
-        )
-        if not project:
-            frappe.throw("Select a valid Project.")
-        self.farm = project.farm or self.farm
+        project = apply_project_context(self)
+        if project.managed_item_doctype != "Crop Type":
+            frappe.throw("Harvest Log requires a crop Agriculture Project.")
         asset = project.biological_asset
         if asset:
             asset_state = frappe.db.get_value(
@@ -59,7 +63,7 @@ class HarvestLog(Document):
                 "farm": self.farm,
                 "biological_asset": self.biological_asset,
                 "harvest_date": self.date,
-                "quantity_harvested": self.total_yield_tons,
+                "quantity_harvested": self.harvested_quantity,
                 "unit": self.harvest_uom,
                 "harvest_value": self.harvest_fair_value,
                 "conversion_item": self.conversion_item,

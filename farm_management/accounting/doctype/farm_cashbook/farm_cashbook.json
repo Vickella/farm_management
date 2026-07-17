@@ -6,21 +6,16 @@
  "field_order": [
   "section_transaction",
   "date",
+  "amended_from",
   "farm",
   "column_break_transaction",
-  "project_type",
   "project",
   "section_entries",
   "entries",
   "total_amount",
   "section_details",
   "description",
-  "journal_entry",
-  "section_legacy_entry",
-  "debit_account",
-  "credit_account",
-  "expense_type",
-  "amount"
+  "journal_entry"
  ],
  "fields": [
   {
@@ -36,22 +31,25 @@
    "in_list_view": 1
   },
   {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "options": "Farm Cashbook",
+   "read_only": 1,
+   "no_copy": 1,
+   "print_hide": 1
+  },
+  {
    "fieldname": "farm",
    "fieldtype": "Link",
    "label": "Farm",
    "options": "Farm",
+   "reqd": 1,
    "in_list_view": 1
   },
   {
    "fieldname": "column_break_transaction",
    "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "project_type",
-   "fieldtype": "Link",
-   "label": "Project Type",
-   "options": "Agriculture Project Type",
-   "in_list_view": 1
   },
   {
    "fieldname": "project",
@@ -95,43 +93,6 @@
    "label": "Journal Entry",
    "options": "Journal Entry",
    "read_only": 1
-  },
-  {
-   "fieldname": "section_legacy_entry",
-   "fieldtype": "Section Break",
-   "label": "Legacy Single Entry",
-   "hidden": 1
-  },
-  {
-   "fieldname": "debit_account",
-   "fieldtype": "Link",
-   "label": "Debit Account",
-   "options": "Account",
-   "hidden": 1,
-   "read_only": 1
-  },
-  {
-   "fieldname": "credit_account",
-   "fieldtype": "Link",
-   "label": "Credit Account",
-   "options": "Account",
-   "hidden": 1,
-   "read_only": 1
-  },
-  {
-   "fieldname": "expense_type",
-   "fieldtype": "Data",
-   "label": "Expense Type",
-   "hidden": 1,
-   "read_only": 1
-  },
-  {
-   "fieldname": "amount",
-   "fieldtype": "Currency",
-   "label": "Amount",
-   "in_list_view": 1,
-   "hidden": 1,
-   "read_only": 1
   }
  ],
  "links": [],
@@ -150,6 +111,9 @@
    "read": 1,
    "report": 1,
    "role": "System Manager",
+   "submit": 1,
+   "cancel": 1,
+   "amend": 1,
    "share": 1,
    "write": 1
   }

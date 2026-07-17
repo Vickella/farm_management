@@ -22,7 +22,6 @@ doctype_js = {
 
 fixtures = [
     {"dt": "Custom Field", "filters": [["module", "=", "Farm Management"]]},
-    {"dt": "Workspace", "filters": [["name", "=", "Farm Management"]]},
 ]
 
 doc_events = {

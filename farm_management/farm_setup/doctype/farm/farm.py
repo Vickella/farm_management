@@ -9,6 +9,7 @@ class Farm(Document):
     def validate(self):
         self.validate_gps_format()
         self.validate_land_size()
+        self.validate_company_and_types()
 
     def validate_gps_format(self):
         if not self.gps_coordinates:
@@ -33,6 +34,19 @@ class Farm(Document):
     def validate_land_size(self):
         if self.total_land_size is not None and self.total_land_size <= 0:
             frappe.throw("Total land size must be greater than zero.")
+
+    def validate_company_and_types(self):
+        if self.farm_manager:
+            employee_company = frappe.db.get_value("Employee", self.farm_manager, "company")
+            if employee_company and employee_company != self.owner_name:
+                frappe.throw("Farm Manager must belong to the Farm Owner Company.")
+        seen = set()
+        for row in self.get("farm_type", []):
+            if row.farm_type in seen:
+                frappe.throw(f"Farm Type {row.farm_type} is selected more than once.")
+            seen.add(row.farm_type)
+            if not frappe.db.exists("Farm Type", {"name": row.farm_type, "is_active": 1}):
+                frappe.throw(f"Farm Type {row.farm_type} must be active.")
 
     def before_save(self):
         self.set_farm_manager_defaults()

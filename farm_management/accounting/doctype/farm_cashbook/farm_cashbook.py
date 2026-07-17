@@ -1,72 +1,38 @@
 import frappe
 from frappe.model.document import Document
 from frappe.utils import flt
-
-
-CASHBOOK_TRANSACTION_TYPES = {
-    "Fuel and Lubricants",
-    "Seed and Planting Materials",
-    "Fertilizer and Soil Amendments",
-    "Chemicals and Pesticides",
-    "Animal Feed",
-    "Veterinary and Medication",
-    "Labour and Wages",
-    "Machinery Repairs and Maintenance",
-    "Irrigation and Water",
-    "Electricity and Utilities",
-    "Transport and Logistics",
-    "Packaging and Storage",
-    "Equipment and Tools",
-    "Land Preparation",
-    "Harvesting Costs",
-    "Insurance",
-    "Licences and Levies",
-    "Professional Fees",
-    "Sales Income",
-    "Other Income",
-    "Other Expense",
-}
+from farm_management.server_validation import apply_project_context, get_farm_context, validate_unique_rows
 
 
 class FarmCashbook(Document):
     def validate(self):
-        self.ensure_entries_from_legacy_fields()
+        farm = get_farm_context(self.farm)
+        if self.project:
+            project = apply_project_context(self)
+            if project.company and project.company != farm.owner_name:
+                frappe.throw("Cashbook Project and Farm must belong to the same Company.")
         if not self.get("entries"):
             frappe.throw("Add at least one transaction row.")
 
         self.total_amount = 0
+        validate_unique_rows(
+            self.get("entries"),
+            ("debit_account", "credit_account", "project", "cost_center", "amount", "expense_type", "description"),
+            "Cashbook transaction",
+        )
         for row in self.get("entries"):
             self.validate_entry(row)
             self.total_amount += flt(row.amount)
 
-        if self.project and not frappe.db.exists("Project", self.project):
-            frappe.throw("Select a valid Project or leave Project blank.")
-
     def on_submit(self):
         self.create_journal_entry()
 
-    def ensure_entries_from_legacy_fields(self):
-        if self.get("entries"):
+    def on_cancel(self):
+        if not self.journal_entry or not frappe.db.exists("Journal Entry", self.journal_entry):
             return
-        if not (self.get("debit_account") or self.get("credit_account") or flt(self.get("amount"))):
-            return
-        self.append(
-            "entries",
-            {
-                "expense_type": self.get_legacy_transaction_type(),
-                "debit_account": self.get("debit_account"),
-                "credit_account": self.get("credit_account"),
-                "amount": self.get("amount"),
-                "project": self.get("project"),
-                "description": self.get("description"),
-            },
-        )
-
-    def get_legacy_transaction_type(self):
-        expense_type = self.get("expense_type")
-        if expense_type in CASHBOOK_TRANSACTION_TYPES:
-            return expense_type
-        return "Other Expense"
+        journal_entry = frappe.get_doc("Journal Entry", self.journal_entry)
+        if journal_entry.docstatus == 1:
+            journal_entry.cancel()
 
     def validate_entry(self, row):
         if flt(row.amount) <= 0:
@@ -85,6 +51,10 @@ class FarmCashbook(Document):
             self.validate_cost_center(row.cost_center, row.idx)
 
     def create_journal_entry(self):
+        if self.journal_entry and frappe.db.exists("Journal Entry", self.journal_entry):
+            journal_entry = frappe.get_doc("Journal Entry", self.journal_entry)
+            if journal_entry.docstatus == 1:
+                return
         company = self.get_company()
         if not company:
             frappe.throw("Set a Company on Farm Management Settings or as your user default before posting.")
@@ -141,7 +111,7 @@ class FarmCashbook(Document):
         journal_entry.append("accounts", row)
 
     def get_journal_remark(self):
-        parts = [self.project_type, self.description]
+        parts = [self.description]
         row_labels = [row.expense_type for row in self.get("entries") if row.expense_type]
         if row_labels:
             parts.append(", ".join(row_labels[:3]))

@@ -24,9 +24,10 @@ def run():
     for doctype in (
         "Biological Asset",
         "Biological Asset Capitalization",
-        "Contract Farming Agreement",
-        "Input Loan Disbursement",
-        "Harvest Recovery",
+        "Harvest Transaction",
+        "Harvest Log",
+        "Animal Stock Entry",
+        "Farm Activity",
     ):
         if not frappe.db.exists("DocType", doctype):
             frappe.throw(f"Missing DocType after installation: {doctype}")

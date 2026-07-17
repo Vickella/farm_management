@@ -6,6 +6,44 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[2]
 APP_ROOT = REPO_ROOT / "farm_management"
 
+RETAINED_DOCTYPES = {
+    "Agriculture Project Type",
+    "Animal Disease",
+    "Animal Stock Entry",
+    "Biological Asset",
+    "Biological Asset Capitalization",
+    "Biological Asset Valuation",
+    "Crop Type",
+    "Disease Incident",
+    "Farm",
+    "Farm Activity",
+    "Farm Activity Type",
+    "Farm BOM",
+    "Farm BOM Item",
+    "Farm Budget",
+    "Farm Budget Item",
+    "Farm Cashbook",
+    "Farm Cashbook Entry",
+    "Farm Field",
+    "Farm Management Settings",
+    "Farm Pen",
+    "Farm Type",
+    "Farm Type Managed Item",
+    "Farm Type Multiselect",
+    "Field Management",
+    "Field Management Requirement",
+    "Fowl Run",
+    "Harvest Log",
+    "Harvest Transaction",
+    "Livestock Breed",
+    "Livestock Breeding Record",
+    "Livestock Health Event",
+    "Livestock Individual",
+    "Livestock Sibling",
+    "Livestock Species",
+    "Pest",
+}
+
 
 def get_doctype(name):
     for path in APP_ROOT.glob("**/doctype/**/*.json"):
@@ -16,6 +54,13 @@ def get_doctype(name):
 
 
 class TestRepositoryContracts(unittest.TestCase):
+    def test_doctype_inventory_stays_minimal(self):
+        present = {
+            json.loads(path.read_text(encoding="utf-8")).get("name")
+            for path in APP_ROOT.glob("**/doctype/**/*.json")
+        }
+        self.assertEqual(present, RETAINED_DOCTYPES)
+
     def test_all_doctype_json_and_field_order_are_valid(self):
         for path in APP_ROOT.glob("**/doctype/**/*.json"):
             with self.subTest(path=path):
@@ -23,6 +68,11 @@ class TestRepositoryContracts(unittest.TestCase):
                 fieldnames = [row.get("fieldname") for row in data.get("fields", [])]
                 self.assertEqual(len(fieldnames), len(set(fieldnames)))
                 self.assertEqual(set(data.get("field_order", [])), set(fieldnames))
+                if data.get("is_submittable"):
+                    self.assertIn("amended_from", fieldnames)
+                for field in data.get("fields", []):
+                    if field.get("fieldtype") in {"Table", "Table MultiSelect"}:
+                        self.assertIn(field.get("options"), RETAINED_DOCTYPES)
 
     def test_erpnext_is_a_required_app(self):
         hooks = (APP_ROOT / "hooks.py").read_text(encoding="utf-8")
@@ -34,12 +84,7 @@ class TestRepositoryContracts(unittest.TestCase):
 
     def test_master_selection_fields_are_links(self):
         expected = {
-            ("Crop Cycle", "crop_variety"): ("Link", "Crop Type"),
-            ("Greenhouse Cycle", "crop"): ("Link", "Crop Type"),
-            ("Cattle Herd", "breed"): ("Link", "Livestock Breed"),
-            ("Fish Batch", "species"): ("Link", "Livestock Species"),
             ("Farm Pen", "managed_species"): ("Link", "Livestock Species"),
-            ("Farm Pond", "managed_species"): ("Link", "Livestock Species"),
             ("Fowl Run", "managed_species"): ("Link", "Livestock Species"),
         }
         for (doctype, fieldname), contract in expected.items():
@@ -51,15 +96,42 @@ class TestRepositoryContracts(unittest.TestCase):
                 )
                 self.assertEqual((field.get("fieldtype"), field.get("options")), contract)
 
+    def test_project_produce_and_breed_are_category_constrained(self):
+        fixtures = json.loads(
+            (REPO_ROOT / "fixtures" / "custom_field.json").read_text(encoding="utf-8")
+        )
+        fields = {
+            row["fieldname"]: row
+            for row in fixtures
+            if row.get("dt") == "Project"
+        }
+        self.assertEqual(
+            (
+                fields["managed_crop_animal_species"]["fieldtype"],
+                fields["managed_crop_animal_species"]["options"],
+            ),
+            ("Dynamic Link", "managed_item_doctype"),
+        )
+        self.assertEqual(fields["animal_breed"]["options"], "Livestock Breed")
+
+        controller = (
+            APP_ROOT / "farm_projects" / "agriculture_project.py"
+        ).read_text(encoding="utf-8")
+        self.assertIn("get_project_managed_item_context", controller)
+        self.assertIn("validate_project_breed", controller)
+        self.assertIn("breed_species != managed_item", controller)
+
+        client = (APP_ROOT / "public" / "js" / "project.js").read_text(encoding="utf-8")
+        self.assertIn('name: ["in", produce]', client)
+        self.assertIn("species: frm.doc.managed_crop_animal_species", client)
+
     def test_operational_units_use_uom_master(self):
         for doctype, fieldname in (
             ("Biological Asset", "unit"),
             ("Harvest Transaction", "unit"),
-            ("Contract Farming Agreement", "unit"),
             ("Farm BOM", "planned_quantity_unit"),
             ("Crop Type", "yield_unit"),
             ("Animal Stock Entry", "unit"),
-            ("Standard Cost Calculation BOM", "unit"),
         ):
             with self.subTest(doctype=doctype, fieldname=fieldname):
                 field = next(
@@ -69,12 +141,6 @@ class TestRepositoryContracts(unittest.TestCase):
                 )
                 self.assertEqual(field.get("fieldtype"), "Link")
                 self.assertEqual(field.get("options"), "UOM")
-
-    def test_weather_source_contains_no_fallback_api_key(self):
-        weather = (
-            APP_ROOT / "farm_management" / "api" / "weather.py"
-        ).read_text(encoding="utf-8")
-        self.assertNotIn("DEFAULT_OPENWEATHER_API_KEY", weather)
 
     def test_farm_type_uses_activity_and_produce_rows(self):
         farm_type = get_doctype("Farm Type")
@@ -148,12 +214,26 @@ class TestRepositoryContracts(unittest.TestCase):
         self.assertIn('invoice.get("is_return")', controller)
         self.assertIn("base_net_amount", controller)
 
-    def test_contract_accounting_implements_both_directions(self):
-        accounting = (APP_ROOT / "contract_farming" / "accounting.py").read_text(encoding="utf-8")
-        self.assertIn('Receiving Contract (Liability)', accounting)
-        self.assertIn("create_received_input_journal", accounting)
-        self.assertIn("create_receiving_harvest_journal", accounting)
-        self.assertIn('get_party_account("Customer"', accounting)
+    def test_removed_feature_doctypes_do_not_return(self):
+        removed = {
+            "Animal Herd",
+            "Broiler Batch",
+            "Budget Forecasting",
+            "Contract Farming Agreement",
+            "Crop Cycle",
+            "Dairy Cow Herd",
+            "Fish Batch",
+            "Goat Herd",
+            "Greenhouse Cycle",
+            "Pig Batch",
+            "Poultry Flock",
+            "Standard Cost Calculation BOM",
+        }
+        present = {
+            json.loads(path.read_text(encoding="utf-8")).get("name")
+            for path in APP_ROOT.glob("**/doctype/**/*.json")
+        }
+        self.assertFalse(removed & present)
 
     def test_ias41_reconciliation_report_is_installed(self):
         report = APP_ROOT / "biological_assets" / "report" / "biological_asset_gl_reconciliation"

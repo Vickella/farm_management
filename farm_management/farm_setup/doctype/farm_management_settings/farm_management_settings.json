@@ -9,31 +9,14 @@
   "default_company",
   "default_cost_center",
   "default_harvest_warehouse",
-  "section_contract_farming",
-  "contract_farming_cost_center",
-  "contract_farming_income_account",
-  "contract_farming_liability_account",
-  "contract_inputs_received_expense_account",
-  "contract_input_loans_receivable_account",
-  "contract_input_clearing_account",
-  "column_break_contract_accounts",
-  "contract_harvest_purchases_account",
-  "contract_grower_payable_account",
   "section_biological_asset_sales",
   "biological_asset_sales_receivable_account",
   "biological_asset_sales_income_account",
   "biological_asset_cost_of_sales_account",
-  "section_break_ai",
-  "ai_api_key",
-  "ai_provider",
   "section_break_flags",
-  "enable_ai_assistant",
   "enable_auto_activity_generation",
   "enable_fair_value_scheduler",
-  "auto_post_fair_value_journals",
-  "section_break_weather",
-  "weather_api_key",
-  "weather_units"
+  "auto_post_fair_value_journals"
  ],
  "fields": [
   {
@@ -60,63 +43,6 @@
    "options": "Warehouse"
   },
   {
-   "fieldname": "section_contract_farming",
-   "fieldtype": "Section Break",
-   "label": "Contract Farming Settings"
-  },
-  {
-   "fieldname": "contract_farming_cost_center",
-   "fieldtype": "Link",
-   "label": "Contract Farming Cost Center",
-   "options": "Cost Center"
-  },
-  {
-   "fieldname": "contract_farming_income_account",
-   "fieldtype": "Link",
-   "label": "Contract Farming Income Account",
-   "options": "Account"
-  },
-  {
-   "fieldname": "contract_farming_liability_account",
-   "fieldtype": "Link",
-   "label": "Contract Farming Liability Account",
-   "options": "Account"
-  },
-  {
-   "fieldname": "contract_inputs_received_expense_account",
-   "fieldtype": "Link",
-   "label": "Contract Inputs Received Expense Account",
-   "options": "Account"
-  },
-  {
-   "fieldname": "contract_input_loans_receivable_account",
-   "fieldtype": "Link",
-   "label": "Input Loans Receivable Account",
-   "options": "Account"
-  },
-  {
-   "fieldname": "contract_input_clearing_account",
-   "fieldtype": "Link",
-   "label": "Input Clearing Account",
-   "options": "Account"
-  },
-  {
-   "fieldname": "column_break_contract_accounts",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "contract_harvest_purchases_account",
-   "fieldtype": "Link",
-   "label": "Harvest Purchases Account",
-   "options": "Account"
-  },
-  {
-   "fieldname": "contract_grower_payable_account",
-   "fieldtype": "Link",
-   "label": "Grower Payable Account",
-   "options": "Account"
-  },
-  {
    "fieldname": "section_biological_asset_sales",
    "fieldtype": "Section Break",
    "label": "Biological Asset Sales"
@@ -140,69 +66,30 @@
    "options": "Account"
   },
   {
-   "fieldname": "section_break_ai",
-   "fieldtype": "Section Break",
-   "label": "AI Configuration"
-  },
-  {
-   "fieldname": "ai_api_key",
-   "fieldtype": "Password",
-   "label": "AI API Key"
-  },
-  {
-   "fieldname": "ai_provider",
-   "fieldtype": "Select",
-   "label": "AI Provider",
-   "options": "OpenAI",
-   "default": "OpenAI"
-  },
-  {
    "fieldname": "section_break_flags",
    "fieldtype": "Section Break",
-   "label": "Feature Flags"
+   "label": "Automation"
   },
   {
-   "fieldname": "enable_ai_assistant",
-   "fieldtype": "Check",
-   "label": "Enable AI Assistant",
-   "default": "1"
-  },
-  {
+   "default": "1",
    "fieldname": "enable_auto_activity_generation",
    "fieldtype": "Check",
-   "label": "Enable Auto Activity Generation",
-   "default": "1"
+   "label": "Enable Auto Activity Generation"
   },
   {
+   "default": "1",
    "fieldname": "enable_fair_value_scheduler",
    "fieldtype": "Check",
-   "label": "Enable Fair Value Scheduler",
-   "default": "1"
+   "label": "Enable Fair Value Scheduler"
   },
   {
+   "default": "0",
    "fieldname": "auto_post_fair_value_journals",
    "fieldtype": "Check",
-   "label": "Auto-post Fair Value Journals",
-   "default": "0"
-  },
-  {
-   "fieldname": "section_break_weather",
-   "fieldtype": "Section Break",
-   "label": "Weather Integration"
-  },
-  {
-   "fieldname": "weather_api_key",
-   "fieldtype": "Password",
-   "label": "OpenWeather API Key"
-  },
-  {
-   "fieldname": "weather_units",
-   "fieldtype": "Select",
-   "label": "Temperature Units",
-   "options": "metric\nimperial\nstandard",
-   "default": "metric"
+   "label": "Auto-post Fair Value Journals"
   }
  ],
+ "issingle": 1,
  "links": [],
  "modified": "2024-01-01 00:00:00.000000",
  "modified_by": "Administrator",
@@ -226,6 +113,5 @@
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],
- "track_changes": 1,
- "issingle": 1
+ "track_changes": 1
 }

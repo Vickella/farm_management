@@ -5,6 +5,7 @@
  "engine": "InnoDB",
  "field_order": [
   "title",
+  "amended_from",
   "farm",
   "project",
   "date",
@@ -26,22 +27,34 @@
    "in_list_view": 1
   },
   {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "options": "Field Management",
+   "read_only": 1,
+   "no_copy": 1,
+   "print_hide": 1
+  },
+  {
    "fieldname": "farm",
    "fieldtype": "Link",
    "label": "Farm",
    "options": "Farm",
+   "reqd": 1,
    "in_list_view": 1
   },
   {
    "fieldname": "project",
    "fieldtype": "Link",
    "label": "Project",
-   "options": "Project"
+   "options": "Project",
+   "reqd": 1
   },
   {
    "fieldname": "date",
    "fieldtype": "Date",
    "label": "Date",
+   "reqd": 1,
    "in_list_view": 1
   },
   {
@@ -64,6 +77,7 @@
    "fieldname": "activity_type",
    "fieldtype": "Select",
    "label": "Activity Type",
+   "reqd": 1,
    "options": "Soil Preparation\nSeeding\nWeeding\nIrrigation\nFertilizer Application\nPesticide Application\nHarvesting"
   },
   {
@@ -104,6 +118,9 @@
    "read": 1,
    "report": 1,
    "role": "System Manager",
+   "submit": 1,
+   "cancel": 1,
+   "amend": 1,
    "share": 1,
    "write": 1
   }

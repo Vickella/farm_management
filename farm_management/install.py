@@ -27,7 +27,61 @@ EXCLUDED_INSTALL_FIXTURES = {"farm_bom.json"}
 
 LEGACY_DOCTYPES = [
     "Agri AI Farm Management Settings Legacy",
+    "Farm Pond",
+    "Fish Batch",
+    "Pond Management",
+    "Water Quality Log",
+    "Fish Feeding Log",
+    "Feeding Log",
+    "Animal Herd",
+    "Breeding Log",
+    "Cattle Herd",
+    "Cattle Infrastructure",
+    "Meat Production Log",
+    "Contract Farming Agreement",
+    "Contract Farming Input",
+    "Harvest Recovery",
+    "Input Loan Disbursement",
+    "Outgrower Farmer",
+    "Crop Cycle",
+    "Dairy Cow Herd",
+    "Dairy Infrastructure",
+    "Dairy Milking Cycle",
+    "Lactation Cycle",
+    "Milk Yield Log",
+    "Goat Breeding Log",
+    "Goat Herd",
+    "Goat Meat Milk Log",
+    "Climate Control Log",
+    "Greenhouse Cycle",
+    "Greenhouse Harvest Log",
+    "Farrowing Log",
+    "Pig Batch",
+    "Pig Infrastructure",
+    "Broiler Batch",
+    "Egg Production Log",
+    "Poultry Flock",
+    "Poultry Infrastructure",
+    "Budget Forecasting",
+    "Budget Forecasting Expense",
+    "Standard Cost Calculation BOM",
+    "Standard Cost Calculation BOM Item",
 ]
+
+LEGACY_MODULES = [
+    "Agri Ai",
+    "Animal Husbandry",
+    "Contract Farming",
+    "Dairy Production",
+    "Fish Farming",
+    "Goat Farming",
+    "Greenhouse Farming",
+    "Pig Farming",
+    "Poultry Production",
+]
+
+LEGACY_PAGES = ["agri-gpt", "farm-weather"]
+LEGACY_REPORTS = ["Contract Farming Statement"]
 
 LEGACY_PROJECT_CUSTOM_FIELDS = [
     "Project-breed",
@@ -84,77 +138,20 @@ WORKSPACE_GROUPS = [
         ],
     ),
     (
-        "Crop Production",
+        "Field Operations",
         [
             ("Farm Field", "DocType"),
-            ("Crop Cycle", "DocType"),
             ("Field Management", "DocType"),
+            ("Farm Activity Type", "DocType"),
+            ("Farm Activity", "DocType"),
             ("Harvest Log", "DocType"),
         ],
     ),
     (
-        "Greenhouse Farming",
-        [
-            ("Greenhouse Cycle", "DocType"),
-            ("Climate Control Log", "DocType"),
-            ("Greenhouse Harvest Log", "DocType"),
-        ],
-    ),
-    (
-        "Poultry Production",
-        [
-            ("Fowl Run", "DocType"),
-            ("Poultry Flock", "DocType"),
-            ("Broiler Batch", "DocType"),
-            ("Egg Production Log", "DocType"),
-        ],
-    ),
-    (
-        "Fish Farming",
-        [
-            ("Farm Pond", "DocType"),
-            ("Fish Batch", "DocType"),
-            ("Pond Management", "DocType"),
-            ("Water Quality Log", "DocType"),
-            ("Fish Feeding Log", "DocType"),
-            ("Feeding Log", "DocType"),
-        ],
-    ),
-    (
-        "Animal Husbandry",
+        "Farm Infrastructure",
         [
             ("Farm Pen", "DocType"),
-            ("Cattle Infrastructure", "DocType"),
-            ("Animal Herd", "DocType"),
-            ("Cattle Herd", "DocType"),
-            ("Breeding Log", "DocType"),
-            ("Meat Production Log", "DocType"),
-        ],
-    ),
-    (
-        "Dairy Production",
-        [
-            ("Dairy Infrastructure", "DocType"),
-            ("Dairy Cow Herd", "DocType"),
-            ("Lactation Cycle", "DocType"),
-            ("Milk Yield Log", "DocType"),
-            ("Dairy Milking Cycle", "DocType"),
-        ],
-    ),
-    (
-        "Goat Farming",
-        [
-            ("Goat Herd", "DocType"),
-            ("Goat Breeding Log", "DocType"),
-            ("Goat Meat Milk Log", "DocType"),
-        ],
-    ),
-    (
-        "Pig Farming",
-        [
-            ("Pig Batch", "DocType"),
-            ("Farrowing Log", "DocType"),
-            ("Pig Infrastructure", "DocType"),
+            ("Fowl Run", "DocType"),
         ],
     ),
     (
@@ -185,22 +182,10 @@ WORKSPACE_GROUPS = [
         [("Disease Incident", "DocType"), ("Animal Disease", "DocType"), ("Pest", "DocType")],
     ),
     (
-        "Contract Farming",
-        [
-            ("Outgrower Farmer", "DocType"),
-            ("Contract Farming Agreement", "DocType"),
-            ("Input Loan Disbursement", "DocType"),
-            ("Harvest Recovery", "DocType"),
-            ("Contract Farming Statement", "Report"),
-        ],
-    ),
-    (
-        "Budgeting and Costing",
+        "Planning and Costing",
         [
             ("Farm BOM", "DocType"),
             ("Farm Budget", "DocType"),
-            ("Budget Forecasting", "DocType"),
-            ("Standard Cost Calculation BOM", "DocType"),
             ("Farm Budget Variance Analysis", "Report"),
         ],
     ),
@@ -212,31 +197,18 @@ WORKSPACE_GROUPS = [
             ("Accounts Receivable Summary", "Report"),
             ("Accounts Payable Summary", "Report"),
             ("General Ledger", "Report"),
-        ],
-    ),
-    (
-        "Farm Calendar",
-        [("Farm Activity Type", "DocType"), ("Farm Activity", "DocType")],
-    ),
-    (
-        "Decision Support",
-        [
             ("Farm KPI Summary", "Report"),
-            ("Farm Weather Forecast", "Page", "farm-weather"),
-            ("Agri GPT", "Page", "agri-gpt"),
         ],
     ),
 ]
 
 WORKSPACE_SHORTCUTS = [
     "Farm",
-    "Farm Type",
-    "Agriculture Project Type",
     "Project",
     "Biological Asset",
     "Farm Activity",
     "Harvest Log",
-    "Harvest Transaction",
+    "Animal Stock Entry",
     "Farm Cashbook",
     ("Farm KPI Summary", "Report"),
     ("Profit and Loss Statement", "Report"),
@@ -294,24 +266,26 @@ def after_install():
 
 def apply_phase2_updates():
     ensure_erpnext_dependency()
+    migrate_harvest_quantity_field()
+    remove_legacy_project_custom_fields()
+    remove_legacy_doctypes()
+    retire_removed_fish_masters()
     ensure_module_defs()
     ensure_amendable_doctypes()
     seed_agricultural_uoms()
     seed_erpnext_operational_masters()
-    remove_legacy_project_custom_fields()
     normalize_managed_item_master_links()
     seed_fixture_data()
     retire_legacy_flat_farm_types()
     normalize_existing_farm_type_links()
     seed_missing_crop_types()
     seed_livestock_breeds()
-    normalize_legacy_harvest_recovery_units()
     seed_agriculture_project_types()
     seed_pests()
     seed_animal_diseases()
     setup_farm_management_settings()
     setup_biological_asset_accounts()
-    setup_contract_farming_accounts()
+    setup_biological_asset_sales_accounts()
     create_farm_workspace()
 
 
@@ -328,12 +302,27 @@ def ensure_erpnext_dependency():
         )
 
 
+def migrate_harvest_quantity_field():
+    table = "tabHarvest Log"
+    if not frappe.db.table_exists(table):
+        return
+    if not frappe.db.has_column(table, "total_yield_tons"):
+        return
+    if not frappe.db.has_column(table, "harvested_quantity"):
+        return
+    frappe.db.sql(
+        f"""update `{table}`
+        set harvested_quantity = total_yield_tons
+        where ifnull(harvested_quantity, 0) = 0
+          and ifnull(total_yield_tons, 0) != 0"""
+    )
+
+
 def seed_agricultural_uoms():
-    whole_number_uoms = {"Head", "Bird", "Fingerling", "Colony"}
+    whole_number_uoms = {"Head", "Bird", "Colony"}
     for uom_name in (
         "Head",
         "Bird",
-        "Fingerling",
         "Colony",
         "Hectare",
         "Kg",
@@ -438,6 +427,56 @@ def remove_legacy_doctypes():
     for doctype in LEGACY_DOCTYPES:
         if frappe.db.exists("DocType", doctype):
             frappe.delete_doc("DocType", doctype, force=True, ignore_permissions=True)
+    for report in LEGACY_REPORTS:
+        if frappe.db.exists("Report", report):
+            frappe.delete_doc("Report", report, force=True, ignore_permissions=True)
+    for page in LEGACY_PAGES:
+        if frappe.db.exists("Page", page):
+            frappe.delete_doc("Page", page, force=True, ignore_permissions=True)
+    for module in LEGACY_MODULES:
+        if frappe.db.exists("Module Def", module):
+            frappe.delete_doc("Module Def", module, force=True, ignore_permissions=True)
+
+
+def retire_removed_fish_masters():
+    for project_type in ("Fish Farming", "Tilapia Production", "Catfish Production"):
+        if frappe.db.exists("Agriculture Project Type", project_type):
+            frappe.db.set_value(
+                "Agriculture Project Type",
+                project_type,
+                "is_active",
+                0,
+                update_modified=False,
+            )
+    for species in ("Tilapia", "Catfish", "Trout", "Shrimp"):
+        if frappe.db.exists("Livestock Species", species):
+            frappe.db.set_value(
+                "Livestock Species",
+                species,
+                "is_active",
+                0,
+                update_modified=False,
+            )
+    if frappe.db.exists("Farm Type", "Aquaculture"):
+        frappe.db.set_value(
+            "Farm Type",
+            "Aquaculture",
+            "is_active",
+            0,
+            update_modified=False,
+        )
+    for activity in frappe.get_all(
+        "Farm Activity Type",
+        filters={"activity_name": ["like", "Aquaculture - %"]},
+        pluck="name",
+    ):
+        frappe.db.set_value(
+            "Farm Activity Type",
+            activity,
+            "is_active",
+            0,
+            update_modified=False,
+        )
 
 
 def remove_legacy_project_custom_fields():
@@ -449,7 +488,6 @@ def remove_legacy_project_custom_fields():
 def setup_farm_management_settings():
     if not frappe.db.exists("Farm Management Settings", "Farm Management Settings"):
         doc = frappe.new_doc("Farm Management Settings")
-        doc.enable_ai_assistant = 1
         doc.enable_auto_activity_generation = 1
         doc.enable_fair_value_scheduler = 1
         doc.insert(ignore_permissions=True)
@@ -510,7 +548,7 @@ def setup_biological_asset_accounts():
         frappe.db.set_value("Farm Management Settings", "Farm Management Settings", updates, update_modified=False)
 
 
-def setup_contract_farming_accounts(company=None):
+def setup_biological_asset_sales_accounts(company=None):
     settings = frappe.get_single("Farm Management Settings")
     company = company or settings.default_company or frappe.defaults.get_user_default("Company") or frappe.db.get_single_value(
         "Global Defaults", "default_company"
@@ -536,49 +574,6 @@ def setup_contract_farming_accounts(company=None):
         root_type="Expense",
         report_type="Profit and Loss",
         account_type="Cost of Goods Sold",
-    )
-    ensure_account(
-        "Contract Farming Input Loans Receivable",
-        company,
-        root_type="Asset",
-        report_type="Balance Sheet",
-    )
-    ensure_account(
-        "Contract Farming Input Clearing",
-        company,
-        root_type="Liability",
-        report_type="Balance Sheet",
-    )
-    ensure_account(
-        "Contract Farming Harvest Purchases",
-        company,
-        root_type="Expense",
-        report_type="Profit and Loss",
-    )
-    ensure_account(
-        "Contract Farming Grower Payable",
-        company,
-        root_type="Liability",
-        report_type="Balance Sheet",
-    )
-    ensure_account(
-        "Contract Farming Deferred Liability",
-        company,
-        root_type="Liability",
-        report_type="Balance Sheet",
-    )
-    ensure_account(
-        "Contract Farming Inputs Received Expense",
-        company,
-        root_type="Expense",
-        report_type="Profit and Loss",
-        account_type="Expense Account",
-    )
-    ensure_account(
-        "Contract Farming Income",
-        company,
-        root_type="Income",
-        report_type="Profit and Loss",
     )
 
 
@@ -704,7 +699,6 @@ def normalize_farm_type_fixture(record):
         "Crop": ("Crop Production", "Crop Type"),
         "Animal Species": ("Animal Husbandry", "Livestock Species"),
         "Poultry": ("Poultry Production", "Livestock Species"),
-        "Aquaculture Species": ("Aquaculture", "Livestock Species"),
         "Apiary": ("Apiculture", "Livestock Species"),
         "Other": ("Agroforestry", "Crop Type"),
     }
@@ -732,14 +726,15 @@ def is_legacy_project_custom_field(record):
 
 
 def seed_agriculture_project_types():
-    if frappe.db.exists("Agriculture Project Type", "Poultry Production"):
-        frappe.db.set_value(
-            "Agriculture Project Type",
-            "Poultry Production",
-            "is_active",
-            0,
-            update_modified=False,
-        )
+    for ambiguous_type in ("Poultry Production", "Mixed Farming"):
+        if frappe.db.exists("Agriculture Project Type", ambiguous_type):
+            frappe.db.set_value(
+                "Agriculture Project Type",
+                ambiguous_type,
+                "is_active",
+                0,
+                update_modified=False,
+            )
     project_types = [
         ("Crop Production", "Crop Production", None),
         ("Horticulture", "Horticulture", None),
@@ -755,11 +750,7 @@ def seed_agriculture_project_types():
         ("Sheep Farming", "Animal Husbandry", "Sheep"),
         ("Pig Farming", "Animal Husbandry", "Pigs"),
         ("Rabbit Production", "Animal Husbandry", "Rabbits"),
-        ("Fish Farming", "Aquaculture", None),
-        ("Tilapia Production", "Aquaculture", "Tilapia"),
-        ("Catfish Production", "Aquaculture", "Catfish"),
         ("Apiculture", "Apiculture", "Honey Bees"),
-        ("Mixed Farming", "Mixed Farming", None),
         ("Agroforestry", "Agroforestry", None),
     ]
     for project_type_name, farm_type, managed_item in project_types:
@@ -880,10 +871,6 @@ def retire_legacy_flat_farm_types():
         "Road Runners",
         "Turkey",
         "Ducks",
-        "Tilapia",
-        "Catfish",
-        "Trout",
-        "Shrimp",
     ]
     for name in legacy_names:
         if frappe.db.exists("Farm Type", name):
@@ -910,7 +897,6 @@ def normalize_existing_farm_type_links():
     horticulture_items = {"Tomatoes", "Potatoes", "Onions", "Cabbage", "Peppers", "Flowers", "Greenhouse Farming"}
     livestock_items = {"Cattle", "Goats", "Sheep", "Pigs", "Rabbits"}
     poultry_items = {"Broilers", "Layers", "Road Runners", "Turkey", "Ducks"}
-    aquaculture_items = {"Tilapia", "Catfish", "Trout", "Shrimp"}
 
     def broad_type(old_value):
         if old_value in crop_items:
@@ -921,14 +907,12 @@ def normalize_existing_farm_type_links():
             return "Animal Husbandry"
         if old_value in poultry_items:
             return "Poultry"
-        if old_value in aquaculture_items:
-            return "Aquaculture"
         return old_value
 
     for name, farm_type in frappe.get_all(
         "Biological Asset",
         fields=["name", "farm_type"],
-        filters={"farm_type": ["in", list(crop_items | horticulture_items | livestock_items | poultry_items | aquaculture_items)]},
+        filters={"farm_type": ["in", list(crop_items | horticulture_items | livestock_items | poultry_items)]},
         as_list=True,
     ):
         frappe.db.set_value(
@@ -938,11 +922,11 @@ def normalize_existing_farm_type_links():
             update_modified=False,
         )
 
-    for doctype, link_field in (("Farm Pen", "animal_type"), ("Farm Pond", "species"), ("Fowl Run", "bird_type")):
+    for doctype, link_field in (("Farm Pen", "animal_type"), ("Fowl Run", "bird_type")):
         for name, farm_type in frappe.get_all(
             doctype,
             fields=["name", link_field],
-            filters={link_field: ["in", list(livestock_items | poultry_items | aquaculture_items)]},
+            filters={link_field: ["in", list(livestock_items | poultry_items)]},
             as_list=True,
         ):
             frappe.db.set_value(
@@ -978,10 +962,6 @@ def seed_livestock_breeds():
         ("Rabbits", "Animal Husbandry", "Livestock", ["New Zealand White", "Californian"]),
         ("Broilers", "Poultry", "Poultry", ["Ross 308", "Cobb 500", "Arbor Acres"]),
         ("Layers", "Poultry", "Poultry", ["Hy-Line Brown", "Lohmann Brown", "ISA Brown"]),
-        ("Tilapia", "Aquaculture", "Aquaculture", ["Nile Tilapia", "Red Tilapia"]),
-        ("Catfish", "Aquaculture", "Aquaculture", ["African Catfish"]),
-        ("Trout", "Aquaculture", "Aquaculture", []),
-        ("Shrimp", "Aquaculture", "Aquaculture", []),
         ("Road Runners", "Poultry", "Poultry", []),
         ("Turkey", "Poultry", "Poultry", []),
         ("Ducks", "Poultry", "Poultry", []),
@@ -1037,7 +1017,6 @@ def normalize_managed_item_master_links():
         "when 'Crop' then 'Crop Production' "
         "when 'Animal Species' then 'Animal Husbandry' "
         "when 'Poultry' then 'Poultry Production' "
-        "when 'Aquaculture Species' then 'Aquaculture' "
         "when 'Apiary' then 'Apiculture' "
         "else 'Agroforestry' end"
     )
@@ -1052,33 +1031,6 @@ def normalize_managed_item_master_links():
             farm_produce = ifnull(nullif(farm_produce, ''), managed_item_name)
         where ifnull(farm_produce, '') = ''"""
     )
-
-
-def normalize_legacy_harvest_recovery_units():
-    if not frappe.db.exists("DocType", "Harvest Recovery"):
-        return
-    for row in frappe.get_all(
-        "Harvest Recovery",
-        fields=[
-            "name",
-            "quantity_delivered",
-            "unit",
-            "purchase_price_per_unit",
-            "quantity_delivered_kg",
-            "purchase_price_per_kg",
-        ],
-    ):
-        updates = {}
-        if not flt(row.quantity_delivered) and flt(row.quantity_delivered_kg):
-            updates["quantity_delivered"] = row.quantity_delivered_kg
-        if not row.unit and (row.quantity_delivered_kg or row.purchase_price_per_kg):
-            updates["unit"] = "Kg"
-        if not flt(row.purchase_price_per_unit) and flt(row.purchase_price_per_kg):
-            updates["purchase_price_per_unit"] = row.purchase_price_per_kg
-        if updates:
-            frappe.db.set_value(
-                "Harvest Recovery", row.name, updates, update_modified=False
-            )
 
 
 def seed_pests():
@@ -1403,9 +1355,11 @@ def verify_installation():
         "Crop Type",
         "Farm Management Settings",
         "Farm Field",
-        "Farm Pond",
         "Farm Pen",
         "Fowl Run",
+        "Field Management",
+        "Field Management Requirement",
+        "Harvest Log",
         "Livestock Species",
         "Livestock Breed",
         "Livestock Individual",
@@ -1423,10 +1377,8 @@ def verify_installation():
         "Farm BOM Item",
         "Farm Budget",
         "Farm Budget Item",
-        "Outgrower Farmer",
-        "Contract Farming Agreement",
-        "Input Loan Disbursement",
-        "Harvest Recovery",
+        "Farm Cashbook",
+        "Farm Cashbook Entry",
         "Farm Activity",
         "Farm Activity Type",
     ]
@@ -1434,8 +1386,8 @@ def verify_installation():
         "Farm KPI Summary",
         "Farm Budget Variance Analysis",
         "Biological Asset Register",
+        "Biological Asset GL Reconciliation",
         "Animal Stock Ledger",
-        "Contract Farming Statement",
     ]
     expected_account_names = [
         "Biological Assets",
@@ -1443,10 +1395,7 @@ def verify_installation():
         "Biological Asset Fair Value Gain Loss",
         "Biological Asset Sales Receivable",
         "Biological Asset Sales Income",
-        "Contract Farming Input Loans Receivable",
-        "Contract Farming Input Clearing",
-        "Contract Farming Harvest Purchases",
-        "Contract Farming Grower Payable",
+        "Biological Asset Cost of Sales",
     ]
     legacy_project_fields = [
         fieldname.replace("Project-", "")

@@ -5,8 +5,7 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "sibling",
-  "tag_number"
+  "sibling"
  ],
  "fields": [
   {
@@ -16,12 +15,6 @@
    "options": "Livestock Individual",
    "reqd": 1,
    "in_list_view": 1
-  },
-  {
-   "fieldname": "tag_number",
-   "fieldtype": "Data",
-   "label": "Tag Number",
-   "read_only": 1
   }
  ],
  "istable": 1,

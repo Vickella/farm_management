@@ -18,7 +18,7 @@
    "fieldname": "farm_activity",
    "fieldtype": "Select",
    "label": "Farm Activity",
-   "options": "Crop Production\nAnimal Husbandry\nPoultry Production\nAquaculture\nApiculture\nAgroforestry",
+   "options": "Crop Production\nAnimal Husbandry\nPoultry Production\nApiculture\nAgroforestry",
    "reqd": 1,
    "in_list_view": 1
   },

@@ -6,11 +6,25 @@ from farm_management.biological_assets.valuation import (
     create_capitalization_document,
     get_capitalization_source_account,
 )
+from farm_management.server_validation import apply_project_context, get_farm_context, validate_asset_context, validate_date_order, validate_non_negative
 
 
 class FarmActivity(Document):
     def validate(self):
         self.validate_capitalization_immutability()
+        project = apply_project_context(self) if self.project else None
+        get_farm_context(self.farm)
+        activity_type = frappe.db.get_value("Farm Activity Type", self.activity_type, ["activity_name", "is_active"], as_dict=True)
+        if not activity_type or not activity_type.is_active:
+            frappe.throw("Select an active Farm Activity Type.")
+        if not self.activity_title:
+            self.activity_title = activity_type.activity_name
+        if self.biological_asset:
+            validate_asset_context(self.biological_asset, farm=self.farm, project=self.project, active=self.capitalizable)
+        elif self.capitalizable and project and project.biological_asset:
+            self.biological_asset = project.biological_asset
+        validate_date_order(self.scheduled_date, self.actual_date, "Scheduled Date", "Actual Date")
+        validate_non_negative(self, ("estimated_cost", "actual_cost"))
         if self.status == "Completed" and not self.actual_date:
             self.actual_date = today()
         if self.status == "Completed" and self.actual_cost is None:
@@ -125,7 +139,6 @@ def get_farm_activity_categories(farm):
         "Agroforestry": "Crop Farming",
         "Animal Husbandry": "Livestock",
         "Poultry": "Poultry",
-        "Aquaculture": "Aquaculture",
     }
     farm_types = frappe.get_all(
         "Farm Type Multiselect",

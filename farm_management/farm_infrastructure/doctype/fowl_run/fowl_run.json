@@ -14,11 +14,7 @@
   "current_status",
   "section_break_2",
   "capacity",
-  "current_flock_size",
-  "mortality_rate_percent",
-  "column_break_3",
-  "temperature_celsius",
-  "feeding_schedule"
+  "current_flock_size"
  ],
  "fields": [
   {
@@ -81,26 +77,6 @@
    "fieldname": "current_flock_size",
    "fieldtype": "Int",
    "label": "Current Flock Size"
-  },
-  {
-   "fieldname": "mortality_rate_percent",
-   "fieldtype": "Float",
-   "label": "Mortality Rate (%)"
-  },
-  {
-   "fieldname": "column_break_3",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "temperature_celsius",
-   "fieldtype": "Float",
-   "label": "Temperature (\u00b0C)"
-  },
-  {
-   "fieldname": "feeding_schedule",
-   "fieldtype": "Select",
-   "label": "Feeding Schedule",
-   "options": "\nAd Lib\nRestricted\nTimed"
   }
  ],
  "links": [],

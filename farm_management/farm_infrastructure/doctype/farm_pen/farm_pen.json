@@ -16,8 +16,7 @@
   "section_break_2",
   "capacity",
   "current_occupancy",
-  "occupancy_rate",
-  "vaccination_status"
+  "occupancy_rate"
  ],
  "fields": [
   {
@@ -92,12 +91,6 @@
    "fieldtype": "Float",
    "label": "Occupancy Rate (%)",
    "read_only": 1
-  },
-  {
-   "fieldname": "vaccination_status",
-   "fieldtype": "Select",
-   "label": "Vaccination Status",
-   "options": "\nUp to Date\nDue\nOverdue"
   }
  ],
  "links": [],

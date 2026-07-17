@@ -1,5 +1,6 @@
 import frappe
 from frappe.utils import flt, today
+from farm_management.server_validation import get_farm_context, validate_date_order, validate_farm_type_assignment
 
 
 def validate_agriculture_project(doc, method=None):
@@ -9,15 +10,41 @@ def validate_agriculture_project(doc, method=None):
     project_type = get_agriculture_project_type(ptype)
     if project_type:
         doc.agriculture_farm_type = project_type.farm_type
-        if project_type.managed_item and not doc.get("managed_crop_animal_species"):
-            doc.managed_crop_animal_species = project_type.managed_item
     else:
         frappe.throw("Agriculture Project Type must be an active Agriculture Project Type record.")
 
-    validate_managed_item(project_type.farm_type, doc.get("managed_crop_animal_species"))
+    context = _get_managed_item_context(project_type.farm_type, project_type)
+    if not doc.get("farm"):
+        frappe.throw("Farm is required for an Agriculture Project.")
+    farm = get_farm_context(doc.farm)
+    validate_farm_type_assignment(doc.farm, project_type.farm_type)
+    if doc.get("company") and doc.company != farm.owner_name:
+        frappe.throw("Project Company must match the Farm Owner Company.")
+    doc.company = farm.owner_name
+    doc.managed_item_doctype = context["doctype"]
+    if context["default"] and not doc.get("managed_crop_animal_species"):
+        doc.managed_crop_animal_species = context["default"]
+    managed_item = doc.get("managed_crop_animal_species")
+    if not managed_item:
+        frappe.throw("Select the crop, animal, or species managed by this Project.")
+    if managed_item not in context["options"]:
+        choices = ", ".join(context["options"]) or "none configured"
+        frappe.throw(
+            f"{managed_item} is not valid for Agriculture Project Type {project_type.name}. "
+            f"Select one of: {choices}."
+        )
+    validate_project_breed(context["doctype"], managed_item, doc.get("animal_breed"))
 
-    if doc.get("project_quantity") and flt(doc.get("project_quantity")) < 0:
-        frappe.throw("Project Quantity cannot be negative.")
+    if flt(doc.get("project_quantity")) <= 0:
+        frappe.throw("Project Quantity must be greater than zero.")
+    if not doc.get("project_unit"):
+        frappe.throw("Project Unit is required.")
+    validate_date_order(
+        doc.get("expected_start_date"),
+        doc.get("expected_end_date"),
+        "Expected Start Date",
+        "Expected End Date",
+    )
     activity = get_primary_farm_activity(project_type.farm_type)
     if activity not in ("Crop Production", "Agroforestry") and flt(doc.get("initial_asset_cost")) <= 0:
         frappe.throw("Initial Biological Asset Cost must be greater than zero for this project.")
@@ -79,17 +106,16 @@ def get_project_asset_profile(doc):
         managed_item = (
             doc.get("managed_crop_animal_species")
             or project_type.managed_item
-            or get_legacy_managed_item(doc)
             or project_type.project_type_name
         )
-        quantity = flt(doc.get("project_quantity")) or get_legacy_quantity(doc) or 1
+        quantity = flt(doc.get("project_quantity")) or 1
         return {
             "asset_category": get_asset_category_from_farm_type(farm_category),
             "farm_type": farm_type,
             "managed_item": managed_item,
             "quantity": quantity,
             "unit": doc.get("project_unit") or get_default_unit_from_farm_type(farm_category),
-            "acquisition_date": get_legacy_acquisition_date(doc),
+            "acquisition_date": doc.get("expected_start_date") or today(),
             "initial_cost": flt(doc.get("initial_asset_cost")),
         }
 
@@ -109,15 +135,68 @@ def get_managed_item_options(farm_type):
     """Return active managed masters for a Farm Type in deterministic order."""
     if not farm_type or not frappe.db.exists("Farm Type", farm_type):
         return []
+    return _get_managed_item_context(farm_type)["options"]
+
+
+@frappe.whitelist()
+def get_project_managed_item_context(project_type):
+    profile = get_agriculture_project_type(project_type)
+    if not profile:
+        frappe.throw("Select an active Agriculture Project Type.")
+    context = _get_managed_item_context(profile.farm_type, profile)
+    context["farm_type"] = profile.farm_type
+    return context
+
+
+def _get_managed_item_context(farm_type, project_type=None):
+    if not farm_type or not frappe.db.exists("Farm Type", farm_type):
+        return {"doctype": None, "options": [], "default": None}
+
     farm_type_doc = frappe.get_doc("Farm Type", farm_type)
-    farm_type_doc.check_permission("read")
-    return list(
-        dict.fromkeys(
-            row.farm_produce.strip()
-            for row in farm_type_doc.get("managed_items", [])
-            if (row.farm_produce or "").strip()
+    if not (frappe.flags.in_install or frappe.flags.in_migrate):
+        farm_type_doc.check_permission("read")
+
+    rows = [
+        row
+        for row in farm_type_doc.get("managed_items", [])
+        if row.farm_produce and row.farm_produce_doctype
+    ]
+    if not rows:
+        frappe.throw(
+            f"Farm Type {farm_type} has no Farm Produce configured. "
+            "Add produce rows or choose a more specific Agriculture Project Type."
         )
-    )
+    default = project_type.managed_item if project_type else None
+    if default:
+        rows = [row for row in rows if row.farm_produce == default]
+        if not rows:
+            frappe.throw(
+                f"{default} is not configured as Farm Produce on Farm Type {farm_type}."
+            )
+
+    doctypes = {row.farm_produce_doctype for row in rows}
+    if len(doctypes) > 1:
+        frappe.throw(
+            f"Farm Type {farm_type} mixes crops and animal species. "
+            "Use a specific Agriculture Project Type with a default Farm Produce."
+        )
+    produce_doctype = next(iter(doctypes), None)
+    options = list(dict.fromkeys(row.farm_produce.strip() for row in rows))
+    if produce_doctype == "Livestock Species":
+        active = set(
+            frappe.get_all(
+                "Livestock Species",
+                filters={"name": ["in", options], "is_active": 1},
+                pluck="name",
+            )
+        )
+        options = [name for name in options if name in active]
+
+    return {
+        "doctype": produce_doctype,
+        "options": options,
+        "default": default if default in options else None,
+    }
 
 
 def validate_managed_item(farm_type, managed_item):
@@ -130,13 +209,27 @@ def validate_managed_item(farm_type, managed_item):
         )
 
 
+def validate_project_breed(produce_doctype, managed_item, breed):
+    if not breed:
+        return
+    if produce_doctype != "Livestock Species":
+        frappe.throw("Breed can only be selected for an animal or poultry Project.")
+    breed_species = frappe.db.get_value(
+        "Livestock Breed",
+        {"name": breed, "is_active": 1},
+        "species",
+    )
+    if not breed_species:
+        frappe.throw("Select an active Livestock Breed.")
+    if breed_species != managed_item:
+        frappe.throw(f"Breed {breed} belongs to {breed_species}, not {managed_item}.")
+
+
 def get_asset_category_from_farm_type(farm_category):
     if farm_category in ("Crop Production", "Horticulture", "Agroforestry"):
         return "Crops in Growth"
     if farm_category in ("Poultry", "Poultry Production"):
         return "Poultry"
-    if farm_category == "Aquaculture":
-        return "Aquaculture"
     return "Livestock"
 
 
@@ -152,54 +245,8 @@ def get_primary_farm_activity(farm_type):
 def get_default_unit_from_farm_type(farm_category):
     if farm_category in ("Poultry", "Poultry Production"):
         return "Bird"
-    if farm_category == "Aquaculture":
-        return "Fingerling"
     if farm_category in ("Crop Production", "Horticulture", "Agroforestry"):
         return "Hectare"
     if farm_category == "Apiculture":
         return "Colony"
     return "Head"
-
-
-def get_legacy_managed_item(doc):
-    return (
-        doc.get("crop_variety")
-        or doc.get("greenhouse_crop")
-        or doc.get("fish_species_managed_item")
-        or doc.get("poultry_breed")
-        or doc.get("dairy_breed")
-        or doc.get("goat_breed")
-        or doc.get("pig_breed")
-    )
-
-
-def get_legacy_quantity(doc):
-    return (
-        get_field_area(doc.get("field_allocation"))
-        or flt(doc.get("greenhouse_area_sqm"))
-        or flt(doc.get("chick_quantity"))
-        or flt(doc.get("fingerling_quantity"))
-        or flt(doc.get("herd_size"))
-        or flt(doc.get("goat_herd_size"))
-        or flt(doc.get("pig_herd_size"))
-    )
-
-
-def get_legacy_acquisition_date(doc):
-    return (
-        doc.get("planting_date")
-        or doc.get("planting_date_gh")
-        or doc.get("stocking_date")
-        or doc.get("expected_start_date")
-        or today()
-    )
-
-
-def get_farm_type(category):
-    return frappe.db.get_value("Farm Type", {"name": category, "is_active": 1}, "name")
-
-
-def get_field_area(field_allocation):
-    if not field_allocation:
-        return 0
-    return flt(frappe.db.get_value("Farm Field", field_allocation, "field_size_ha"))

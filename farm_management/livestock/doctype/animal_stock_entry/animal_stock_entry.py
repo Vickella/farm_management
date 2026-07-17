@@ -12,6 +12,7 @@ from farm_management.biological_assets.valuation import (
     reduce_asset_quantity,
     restore_asset_quantity,
 )
+from farm_management.server_validation import get_farm_context, validate_asset_context, validate_non_negative
 
 
 class AnimalStockEntry(Document):
@@ -20,10 +21,11 @@ class AnimalStockEntry(Document):
             self.posting_date = today()
         if flt(self.quantity) <= 0:
             frappe.throw("Quantity must be greater than zero.")
+        validate_non_negative(self, ("rate", "amount", "sale_amount"))
 
-        self.amount = flt(self.quantity) * flt(self.rate)
         self.validate_biological_asset()
         self.validate_standard_invoice()
+        self.amount = flt(self.quantity) * flt(self.rate)
 
     def validate_standard_invoice(self):
         if self.entry_type not in ("Purchase", "Sale"):
@@ -92,12 +94,19 @@ class AnimalStockEntry(Document):
             return
 
         asset = frappe.get_doc("Biological Asset", self.biological_asset)
+        validate_asset_context(asset.name, active=True)
         if self.farm and asset.farm != self.farm:
             frappe.throw("Animal Stock Entry farm must match the selected Biological Asset farm.")
+        self.farm = asset.farm
+        get_farm_context(self.farm)
         if not self.project and asset.linked_project:
             self.project = asset.linked_project
         if not self.unit:
             self.unit = asset.unit
+        if self.unit != asset.unit:
+            frappe.throw(f"Movement Unit must match Biological Asset UOM {asset.unit}.")
+        if self.entry_type in ("Issue", "Sale", "Death", "Transfer") and flt(self.quantity) > flt(asset.quantity):
+            frappe.throw("Movement Quantity cannot exceed the Biological Asset quantity.")
 
         if not self.species and asset.managed_item:
             self.species = frappe.db.get_value(
@@ -115,9 +124,17 @@ class AnimalStockEntry(Document):
                 frappe.throw("Animal must match the managed item on the selected Biological Asset.")
 
         if self.breed and self.species:
-            breed_species = frappe.db.get_value("Livestock Breed", self.breed, "species")
-            if breed_species and breed_species != self.species:
+            breed_species = frappe.db.get_value("Livestock Breed", {"name": self.breed, "is_active": 1}, "species")
+            if not breed_species or breed_species != self.species:
                 frappe.throw("Breed must belong to the selected Animal.")
+        if self.livestock_individual:
+            individual = frappe.db.get_value("Livestock Individual", self.livestock_individual, ["farm", "species", "breed", "biological_asset"], as_dict=True)
+            if not individual:
+                frappe.throw("Select a valid Livestock Individual.")
+            if individual.farm != self.farm or individual.biological_asset != self.biological_asset:
+                frappe.throw("Individual Animal must belong to the selected Farm and Biological Asset.")
+            if self.species and individual.species != self.species:
+                frappe.throw("Individual Animal species must match the movement species.")
 
     def on_submit(self):
         if self.entry_type in ("Opening", "Receipt", "Purchase", "Birth"):
@@ -212,6 +229,10 @@ class AnimalStockEntry(Document):
             frappe.throw("Target Farm is required for Transfer.")
         if self.target_farm == self.farm:
             frappe.throw("Target Farm must be different from the source Farm.")
+        source = get_farm_context(self.farm)
+        target = get_farm_context(self.target_farm)
+        if source.owner_name != target.owner_name:
+            frappe.throw("Transfers between different Companies require accounting documents and are not supported.")
         asset = frappe.get_doc("Biological Asset", self.biological_asset)
         if flt(self.quantity) < flt(asset.quantity):
             frappe.throw("Partial transfer of biological asset is not supported via Stock Entry. Please split the asset first.")

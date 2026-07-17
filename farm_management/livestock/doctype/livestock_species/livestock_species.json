@@ -36,7 +36,7 @@
    "fieldname": "species_group",
    "fieldtype": "Select",
    "label": "Species Group",
-   "options": "Livestock\nPoultry\nAquaculture\nOther"
+   "options": "Livestock\nPoultry\nOther"
   },
   {
    "default": "1",

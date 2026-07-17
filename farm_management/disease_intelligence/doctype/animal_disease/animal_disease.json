@@ -37,7 +37,7 @@
    "fieldname": "affects",
    "fieldtype": "Select",
    "label": "Affects",
-   "options": "Cattle\nGoats\nSheep\nPigs\nPoultry\nAquaculture\nAll Livestock",
+   "options": "Cattle\nGoats\nSheep\nPigs\nPoultry\nAll Livestock",
    "in_list_view": 1
   },
   {

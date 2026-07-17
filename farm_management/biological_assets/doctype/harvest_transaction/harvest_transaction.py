@@ -1,6 +1,7 @@
 import frappe
 from frappe.model.document import Document
 from frappe.utils import flt
+from farm_management.server_validation import get_farm_context, validate_asset_context, validate_date_order
 
 from farm_management.biological_assets.valuation import (
     get_biological_asset_account,
@@ -20,6 +21,8 @@ class HarvestTransaction(Document):
         if flt(self.quantity_harvested) <= 0:
             frappe.throw("Quantity harvested must be greater than zero.")
         asset = frappe.get_doc("Biological Asset", self.biological_asset)
+        validate_asset_context(asset.name, farm=self.farm, active=True)
+        validate_date_order(asset.acquisition_date, self.harvest_date, "Asset Acquisition Date", "Harvest Date")
         if asset.farm != self.farm:
             frappe.throw("Harvest farm must match the Biological Asset farm.")
         if asset.status != "Active":
@@ -28,13 +31,27 @@ class HarvestTransaction(Document):
             frappe.throw("Use Animal Stock Entry for live-animal sale, death, or issue movements.")
         if not self.conversion_item:
             frappe.throw("Conversion Item is required so harvested produce is recognized in ERPNext inventory.")
+        if self.source_harvest_log:
+            duplicate = frappe.db.exists(
+                "Harvest Transaction",
+                {
+                    "source_harvest_log": self.source_harvest_log,
+                    "docstatus": ["<", 2],
+                    "name": ["!=", self.name or ""],
+                },
+            )
+            if duplicate:
+                frappe.throw("This Harvest Log already has an active Harvest Transaction.")
         if asset.asset_category != "Crops in Growth" and flt(asset.quantity) > 0 and flt(self.quantity_harvested) > flt(asset.quantity):
             frappe.throw("Harvest quantity cannot exceed Biological Asset quantity.")
 
     def set_defaults(self):
         settings = frappe.get_single("Farm Management Settings")
+        farm = get_farm_context(self.farm)
         if not self.company:
-            self.company = settings.default_company or frappe.defaults.get_user_default("Company")
+            self.company = farm.owner_name or settings.default_company or frappe.defaults.get_user_default("Company")
+        if farm.owner_name and self.company != farm.owner_name:
+            frappe.throw("Harvest Transaction Company must match the Farm Owner Company.")
         if self.conversion_item and not self.company:
             frappe.throw("Set Company or configure Default Company in Farm Management Settings.")
         if self.conversion_item and not self.target_warehouse:
@@ -42,7 +59,10 @@ class HarvestTransaction(Document):
         if self.conversion_item and not self.target_warehouse:
             frappe.throw("Set Target Warehouse or configure Default Harvest Warehouse in Farm Management Settings.")
         if self.conversion_item:
-            self.unit = frappe.db.get_value("Item", self.conversion_item, "stock_uom")
+            item = frappe.db.get_value("Item", self.conversion_item, ["stock_uom", "disabled", "is_stock_item"], as_dict=True)
+            if not item or item.disabled or not item.is_stock_item:
+                frappe.throw("Conversion Item must be an enabled stock Item.")
+            self.unit = item.stock_uom
             self.validate_stock_conversion()
 
     def validate_stock_conversion(self):
@@ -52,9 +72,11 @@ class HarvestTransaction(Document):
                 f"Harvest Unit must match conversion Item {self.conversion_item} stock UOM ({item_uom})."
             )
         warehouse_company = frappe.db.get_value(
-            "Warehouse", self.target_warehouse, "company"
+            "Warehouse", self.target_warehouse, ["company", "is_group", "disabled"], as_dict=True
         )
-        if warehouse_company and self.company and warehouse_company != self.company:
+        if not warehouse_company or warehouse_company.is_group or warehouse_company.disabled:
+            frappe.throw("Target Warehouse must be an enabled non-group Warehouse.")
+        if warehouse_company.company and self.company and warehouse_company.company != self.company:
             frappe.throw("Target Warehouse must belong to the Harvest Transaction company.")
 
     def calculate_asset_impact(self):

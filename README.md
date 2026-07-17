@@ -1,6 +1,6 @@
 # Farm Management
 
-Farm Management is a Frappe/ERPNext v15 custom app for agricultural ERP workflows: farm setup, infrastructure, projects, calendars, disease intelligence, biological assets, BOMs, budgets, contract farming, AI assistance, and analytics.
+Farm Management is a focused Frappe/ERPNext v15 app for farm setup, agricultural projects, field and livestock operations, IAS 41 biological assets, harvest inventory, budgeting, and farm accounting.
 
 ## Installation
 
@@ -18,20 +18,18 @@ If a site already lists `farm_management` in `sites/apps.txt` but the package wa
 
 ## Configuration
 
-Open **Farm Management Settings** and configure biological asset, fair value gain/loss, default cost center, and AI provider credentials.
+Open **Farm Management Settings** and configure the default company, cost center, harvest warehouse, biological-asset sale accounts, and automation flags.
 
 ## Modules
 
-- Farm Setup: Farm, Farm Type, Crop Type.
-- Farm Infrastructure: fields, ponds, pens, and fowl runs.
-- Farm Projects: ERPNext Project agriculture custom fields and validation hooks.
-- Farm Calendar: scheduled activities and operational task generation.
-- Disease Intelligence: pests, animal diseases, and incidents.
-- Biological Assets: IFRS 41 fair value tracking and harvest stock integration.
-- Farm BOM: production templates and input costing.
-- Project Costing: budgets, variance calculations, and reports.
-- Contract Farming: outgrowers, agreements, input loans, and recoveries.
-- Agri AI: AgriGPT desk page and backend API.
+- Farm Setup: farms, Farm Types, produce, Crop Types, species, breeds, and Project profiles.
+- Farm Infrastructure: fields, pens, and fowl runs.
+- Field Operations: activities, Item requirements, and harvest logs.
+- Livestock: individual animals, breeding, health events, and stock movements.
+- Biological Assets: IAS 41 capitalization, valuation, harvest transfer, and reconciliation.
+- Planning and Costing: Farm BOMs, budgets, variance analysis, and KPI reporting.
+- Accounting: Farm Cashbook and standard ERPNext financial reports.
+- Health and Biosecurity: pests, animal diseases, and incidents.
 
 ## Tests
 
@@ -44,6 +42,6 @@ python -m unittest farm_management.tests.test_repository_contracts -v
 
 ## Known Limitations
 
-- Account creation is intentionally conservative and does not mutate ERPNext charts of accounts automatically.
-- Stock Entry warehouse selection should be adapted to each deployment's warehouse strategy.
-- AI responses require a configured API key.
+- Configure and verify all generated biological-asset accounts before live posting.
+- Harvest currently closes the whole crop Biological Asset; staged or partial harvests require further work.
+- Validate stock, GL, cancellation, and amendment flows on a staging site before production use.

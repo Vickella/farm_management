@@ -1,16 +1,36 @@
 import frappe
 from frappe.model.document import Document
 from frappe.utils import flt
+from farm_management.server_validation import validate_asset_context, validate_date_order
 
 from farm_management.biological_assets.valuation import apply_capitalization, reverse_capitalization
 
 
 class BiologicalAssetCapitalization(Document):
     def validate(self):
+        asset = validate_asset_context(self.biological_asset, active=True)
         if not flt(self.amount) and not flt(self.quantity_delta):
             frappe.throw("Enter a capitalized amount or quantity movement.")
         if flt(self.amount) < 0:
             frappe.throw("Capitalized amount cannot be negative.")
+        if flt(self.quantity_delta) < 0:
+            frappe.throw("Capitalization Quantity Delta cannot be negative.")
+        validate_date_order(asset.acquisition_date, self.posting_date, "Asset Acquisition Date", "Posting Date")
+        if self.project and asset.linked_project and self.project != asset.linked_project:
+            frappe.throw("Capitalization Project must match the Biological Asset Project.")
+        self.project = self.project or asset.linked_project
+        if self.source_doctype and self.source_name:
+            duplicate = frappe.db.exists(
+                "Biological Asset Capitalization",
+                {
+                    "source_doctype": self.source_doctype,
+                    "source_name": self.source_name,
+                    "docstatus": ["<", 2],
+                    "name": ["!=", self.name or ""],
+                },
+            )
+            if duplicate:
+                frappe.throw(f"Source {self.source_doctype} {self.source_name} is already capitalized.")
 
     def on_submit(self):
         apply_capitalization(self)

@@ -1,9 +1,12 @@
 import frappe
 from frappe.model.document import Document
 from frappe.utils import flt
+from farm_management.server_validation import get_farm_context, validate_farm_type_assignment
 
 class FarmPen(Document):
     def validate(self):
+        get_farm_context(self.farm, require_active=self.current_status == "Active")
+        validate_farm_type_assignment(self.farm, self.animal_type)
         self.validate_managed_species()
         if self.capacity is not None and flt(self.capacity) < 0:
             frappe.throw("Capacity cannot be negative.")
@@ -19,6 +22,11 @@ class FarmPen(Document):
         if not self.animal_type or not self.managed_species:
             return
         validate_managed_item(self.animal_type, self.managed_species)
+        species = frappe.db.get_value(
+            "Livestock Species", self.managed_species, ["species_group", "is_active"], as_dict=True
+        )
+        if not species or not species.is_active or species.species_group != "Livestock":
+            frappe.throw("Farm Pen Managed Species must be an active livestock species.")
 
 
 def validate_managed_item(farm_type_name, managed_item):

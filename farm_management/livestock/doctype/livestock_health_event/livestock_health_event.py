@@ -1,6 +1,7 @@
 import frappe
 from frappe.model.document import Document
 from frappe.utils import flt
+from farm_management.server_validation import get_farm_context, validate_asset_context, validate_date_order, validate_non_negative
 from farm_management.biological_assets.valuation import (
     create_capitalization_document,
     get_capitalization_source_account,
@@ -10,16 +11,22 @@ from farm_management.biological_assets.valuation import (
 class LivestockHealthEvent(Document):
     def validate(self):
         self.validate_capitalization_immutability()
+        animal = frappe.db.get_value("Livestock Individual", self.animal, ["farm", "biological_asset", "status"], as_dict=True)
+        if not animal:
+            frappe.throw("Select a valid Livestock Individual.")
+        if self.farm and self.farm != animal.farm:
+            frappe.throw("Health Event Farm must match the animal Farm.")
+        self.farm = animal.farm
+        self.biological_asset = animal.biological_asset or self.biological_asset
+        get_farm_context(self.farm)
+        if self.biological_asset:
+            validate_asset_context(self.biological_asset, farm=self.farm)
+        validate_date_order(self.event_date, self.next_due_date, "Event Date", "Next Due Date")
+        validate_non_negative(self, ("weight_kg", "cost"))
+        if self.product_used and frappe.db.get_value("Item", self.product_used, "disabled"):
+            frappe.throw("Product Used must be an enabled Item.")
         self.fetch_item_cost()
         self.validate_capitalization_source()
-        if self.weight_kg and self.animal:
-            frappe.db.set_value(
-                "Livestock Individual",
-                self.animal,
-                "current_weight_kg",
-                self.weight_kg,
-                update_modified=False,
-            )
 
     def validate_capitalization_source(self):
         if (
@@ -62,6 +69,14 @@ class LivestockHealthEvent(Document):
             self.cost = flt(frappe.db.get_value("Item", self.product_used, "valuation_rate"))
 
     def on_update(self):
+        if self.weight_kg and self.animal and self.status == "Completed":
+            frappe.db.set_value(
+                "Livestock Individual",
+                self.animal,
+                "current_weight_kg",
+                self.weight_kg,
+                update_modified=False,
+            )
         self.capitalize_health_cost()
 
     def capitalize_health_cost(self):

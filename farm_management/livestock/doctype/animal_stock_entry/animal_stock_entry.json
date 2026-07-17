@@ -36,7 +36,6 @@
   "asset_value_reduction",
   "valuation_snapshot",
   "journal_entry",
-  "sale_journal_entry",
   "amended_from"
  ],
  "fields": [
@@ -246,14 +245,6 @@
    "label": "Outflow Journal Entry",
    "options": "Journal Entry",
    "read_only": 1
-  },
-  {
-   "fieldname": "sale_journal_entry",
-   "fieldtype": "Link",
-   "label": "Sale Proceeds Journal Entry",
-   "options": "Journal Entry",
-   "read_only": 1,
-   "hidden": 1
   },
   {
    "fieldname": "amended_from",

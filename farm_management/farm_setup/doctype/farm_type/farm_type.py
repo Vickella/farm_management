@@ -7,7 +7,6 @@ class FarmType(Document):
         "Crop Production": "Crop Type",
         "Animal Husbandry": "Livestock Species",
         "Poultry Production": "Livestock Species",
-        "Aquaculture": "Livestock Species",
         "Apiculture": "Livestock Species",
         "Agroforestry": "Crop Type",
     }
@@ -49,7 +48,6 @@ class FarmType(Document):
         expected_group = {
             "Animal Husbandry": "Livestock",
             "Poultry Production": "Poultry",
-            "Aquaculture": "Aquaculture",
         }.get(row.farm_activity)
         if expected_group and species_group != expected_group:
             frappe.throw(

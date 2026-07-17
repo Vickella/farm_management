@@ -138,40 +138,5 @@
     "farm_category": "Livestock",
     "default_frequency": "As Required",
     "is_active": 1
-  },
-  {
-    "doctype": "Farm Activity Type",
-    "activity_name": "Aquaculture - Water Testing",
-    "farm_category": "Aquaculture",
-    "default_frequency": "As Required",
-    "is_active": 1
-  },
-  {
-    "doctype": "Farm Activity Type",
-    "activity_name": "Aquaculture - Feeding",
-    "farm_category": "Aquaculture",
-    "default_frequency": "As Required",
-    "is_active": 1
-  },
-  {
-    "doctype": "Farm Activity Type",
-    "activity_name": "Aquaculture - Oxygen Monitoring",
-    "farm_category": "Aquaculture",
-    "default_frequency": "As Required",
-    "is_active": 1
-  },
-  {
-    "doctype": "Farm Activity Type",
-    "activity_name": "Aquaculture - Disease Inspection",
-    "farm_category": "Aquaculture",
-    "default_frequency": "As Required",
-    "is_active": 1
-  },
-  {
-    "doctype": "Farm Activity Type",
-    "activity_name": "Aquaculture - Harvest Planning",
-    "farm_category": "Aquaculture",
-    "default_frequency": "As Required",
-    "is_active": 1
   }
 ]

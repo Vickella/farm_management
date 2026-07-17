@@ -1,15 +1,27 @@
 import frappe
 from frappe.model.document import Document
 from frappe.utils import flt, today
+from farm_management.server_validation import get_farm_context, validate_asset_context, validate_non_negative
 
 class BiologicalAsset(Document):
     def validate(self):
         self.set_project_defaults()
+        get_farm_context(self.farm, require_active=self.status == "Active")
+        if self.linked_project:
+            validate_asset_project = frappe.db.get_value("Project", self.linked_project, ["farm", "biological_asset"], as_dict=True)
+            if validate_asset_project.farm != self.farm:
+                frappe.throw("Biological Asset Farm must match the linked Project Farm.")
+            if validate_asset_project.biological_asset and validate_asset_project.biological_asset != self.name:
+                frappe.throw("Linked Project already points to another Biological Asset.")
         self.validate_managed_item()
         self.validate_livestock_breed()
         self.validate_mandatory_fields()
         self.recalculate_valuation()
         self.validate_quantity()
+        validate_non_negative(
+            self,
+            ("initial_cost", "capitalized_cost", "current_fair_value", "cost_to_sell", "mortality_to_date"),
+        )
 
     def set_project_defaults(self):
         if not self.linked_project:
@@ -104,8 +116,8 @@ class BiologicalAsset(Document):
     def validate_livestock_breed(self):
         if not self.livestock_breed:
             return
-        breed_species = frappe.db.get_value("Livestock Breed", self.livestock_breed, "species")
-        if breed_species and self.managed_item and breed_species != self.managed_item:
+        breed_species = frappe.db.get_value("Livestock Breed", {"name": self.livestock_breed, "is_active": 1}, "species")
+        if not breed_species or (self.managed_item and breed_species != self.managed_item):
             frappe.throw("Breed must belong to the selected managed animal species.")
 
     def recalculate_valuation(self, scale_by_quantity=False):
@@ -130,9 +142,6 @@ class BiologicalAsset(Document):
             frappe.throw("Quantity must be greater than zero.")
         if self.mortality_to_date and flt(self.mortality_to_date) > flt(self.quantity):
             frappe.throw("Mortality to date cannot exceed total quantity.")
-
-    def on_update(self):
-        self.db_set("last_valuation_date", today(), update_modified=False)
 
     def after_insert(self):
         opening_cost = flt(self.initial_cost)

@@ -5,6 +5,7 @@
  "engine": "InnoDB",
  "field_order": [
   "title",
+  "amended_from",
   "farm",
   "project",
   "date",
@@ -13,7 +14,7 @@
   "sec_harvest",
   "biological_asset",
   "conversion_item",
-  "total_yield_tons",
+  "harvested_quantity",
   "harvest_uom",
   "harvest_fair_value",
   "moisture_content",
@@ -29,6 +30,15 @@
    "label": "Title",
    "reqd": 1,
    "in_list_view": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "options": "Harvest Log",
+   "read_only": 1,
+   "no_copy": 1,
+   "print_hide": 1
   },
   {
    "fieldname": "farm",
@@ -83,7 +93,7 @@
    "reqd": 1
   },
   {
-   "fieldname": "total_yield_tons",
+   "fieldname": "harvested_quantity",
    "fieldtype": "Float",
    "label": "Harvested Quantity",
    "reqd": 1
@@ -147,6 +157,9 @@
    "read": 1,
    "report": 1,
    "role": "System Manager",
+   "submit": 1,
+   "cancel": 1,
+   "amend": 1,
    "share": 1,
    "write": 1
   }

@@ -29,8 +29,6 @@
   "section_break_parentage",
   "dam",
   "sire",
-  "dam_tag",
-  "sire_tag",
   "siblings",
   "litter_size",
   "section_break_physical",
@@ -180,16 +178,6 @@
    "fieldtype": "Link",
    "label": "Sire (Father)",
    "options": "Livestock Individual"
-  },
-  {
-   "fieldname": "dam_tag",
-   "fieldtype": "Data",
-   "label": "Dam Tag (if not on system)"
-  },
-  {
-   "fieldname": "sire_tag",
-   "fieldtype": "Data",
-   "label": "Sire Tag (if not on system)"
   },
   {
    "fieldname": "siblings",

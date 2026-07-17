@@ -136,8 +136,6 @@ def find_farm_type_for_managed_item(managed_item):
 def get_asset_category_for_species(species):
     if species.species_group == "Poultry":
         return "Poultry"
-    if species.species_group == "Aquaculture":
-        return "Aquaculture"
     return "Livestock"
 
 
@@ -660,9 +658,9 @@ def create_asset_sale_proceeds_journal_entry(
     if not biological_asset or not amount:
         return None
 
-    from farm_management.install import setup_contract_farming_accounts
+    from farm_management.install import setup_biological_asset_sales_accounts
 
-    setup_contract_farming_accounts()
+    setup_biological_asset_sales_accounts()
 
     asset = frappe.get_doc("Biological Asset", biological_asset)
     company = get_company(asset)

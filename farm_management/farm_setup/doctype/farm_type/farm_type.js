@@ -5,7 +5,6 @@ frappe.ui.form.on("Farm Type", {
             const group = {
                 "Animal Husbandry": "Livestock",
                 "Poultry Production": "Poultry",
-                "Aquaculture": "Aquaculture",
                 "Apiculture": "Other",
             }[row.farm_activity];
             return group ? {filters: {species_group: group, is_active: 1}} : {};

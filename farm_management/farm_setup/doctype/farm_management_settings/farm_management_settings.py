@@ -6,22 +6,28 @@ import frappe
 class FarmManagementSettings(Document):
     def validate(self):
         if not self.default_company:
+            configured = [
+                self.meta.get_field(fieldname).label
+                for fieldname in (
+                    "default_cost_center",
+                    "default_harvest_warehouse",
+                    "biological_asset_sales_receivable_account",
+                    "biological_asset_sales_income_account",
+                    "biological_asset_cost_of_sales_account",
+                )
+                if self.get(fieldname)
+            ]
+            if configured:
+                frappe.throw(
+                    "Set Default Company before configuring: " + ", ".join(configured)
+                )
             return
-        for fieldname in (
-            "default_cost_center",
-            "contract_farming_cost_center",
-        ):
-            self.validate_company_link(fieldname, "Cost Center")
+        self.validate_company_link("default_cost_center", "Cost Center")
         self.validate_company_link("default_harvest_warehouse", "Warehouse")
         for fieldname in (
-            "contract_farming_income_account",
-            "contract_farming_liability_account",
-            "contract_input_loans_receivable_account",
-            "contract_input_clearing_account",
-            "contract_harvest_purchases_account",
-            "contract_grower_payable_account",
             "biological_asset_sales_receivable_account",
             "biological_asset_sales_income_account",
+            "biological_asset_cost_of_sales_account",
         ):
             self.validate_company_link(fieldname, "Account", reject_groups=True)
 
