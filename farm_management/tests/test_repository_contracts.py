@@ -1,3 +1,4 @@
+import ast
 import json
 import unittest
 from pathlib import Path
@@ -142,6 +143,22 @@ class TestRepositoryContracts(unittest.TestCase):
                 self.assertEqual(field.get("fieldtype"), "Link")
                 self.assertEqual(field.get("options"), "UOM")
 
+    def test_weather_feature_is_installed_and_configurable(self):
+        weather = APP_ROOT / "farm_management" / "api" / "weather.py"
+        page = APP_ROOT / "farm_setup" / "page" / "farm_weather"
+        self.assertTrue(weather.is_file())
+        self.assertTrue((page / "farm_weather.json").is_file())
+        self.assertTrue((page / "farm_weather.js").is_file())
+        self.assertNotIn("DEFAULT_OPENWEATHER_API_KEY", weather.read_text(encoding="utf-8"))
+
+        settings = get_doctype("Farm Management Settings")
+        fields = {field["fieldname"] for field in settings["fields"]}
+        self.assertTrue({"weather_api_key", "weather_units"} <= fields)
+
+        install = (APP_ROOT / "install.py").read_text(encoding="utf-8")
+        self.assertNotIn('LEGACY_PAGES = ["agri-gpt", "farm-weather"]', install)
+        self.assertIn('("Farm Weather", "Page", "farm-weather")', install)
+
     def test_farm_type_uses_activity_and_produce_rows(self):
         farm_type = get_doctype("Farm Type")
         self.assertNotIn("category", {field["fieldname"] for field in farm_type["fields"]})
@@ -182,9 +199,68 @@ class TestRepositoryContracts(unittest.TestCase):
         ).read_text(encoding="utf-8")
         self.assertIn('"doctype": "Harvest Transaction"', controller)
         self.assertIn("transaction.submit()", controller)
+        self.assertIn('"Biological Asset", self.biological_asset, "output_item"', controller)
         transaction = get_doctype("Harvest Transaction")
         unit = next(field for field in transaction["fields"] if field["fieldname"] == "unit")
         self.assertNotIn("fetch_from", unit)
+
+    def test_every_seeded_farm_produce_has_a_preconfigured_output_item(self):
+        source = (APP_ROOT / "install.py").read_text(encoding="utf-8")
+        module = ast.parse(source)
+        constants = {}
+        for statement in module.body:
+            if isinstance(statement, ast.Assign) and len(statement.targets) == 1:
+                target = statement.targets[0]
+                if isinstance(target, ast.Name) and target.id in {
+                    "FARM_OUTPUT_ITEMS",
+                    "DEFAULT_OUTPUT_ITEM_BY_PRODUCE",
+                }:
+                    constants[target.id] = ast.literal_eval(statement.value)
+
+        farm_types = json.loads(
+            (REPO_ROOT / "fixtures" / "farm_type.json").read_text(encoding="utf-8")
+        )
+        seeded_produce = {
+            row["managed_item_name"]
+            for farm_type in farm_types
+            for row in farm_type.get("managed_items", [])
+        }
+        mappings = constants["DEFAULT_OUTPUT_ITEM_BY_PRODUCE"]
+        self.assertEqual(seeded_produce, set(mappings))
+        self.assertTrue(set(mappings.values()) <= set(constants["FARM_OUTPUT_ITEMS"]))
+        self.assertIn("seed_farm_output_items()", source)
+        self.assertIn("configure_farm_output_items()", source)
+
+    def test_project_asset_and_harvest_share_the_output_item(self):
+        project_fields = {
+            row["fieldname"]: row
+            for row in json.loads(
+                (REPO_ROOT / "fixtures" / "custom_field.json").read_text(encoding="utf-8")
+            )
+            if row.get("dt") == "Project"
+        }
+        self.assertEqual(project_fields["expected_output_item"]["options"], "Item")
+        asset_fields = {
+            row["fieldname"]: row for row in get_doctype("Biological Asset")["fields"]
+        }
+        self.assertTrue(asset_fields["output_item"]["reqd"])
+        self.assertEqual(asset_fields["output_item"]["options"], "Item")
+
+        project_controller = (
+            APP_ROOT / "farm_projects" / "agriculture_project.py"
+        ).read_text(encoding="utf-8")
+        self.assertIn('asset.output_item = profile["output_item"]', project_controller)
+        self.assertIn('asset.initial_cost = profile["initial_cost"]', project_controller)
+        self.assertNotIn("asset.initial_cost = 0", project_controller)
+
+        transaction = (
+            APP_ROOT
+            / "biological_assets"
+            / "doctype"
+            / "harvest_transaction"
+            / "harvest_transaction.py"
+        ).read_text(encoding="utf-8")
+        self.assertIn("self.conversion_item != asset.output_item", transaction)
 
     def test_cancelable_doctypes_are_amendable_and_statuses_are_synchronized(self):
         for doctype in ("Biological Asset Valuation", "Biological Asset Capitalization"):
@@ -205,6 +281,12 @@ class TestRepositoryContracts(unittest.TestCase):
     def test_live_animal_sales_and_purchases_require_standard_invoices(self):
         doc = get_doctype("Animal Stock Entry")
         fields = {row["fieldname"]: row for row in doc["fields"]}
+        self.assertTrue(fields["project"].get("reqd"))
+        self.assertTrue(fields["biological_asset"].get("read_only"))
+        self.assertLess(
+            doc["field_order"].index("project"),
+            doc["field_order"].index("biological_asset"),
+        )
         self.assertEqual(fields["purchase_invoice"].get("options"), "Purchase Invoice")
         self.assertEqual(fields["sales_invoice"].get("options"), "Sales Invoice")
         controller = (
@@ -213,6 +295,17 @@ class TestRepositoryContracts(unittest.TestCase):
         self.assertIn('invoice.docstatus != 1', controller)
         self.assertIn('invoice.get("is_return")', controller)
         self.assertIn("base_net_amount", controller)
+        self.assertIn("self.set_project_defaults()", controller)
+        self.assertIn("project.biological_asset", controller)
+
+        project_fields = {
+            row["fieldname"]: row
+            for row in json.loads(
+                (REPO_ROOT / "fixtures" / "custom_field.json").read_text(encoding="utf-8")
+            )
+            if row.get("dt") == "Project"
+        }
+        self.assertNotIn("mandatory_depends_on", project_fields["initial_asset_cost"])
 
     def test_removed_feature_doctypes_do_not_return(self):
         removed = {

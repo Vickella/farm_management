@@ -9,6 +9,9 @@ frappe.ui.form.on("Farm Type", {
             }[row.farm_activity];
             return group ? {filters: {species_group: group, is_active: 1}} : {};
         });
+        frm.set_query("default_output_item", "managed_items", () => ({
+            filters: {is_stock_item: 1, disabled: 0},
+        }));
     },
 });
 

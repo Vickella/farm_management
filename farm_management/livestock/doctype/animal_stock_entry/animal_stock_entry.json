@@ -13,8 +13,8 @@
   "column_break_1",
   "farm",
   "target_farm",
-  "biological_asset",
   "project",
+  "biological_asset",
   "section_movement",
   "species",
   "breed",
@@ -93,14 +93,16 @@
    "in_list_view": 1,
    "label": "Biological Asset",
    "options": "Biological Asset",
-   "reqd": 1
+   "read_only": 1,
+   "reqd": 1,
+   "description": "Automatically selected from the Agriculture Project."
   },
   {
    "fieldname": "project",
    "fieldtype": "Link",
    "label": "Project",
    "options": "Project",
-   "fetch_from": "biological_asset.linked_project"
+   "reqd": 1
   },
   {
    "fieldname": "section_movement",

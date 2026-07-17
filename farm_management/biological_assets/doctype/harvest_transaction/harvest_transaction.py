@@ -31,6 +31,10 @@ class HarvestTransaction(Document):
             frappe.throw("Use Animal Stock Entry for live-animal sale, death, or issue movements.")
         if not self.conversion_item:
             frappe.throw("Conversion Item is required so harvested produce is recognized in ERPNext inventory.")
+        if asset.output_item and self.conversion_item != asset.output_item:
+            frappe.throw(
+                f"Harvested Item must be the Biological Asset output Item {asset.output_item}."
+            )
         if self.source_harvest_log:
             duplicate = frappe.db.exists(
                 "Harvest Transaction",

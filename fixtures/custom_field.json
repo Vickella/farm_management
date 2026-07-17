@@ -60,10 +60,23 @@
     "doctype": "Custom Field",
     "dt": "Project",
     "module": "Farm Management",
+    "fieldname": "expected_output_item",
+    "fieldtype": "Link",
+    "label": "Expected Output Item",
+    "description": "Stock Item expected from this farm project. Configured from the selected Project Type and farm produce.",
+    "insert_after": "managed_crop_animal_species",
+    "options": "Item",
+    "read_only": 1,
+    "depends_on": "eval:doc.agriculture_project_type"
+  },
+  {
+    "doctype": "Custom Field",
+    "dt": "Project",
+    "module": "Farm Management",
     "fieldname": "animal_breed",
     "fieldtype": "Link",
     "label": "Breed",
-    "insert_after": "managed_crop_animal_species",
+    "insert_after": "expected_output_item",
     "options": "Livestock Breed",
     "depends_on": "eval:doc.managed_item_doctype == 'Livestock Species'"
   },
@@ -94,10 +107,10 @@
     "module": "Farm Management",
     "fieldname": "initial_asset_cost",
     "fieldtype": "Currency",
-    "label": "Initial Biological Asset Cost",
+    "label": "Opening Biological Asset Value",
+    "description": "Optional. Use only for animals already owned at project opening. For new purchases, leave zero and let the submitted Animal Stock Entry use the Purchase Invoice cost.",
     "insert_after": "project_unit",
-    "depends_on": "eval:doc.agriculture_project_type && !['Crop Production', 'Horticulture', 'Agroforestry'].includes(doc.agriculture_farm_type)",
-    "mandatory_depends_on": "eval:doc.agriculture_project_type && !['Crop Production', 'Horticulture', 'Agroforestry'].includes(doc.agriculture_farm_type)"
+    "depends_on": "eval:doc.agriculture_project_type && !['Crop Production', 'Horticulture', 'Agroforestry'].includes(doc.agriculture_farm_type)"
   },
   {
     "doctype": "Custom Field",

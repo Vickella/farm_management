@@ -3,10 +3,11 @@ frappe.ui.form.on("Harvest Log", {
         if (!frm.doc.project) {
             return;
         }
-        frappe.db.get_value("Project", frm.doc.project, ["farm", "biological_asset"]).then((r) => {
+        frappe.db.get_value("Project", frm.doc.project, ["farm", "biological_asset", "expected_output_item"]).then((r) => {
             const project = r.message || {};
             frm.set_value("farm", project.farm || null);
             frm.set_value("biological_asset", project.biological_asset || null);
+            frm.set_value("conversion_item", project.expected_output_item || null);
         });
     },
     conversion_item(frm) {

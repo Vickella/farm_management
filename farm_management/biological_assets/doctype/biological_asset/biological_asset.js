@@ -7,6 +7,9 @@ frappe.ui.form.on("Biological Asset", {
                 }
             };
         });
+        frm.set_query("output_item", () => ({
+            filters: {is_stock_item: 1, disabled: 0},
+        }));
     },
     farm_type: function(frm) {
         set_managed_item_options(frm);
@@ -22,6 +25,7 @@ frappe.ui.form.on("Biological Asset", {
                 "farm",
                 "agriculture_farm_type",
                 "managed_crop_animal_species",
+                "expected_output_item",
                 "animal_breed",
                 "project_quantity",
                 "project_unit",
@@ -33,6 +37,7 @@ frappe.ui.form.on("Biological Asset", {
             frm.set_value("farm", project.farm || null);
             frm.set_value("farm_type", project.agriculture_farm_type || null);
             frm.set_value("managed_item", project.managed_crop_animal_species || null);
+            frm.set_value("output_item", project.expected_output_item || null);
             frm.set_value("livestock_breed", project.animal_breed || null);
             frm.set_value("quantity", project.project_quantity || null);
             frm.set_value("unit", project.project_unit || null);

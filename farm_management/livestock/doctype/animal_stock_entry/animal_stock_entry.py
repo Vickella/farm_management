@@ -23,9 +23,42 @@ class AnimalStockEntry(Document):
             frappe.throw("Quantity must be greater than zero.")
         validate_non_negative(self, ("rate", "amount", "sale_amount"))
 
+        self.set_project_defaults()
         self.validate_biological_asset()
         self.validate_standard_invoice()
         self.amount = flt(self.quantity) * flt(self.rate)
+
+    def set_project_defaults(self):
+        if not self.project:
+            return
+        project = frappe.db.get_value(
+            "Project",
+            self.project,
+            [
+                "farm",
+                "biological_asset",
+                "managed_item_doctype",
+                "managed_crop_animal_species",
+                "animal_breed",
+                "project_unit",
+            ],
+            as_dict=True,
+        )
+        if not project or project.managed_item_doctype != "Livestock Species":
+            frappe.throw("Animal Stock Entry requires an animal or poultry Agriculture Project.")
+        if not project.biological_asset:
+            frappe.throw(
+                f"Project {self.project} has no linked Biological Asset. Save the Project again."
+            )
+        if self.biological_asset and self.biological_asset != project.biological_asset:
+            frappe.throw("Biological Asset must be the asset linked to the selected Project.")
+        self.biological_asset = project.biological_asset
+        self.farm = project.farm
+        self.species = project.managed_crop_animal_species
+        if not self.breed:
+            self.breed = project.animal_breed
+        if not self.unit:
+            self.unit = project.project_unit
 
     def validate_standard_invoice(self):
         if self.entry_type not in ("Purchase", "Sale"):

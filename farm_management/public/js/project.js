@@ -13,6 +13,7 @@ frappe.ui.form.on("Project", {
     },
     managed_crop_animal_species(frm) {
         frm.set_value("animal_breed", null);
+        set_expected_output_item(frm);
         configure_queries(frm);
     },
 });
@@ -33,9 +34,13 @@ async function load_managed_context(frm, use_default) {
     const context = response.message || {};
     const options = context.options || [];
     frm._managed_produce_options = options;
+    frm._output_items = context.output_items || {};
 
     await frm.set_value("agriculture_farm_type", context.farm_type || null);
     await frm.set_value("managed_item_doctype", context.doctype || null);
+    if (use_default && context.default_project_unit) {
+        await frm.set_value("project_unit", context.default_project_unit);
+    }
     configure_queries(frm);
 
     const current = frm.doc.managed_crop_animal_species;
@@ -47,6 +52,15 @@ async function load_managed_context(frm, use_default) {
     } else if (use_default && options.length === 1) {
         await frm.set_value("managed_crop_animal_species", options[0]);
     }
+    await set_expected_output_item(frm);
+}
+
+async function set_expected_output_item(frm) {
+    const managed_item = frm.doc.managed_crop_animal_species;
+    await frm.set_value(
+        "expected_output_item",
+        managed_item ? (frm._output_items || {})[managed_item] || null : null
+    );
 }
 
 function configure_queries(frm) {

@@ -14,6 +14,7 @@ class BiologicalAsset(Document):
             if validate_asset_project.biological_asset and validate_asset_project.biological_asset != self.name:
                 frappe.throw("Linked Project already points to another Biological Asset.")
         self.validate_managed_item()
+        self.validate_output_item()
         self.validate_livestock_breed()
         self.validate_mandatory_fields()
         self.recalculate_valuation()
@@ -50,6 +51,7 @@ class BiologicalAsset(Document):
                 "project_quantity",
                 "project_unit",
                 "initial_asset_cost",
+                "expected_output_item",
                 "expected_start_date",
             ],
             as_dict=True,
@@ -72,6 +74,7 @@ class BiologicalAsset(Document):
             "farm": project.farm,
             "farm_type": project_type.farm_type,
             "managed_item": project.managed_crop_animal_species or project_type.managed_item,
+            "output_item": project.expected_output_item or project_type.output_item,
             "livestock_breed": project.animal_breed,
             "asset_category": get_asset_category_from_farm_type(activity),
             "quantity": project.project_quantity,
@@ -119,6 +122,20 @@ class BiologicalAsset(Document):
         breed_species = frappe.db.get_value("Livestock Breed", {"name": self.livestock_breed, "is_active": 1}, "species")
         if not breed_species or (self.managed_item and breed_species != self.managed_item):
             frappe.throw("Breed must belong to the selected managed animal species.")
+
+    def validate_output_item(self):
+        if not self.output_item:
+            frappe.throw("Expected Output Item is required for every Biological Asset.")
+        item = frappe.db.get_value(
+            "Item",
+            self.output_item,
+            ["disabled", "is_stock_item", "stock_uom"],
+            as_dict=True,
+        )
+        if not item or item.disabled or not item.is_stock_item or not item.stock_uom:
+            frappe.throw(
+                "Expected Output Item must be an enabled stock Item with a Stock UOM."
+            )
 
     def recalculate_valuation(self, scale_by_quantity=False):
         if scale_by_quantity and flt(self.previous_quantity):

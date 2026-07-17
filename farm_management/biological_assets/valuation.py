@@ -105,6 +105,19 @@ def get_or_create_biological_asset_for_livestock(livestock):
     asset.asset_category = get_asset_category_for_species(species)
     asset.farm_type = farm_type
     asset.managed_item = species.name
+    asset.output_item = frappe.db.get_value(
+        "Farm Type Managed Item",
+        {
+            "parent": farm_type,
+            "parenttype": "Farm Type",
+            "farm_produce": species.name,
+        },
+        "default_output_item",
+    )
+    if not asset.output_item:
+        frappe.throw(
+            f"Configure the Default Output Item for {species.name} on Farm Type {farm_type}."
+        )
     asset.livestock_breed = livestock.breed
     asset.status = "Active"
     asset.growth_stage = "Immature"

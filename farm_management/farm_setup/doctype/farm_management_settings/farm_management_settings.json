@@ -16,7 +16,10 @@
   "section_break_flags",
   "enable_auto_activity_generation",
   "enable_fair_value_scheduler",
-  "auto_post_fair_value_journals"
+  "auto_post_fair_value_journals",
+  "section_break_weather",
+  "weather_api_key",
+  "weather_units"
  ],
  "fields": [
   {
@@ -87,6 +90,24 @@
    "fieldname": "auto_post_fair_value_journals",
    "fieldtype": "Check",
    "label": "Auto-post Fair Value Journals"
+  },
+  {
+   "fieldname": "section_break_weather",
+   "fieldtype": "Section Break",
+   "label": "Weather Integration"
+  },
+  {
+   "description": "API key used for farm weather and location lookups.",
+   "fieldname": "weather_api_key",
+   "fieldtype": "Password",
+   "label": "OpenWeather API Key"
+  },
+  {
+   "default": "metric",
+   "fieldname": "weather_units",
+   "fieldtype": "Select",
+   "label": "Weather Units",
+   "options": "metric\nimperial"
   }
  ],
  "issingle": 1,

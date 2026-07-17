@@ -25,6 +25,86 @@ FIXTURE_LOAD_ORDER = [
 # UOM links. They must never be installed as global master data.
 EXCLUDED_INSTALL_FIXTURES = {"farm_bom.json"}
 
+# These are structural farm output masters, not prices. Installation creates
+# the Items and relationships; users remain responsible for valuation rates,
+# selling prices, project budgets, and actual operating costs.
+FARM_OUTPUT_ITEMS = {
+    "FARM-MAIZE-GRAIN": ("Maize Grain", "Tonne"),
+    "FARM-WHEAT-GRAIN": ("Wheat Grain", "Tonne"),
+    "FARM-SOYBEANS": ("Soybeans", "Tonne"),
+    "FARM-TOBACCO-LEAF": ("Tobacco Leaf", "Tonne"),
+    "FARM-SEED-COTTON": ("Seed Cotton", "Tonne"),
+    "FARM-SUGAR-BEANS": ("Sugar Beans", "Tonne"),
+    "FARM-GROUNDNUTS": ("Groundnuts", "Tonne"),
+    "FARM-TOMATOES": ("Tomatoes", "Tonne"),
+    "FARM-POTATOES": ("Potatoes", "Tonne"),
+    "FARM-ONIONS": ("Onions", "Tonne"),
+    "FARM-CABBAGE": ("Cabbage", "Kg"),
+    "FARM-PEPPERS": ("Peppers", "Kg"),
+    "FARM-CUT-FLOWERS": ("Cut Flowers", "Kg"),
+    "FARM-GREENHOUSE-VEGETABLES": ("Greenhouse Vegetables", "Kg"),
+    "FARM-LIVE-CATTLE": ("Live Cattle", "Head"),
+    "FARM-FINISHED-CATTLE": ("Finished Cattle", "Head"),
+    "FARM-RAW-MILK": ("Raw Milk", "Litre"),
+    "FARM-LIVE-GOAT": ("Live Goat", "Head"),
+    "FARM-LIVE-SHEEP": ("Live Sheep", "Head"),
+    "FARM-LIVE-PIG": ("Live Pig", "Head"),
+    "FARM-LIVE-RABBIT": ("Live Rabbit", "Head"),
+    "FARM-LIVE-BROILER": ("Live Broiler", "Bird"),
+    "FARM-EGGS": ("Eggs", "Tray"),
+    "FARM-LIVE-ROAD-RUNNER": ("Live Road Runner", "Bird"),
+    "FARM-LIVE-TURKEY": ("Live Turkey", "Bird"),
+    "FARM-LIVE-DUCK": ("Live Duck", "Bird"),
+    "FARM-HONEY": ("Honey", "Kg"),
+    "FARM-FRESH-FRUIT": ("Fresh Fruit", "Kg"),
+    "FARM-TIMBER": ("Timber", "Cubic Metre"),
+}
+
+DEFAULT_OUTPUT_ITEM_BY_PRODUCE = {
+    "Maize": "FARM-MAIZE-GRAIN",
+    "Wheat": "FARM-WHEAT-GRAIN",
+    "Soybeans": "FARM-SOYBEANS",
+    "Tobacco": "FARM-TOBACCO-LEAF",
+    "Cotton": "FARM-SEED-COTTON",
+    "Sugar Beans": "FARM-SUGAR-BEANS",
+    "Groundnuts": "FARM-GROUNDNUTS",
+    "Tomatoes": "FARM-TOMATOES",
+    "Potatoes": "FARM-POTATOES",
+    "Onions": "FARM-ONIONS",
+    "Cabbage": "FARM-CABBAGE",
+    "Peppers": "FARM-PEPPERS",
+    "Flowers": "FARM-CUT-FLOWERS",
+    "Greenhouse Vegetables": "FARM-GREENHOUSE-VEGETABLES",
+    "Cattle": "FARM-LIVE-CATTLE",
+    "Goats": "FARM-LIVE-GOAT",
+    "Sheep": "FARM-LIVE-SHEEP",
+    "Pigs": "FARM-LIVE-PIG",
+    "Rabbits": "FARM-LIVE-RABBIT",
+    "Broilers": "FARM-LIVE-BROILER",
+    "Layers": "FARM-EGGS",
+    "Road Runners": "FARM-LIVE-ROAD-RUNNER",
+    "Turkey": "FARM-LIVE-TURKEY",
+    "Ducks": "FARM-LIVE-DUCK",
+    "Honey Bees": "FARM-HONEY",
+    "Bee Colonies": "FARM-HONEY",
+    "Fruit Trees": "FARM-FRESH-FRUIT",
+    "Woodlots": "FARM-TIMBER",
+}
+
+PROJECT_TYPE_OUTPUT_ITEMS = {
+    "Broiler Production": "FARM-LIVE-BROILER",
+    "Layer Production": "FARM-EGGS",
+    "Road Runner Production": "FARM-LIVE-ROAD-RUNNER",
+    "Cattle Ranching": "FARM-LIVE-CATTLE",
+    "Cattle Pen Fattening": "FARM-FINISHED-CATTLE",
+    "Dairy Production": "FARM-RAW-MILK",
+    "Goat Farming": "FARM-LIVE-GOAT",
+    "Sheep Farming": "FARM-LIVE-SHEEP",
+    "Pig Farming": "FARM-LIVE-PIG",
+    "Rabbit Production": "FARM-LIVE-RABBIT",
+    "Apiculture": "FARM-HONEY",
+}
+
 LEGACY_DOCTYPES = [
     "Agri AI Farm Management Settings Legacy",
     "Farm Pond",
@@ -80,7 +160,7 @@ LEGACY_MODULES = [
     "Poultry Production",
 ]
 
-LEGACY_PAGES = ["agri-gpt", "farm-weather"]
+LEGACY_PAGES = ["agri-gpt"]
 LEGACY_REPORTS = ["Contract Farming Statement"]
 
 LEGACY_PROJECT_CUSTOM_FIELDS = [
@@ -135,6 +215,7 @@ WORKSPACE_GROUPS = [
             ("Crop Type", "DocType"),
             ("Project", "DocType"),
             ("Farm Management Settings", "DocType"),
+            ("Farm Weather", "Page", "farm-weather"),
         ],
     ),
     (
@@ -204,11 +285,12 @@ WORKSPACE_GROUPS = [
 
 WORKSPACE_SHORTCUTS = [
     "Farm",
+    ("Farm Weather", "Page", "farm-weather"),
     "Project",
-    "Biological Asset",
     "Farm Activity",
-    "Harvest Log",
     "Animal Stock Entry",
+    "Harvest Log",
+    "Biological Asset",
     "Farm Cashbook",
     ("Farm KPI Summary", "Report"),
     ("Profit and Loss Statement", "Report"),
@@ -273,6 +355,7 @@ def apply_phase2_updates():
     ensure_module_defs()
     ensure_amendable_doctypes()
     seed_agricultural_uoms()
+    seed_farm_output_items()
     seed_erpnext_operational_masters()
     normalize_managed_item_master_links()
     seed_fixture_data()
@@ -281,6 +364,7 @@ def apply_phase2_updates():
     seed_missing_crop_types()
     seed_livestock_breeds()
     seed_agriculture_project_types()
+    configure_farm_output_items()
     seed_pests()
     seed_animal_diseases()
     setup_farm_management_settings()
@@ -329,7 +413,9 @@ def seed_agricultural_uoms():
         "Tonne",
         "Bag",
         "Crate",
+        "Tray",
         "Litre",
+        "Cubic Metre",
     ):
         if frappe.db.exists("UOM", uom_name):
             continue
@@ -337,6 +423,162 @@ def seed_agricultural_uoms():
         uom.uom_name = uom_name
         uom.must_be_whole_number = uom_name in whole_number_uoms
         uom.insert(ignore_permissions=True)
+
+
+def seed_farm_output_items():
+    item_group = ensure_farm_produce_item_group()
+    for item_code, (item_name, stock_uom) in FARM_OUTPUT_ITEMS.items():
+        if frappe.db.exists("Item", item_code):
+            item = frappe.db.get_value(
+                "Item",
+                item_code,
+                ["disabled", "is_stock_item", "stock_uom"],
+                as_dict=True,
+            )
+            if item.disabled or not item.is_stock_item or item.stock_uom != stock_uom:
+                frappe.throw(
+                    f"Farm output Item {item_code} must be enabled, stock controlled, "
+                    f"and use Stock UOM {stock_uom}."
+                )
+            continue
+
+        item = frappe.new_doc("Item")
+        item.item_code = item_code
+        item.item_name = item_name
+        item.item_group = item_group
+        item.stock_uom = stock_uom
+        item.is_stock_item = 1
+        item.disabled = 0
+        item.description = (
+            "Farm output master created by Farm Management. "
+            "Users must configure valuation and selling prices."
+        )
+        item.insert(ignore_permissions=True)
+
+
+def ensure_farm_produce_item_group():
+    if frappe.db.exists("Item Group", "Farm Produce"):
+        return "Farm Produce"
+
+    root = frappe.db.get_value(
+        "Item Group",
+        {"is_group": 1, "parent_item_group": ["is", "not set"]},
+        "name",
+    ) or frappe.db.get_value("Item Group", {"is_group": 1}, "name")
+    if not root:
+        frappe.throw("Create an Item Group before installing Farm Management output Items.")
+
+    group = frappe.new_doc("Item Group")
+    group.item_group_name = "Farm Produce"
+    group.parent_item_group = root
+    group.is_group = 0
+    group.insert(ignore_permissions=True)
+    return group.name
+
+
+def configure_farm_output_items():
+    for farm_type_name in frappe.get_all("Farm Type", pluck="name"):
+        farm_type = frappe.get_doc("Farm Type", farm_type_name)
+        changed = False
+        for row in farm_type.get("managed_items", []):
+            item_code = DEFAULT_OUTPUT_ITEM_BY_PRODUCE.get(row.farm_produce)
+            if item_code and not row.default_output_item:
+                row.default_output_item = item_code
+                changed = True
+        if changed:
+            farm_type.save(ignore_permissions=True)
+
+    for project_type, item_code in PROJECT_TYPE_OUTPUT_ITEMS.items():
+        if frappe.db.exists("Agriculture Project Type", project_type):
+            current = frappe.db.get_value(
+                "Agriculture Project Type", project_type, "output_item"
+            )
+            if not current:
+                frappe.db.set_value(
+                    "Agriculture Project Type",
+                    project_type,
+                    "output_item",
+                    item_code,
+                    update_modified=False,
+                )
+
+    backfill_project_and_asset_output_items()
+
+
+def backfill_project_and_asset_output_items():
+    if frappe.db.has_column("tabProject", "expected_output_item"):
+        projects = frappe.get_all(
+            "Project",
+            filters={
+                "agriculture_project_type": ["is", "set"],
+                "expected_output_item": ["is", "not set"],
+            },
+            fields=[
+                "name",
+                "agriculture_project_type",
+                "agriculture_farm_type",
+                "managed_crop_animal_species",
+            ],
+        )
+        for project in projects:
+            output_item = get_configured_output_item(
+                project.agriculture_farm_type,
+                project.managed_crop_animal_species,
+                project.agriculture_project_type,
+            )
+            if output_item:
+                frappe.db.set_value(
+                    "Project",
+                    project.name,
+                    "expected_output_item",
+                    output_item,
+                    update_modified=False,
+                )
+
+    if not frappe.db.has_column("tabBiological Asset", "output_item"):
+        return
+    assets = frappe.get_all(
+        "Biological Asset",
+        filters={"output_item": ["is", "not set"]},
+        fields=["name", "linked_project", "farm_type", "managed_item"],
+    )
+    for asset in assets:
+        output_item = None
+        if asset.linked_project and frappe.db.has_column(
+            "tabProject", "expected_output_item"
+        ):
+            output_item = frappe.db.get_value(
+                "Project", asset.linked_project, "expected_output_item"
+            )
+        output_item = output_item or get_configured_output_item(
+            asset.farm_type, asset.managed_item
+        )
+        if output_item:
+            frappe.db.set_value(
+                "Biological Asset",
+                asset.name,
+                "output_item",
+                output_item,
+                update_modified=False,
+            )
+
+
+def get_configured_output_item(farm_type, managed_item, project_type=None):
+    if project_type:
+        output_item = frappe.db.get_value(
+            "Agriculture Project Type", project_type, "output_item"
+        )
+        if output_item:
+            return output_item
+    return frappe.db.get_value(
+        "Farm Type Managed Item",
+        {
+            "parent": farm_type,
+            "parenttype": "Farm Type",
+            "farm_produce": managed_item,
+        },
+        "default_output_item",
+    )
 
 
 def seed_erpnext_operational_masters():

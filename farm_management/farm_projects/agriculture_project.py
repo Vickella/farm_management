@@ -34,6 +34,13 @@ def validate_agriculture_project(doc, method=None):
             f"Select one of: {choices}."
         )
     validate_project_breed(context["doctype"], managed_item, doc.get("animal_breed"))
+    output_item = get_project_output_item(project_type, managed_item)
+    if not output_item:
+        frappe.throw(
+            f"No output Item is configured for {managed_item} under {project_type.name}. "
+            "Configure it on the Agriculture Project Type or Farm Type."
+        )
+    doc.expected_output_item = output_item
 
     if flt(doc.get("project_quantity")) <= 0:
         frappe.throw("Project Quantity must be greater than zero.")
@@ -45,9 +52,6 @@ def validate_agriculture_project(doc, method=None):
         "Expected Start Date",
         "Expected End Date",
     )
-    activity = get_primary_farm_activity(project_type.farm_type)
-    if activity not in ("Crop Production", "Agroforestry") and flt(doc.get("initial_asset_cost")) <= 0:
-        frappe.throw("Initial Biological Asset Cost must be greater than zero for this project.")
 
 
 def on_project_submit(doc, method=None):
@@ -63,6 +67,16 @@ def sync_biological_asset_for_project(doc, method=None):
         return
 
     if doc.get("biological_asset") and frappe.db.exists("Biological Asset", doc.biological_asset):
+        if not frappe.db.get_value("Biological Asset", doc.biological_asset, "output_item"):
+            profile = get_project_asset_profile(doc)
+            if profile and profile.get("output_item"):
+                frappe.db.set_value(
+                    "Biological Asset",
+                    doc.biological_asset,
+                    "output_item",
+                    profile["output_item"],
+                    update_modified=False,
+                )
         return
 
     profile = get_project_asset_profile(doc)
@@ -84,16 +98,23 @@ def sync_biological_asset_for_project(doc, method=None):
     asset.asset_category = profile["asset_category"]
     asset.farm_type = profile["farm_type"]
     asset.managed_item = profile["managed_item"]
+    asset.output_item = profile["output_item"]
     asset.livestock_breed = doc.get("animal_breed")
     asset.linked_project = doc.name
     asset.status = "Active"
     asset.growth_stage = profile.get("growth_stage") or "Immature"
     asset.valuation_method = "Cost Accumulation"
     asset.acquisition_date = profile.get("acquisition_date") or today()
-    asset.quantity = profile.get("quantity") or 1
+    opening_value = flt(profile.get("initial_cost"))
+    if profile["asset_category"] == "Crops in Growth" or opening_value:
+        asset.quantity = profile.get("quantity") or 1
+    else:
+        asset.quantity = 0
     asset.unit = profile.get("unit") or "Head"
-    asset.initial_cost = 0
-    asset.current_fair_value = 0
+    asset.initial_cost = profile["initial_cost"]
+    asset.current_fair_value = profile["initial_cost"]
+    if not opening_value:
+        asset.flags.allow_zero_initial_cost = True
     asset.insert(ignore_permissions=True)
     doc.db_set("biological_asset", asset.name, update_modified=False)
 
@@ -113,6 +134,7 @@ def get_project_asset_profile(doc):
             "asset_category": get_asset_category_from_farm_type(farm_category),
             "farm_type": farm_type,
             "managed_item": managed_item,
+            "output_item": get_project_output_item(project_type, managed_item),
             "quantity": quantity,
             "unit": doc.get("project_unit") or get_default_unit_from_farm_type(farm_category),
             "acquisition_date": doc.get("expected_start_date") or today(),
@@ -145,7 +167,28 @@ def get_project_managed_item_context(project_type):
         frappe.throw("Select an active Agriculture Project Type.")
     context = _get_managed_item_context(profile.farm_type, profile)
     context["farm_type"] = profile.farm_type
+    context["default_project_unit"] = get_default_unit_from_farm_type(
+        get_primary_farm_activity(profile.farm_type)
+    )
+    context["output_items"] = {
+        managed_item: get_project_output_item(profile, managed_item)
+        for managed_item in context["options"]
+    }
     return context
+
+
+def get_project_output_item(project_type, managed_item):
+    if project_type and project_type.output_item:
+        return project_type.output_item
+    return frappe.db.get_value(
+        "Farm Type Managed Item",
+        {
+            "parent": project_type.farm_type if project_type else "",
+            "parenttype": "Farm Type",
+            "farm_produce": managed_item,
+        },
+        "default_output_item",
+    )
 
 
 def _get_managed_item_context(farm_type, project_type=None):

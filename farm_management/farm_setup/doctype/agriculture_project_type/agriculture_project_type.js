@@ -1,6 +1,9 @@
 frappe.ui.form.on("Agriculture Project Type", {
     refresh(frm) {
         set_managed_item_options(frm);
+        frm.set_query("output_item", () => ({
+            filters: {is_stock_item: 1, disabled: 0},
+        }));
     },
     farm_type(frm) {
         frm.set_value("managed_item", null);

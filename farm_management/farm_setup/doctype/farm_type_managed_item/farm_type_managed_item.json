@@ -8,6 +8,7 @@
   "farm_activity",
   "farm_produce_doctype",
   "farm_produce",
+  "default_output_item",
   "section_accounting",
   "biological_asset_account",
   "capital_work_in_progress_account",
@@ -38,6 +39,14 @@
    "reqd": 1,
    "in_list_view": 1,
    "columns": 4
+  },
+  {
+   "description": "Default stock Item produced by this crop, animal, or species. A specific Project Type may override it.",
+   "fieldname": "default_output_item",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Default Output Item",
+   "options": "Item"
   },
   {
    "fieldname": "section_accounting",

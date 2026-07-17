@@ -8,6 +8,25 @@ frappe.ui.form.on("Animal Stock Entry", {
 		update_entry_type_fields(frm);
 	},
 
+	project(frm) {
+		if (!frm.doc.project) {
+			frm.set_value("biological_asset", null);
+			return;
+		}
+		frappe.db.get_value(
+			"Project",
+			frm.doc.project,
+			["farm", "biological_asset", "managed_crop_animal_species", "animal_breed", "project_unit"]
+		).then((r) => {
+			const project = r.message || {};
+			frm.set_value("farm", project.farm || null);
+			frm.set_value("biological_asset", project.biological_asset || null);
+			frm.set_value("species", project.managed_crop_animal_species || null);
+			frm.set_value("breed", project.animal_breed || null);
+			frm.set_value("unit", project.project_unit || null);
+		});
+	},
+
 	quantity(frm) {
 		update_amount(frm);
 	},
@@ -90,6 +109,13 @@ function set_queries(frm) {
 			}
 		};
 	});
+	frm.set_query("project", () => ({
+		filters: {
+			status: "Open",
+			farm: frm.doc.farm || undefined,
+			biological_asset: ["is", "set"]
+		}
+	}));
 }
 
 function update_amount(frm) {

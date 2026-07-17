@@ -1,6 +1,7 @@
 import frappe
 
 from farm_management.biological_assets.valuation import get_biological_asset_gl_reconciliation
+from farm_management.install import FARM_OUTPUT_ITEMS
 
 
 def run():
@@ -20,6 +21,34 @@ def run():
     ):
         if not animal_entry.has_field(fieldname):
             frappe.throw(f"Animal Stock Entry is missing field: {fieldname}")
+
+    for doctype, fieldname in (
+        ("Project", "expected_output_item"),
+        ("Biological Asset", "output_item"),
+        ("Agriculture Project Type", "output_item"),
+        ("Farm Type Managed Item", "default_output_item"),
+    ):
+        if not frappe.get_meta(doctype).has_field(fieldname):
+            frappe.throw(f"{doctype} is missing output relationship field: {fieldname}")
+
+    missing_output_items = [
+        item_code
+        for item_code in FARM_OUTPUT_ITEMS
+        if not frappe.db.exists("Item", item_code)
+    ]
+    unmapped_farm_produce = frappe.get_all(
+        "Farm Type Managed Item",
+        filters={
+            "farm_produce": ["is", "set"],
+            "default_output_item": ["is", "not set"],
+        },
+        fields=["parent", "farm_produce"],
+    )
+    unmapped_assets = frappe.get_all(
+        "Biological Asset",
+        filters={"output_item": ["is", "not set"]},
+        pluck="name",
+    )
 
     for doctype in (
         "Biological Asset",
@@ -51,5 +80,17 @@ def run():
         "companies": companies,
         "reconciliation_rows": sum(len(rows) for rows in reconciliation.values()),
         "mismatches": mismatches,
-        "status": "passed" if not mismatches else "blocked",
+        "missing_output_items": missing_output_items,
+        "unmapped_farm_produce": unmapped_farm_produce,
+        "unmapped_assets": unmapped_assets,
+        "status": (
+            "passed"
+            if not (
+                mismatches
+                or missing_output_items
+                or unmapped_farm_produce
+                or unmapped_assets
+            )
+            else "blocked"
+        ),
     }

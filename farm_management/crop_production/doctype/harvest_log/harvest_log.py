@@ -49,9 +49,15 @@ class HarvestLog(Document):
             frappe.throw("Project, Farm, and Biological Asset must belong to the same harvest.")
 
     def set_item_defaults(self):
-        if not self.conversion_item:
-            return
-        self.harvest_uom = frappe.db.get_value("Item", self.conversion_item, "stock_uom")
+        output_item = frappe.db.get_value(
+            "Biological Asset", self.biological_asset, "output_item"
+        )
+        if not output_item:
+            frappe.throw(
+                "The Biological Asset has no Expected Output Item. Configure it before harvesting."
+            )
+        self.conversion_item = output_item
+        self.harvest_uom = frappe.db.get_value("Item", output_item, "stock_uom")
         if not self.harvest_uom:
             frappe.throw("The Harvested Item must have a Stock UOM.")
 

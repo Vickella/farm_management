@@ -10,6 +10,7 @@
   "farm_type",
   "column_break_1",
   "managed_item",
+  "output_item",
   "is_active"
  ],
  "fields": [
@@ -37,6 +38,13 @@
    "fieldname": "managed_item",
    "fieldtype": "Select",
    "label": "Managed Crop / Animal / Species"
+  },
+  {
+   "description": "Stock Item expected from this project. This may override the Farm Type default, for example Eggs for Layers or Raw Milk for Dairy.",
+   "fieldname": "output_item",
+   "fieldtype": "Link",
+   "label": "Expected Output Item",
+   "options": "Item"
   },
   {
    "default": "1",
