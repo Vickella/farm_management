@@ -4,6 +4,7 @@ frappe.ui.form.on("Project", {
         configure_queries(frm);
     },
     refresh(frm) {
+        set_project_guidance(frm);
         add_farm_operation_actions(frm);
         return load_managed_context(frm, false);
     },
@@ -18,6 +19,20 @@ frappe.ui.form.on("Project", {
         configure_queries(frm);
     },
 });
+
+function set_project_guidance(frm) {
+    if (frm.is_new() && !frm.doc.agriculture_project_type) {
+        frm.set_intro(
+            __("For a farm operation, begin with Agriculture Project Type. The crop or animal, Farm, planning quantity, UOM, output Item, and Biological Asset will then be linked automatically."),
+            "blue"
+        );
+    } else if (!frm.doc.agriculture_project_type) {
+        frm.set_intro(
+            __("This is a general ERPNext Project and cannot be used for crop or animal transactions. Select an Agriculture Project Type and complete the Agriculture Details section first."),
+            "orange"
+        );
+    }
+}
 
 function add_farm_operation_actions(frm) {
     if (frm.is_new() || !frm.doc.agriculture_project_type) {

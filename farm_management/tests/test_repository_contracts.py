@@ -380,6 +380,11 @@ class TestRepositoryContracts(unittest.TestCase):
         self.assertIn('self.entry_type = "Receipt"', controller)
         self.assertIn('self.entry_type == "Opening"', controller)
         self.assertIn('"Opening", "Receipt", "Birth"', controller)
+        client = (
+            APP_ROOT / "livestock" / "doctype" / "animal_stock_entry" / "animal_stock_entry.js"
+        ).read_text(encoding="utf-8")
+        self.assertIn('managed_item_doctype: "Livestock Species"', client)
+        self.assertIn('agriculture_project_type: ["is", "set"]', client)
 
         project_fields = {
             row["fieldname"]: row
@@ -388,9 +393,24 @@ class TestRepositoryContracts(unittest.TestCase):
             )
             if row.get("dt") == "Project"
         }
-        self.assertNotIn("mandatory_depends_on", project_fields["initial_asset_cost"])
-
+        self.assertFalse(
+            project_fields["initial_asset_cost"].get("mandatory_depends_on")
+        )
+        self.assertFalse(
+            project_fields["section_break_agriculture_details"].get("depends_on")
+        )
+        self.assertTrue(
+            project_fields["project_quantity"].get("mandatory_depends_on")
+        )
+        self.assertTrue(project_fields["project_unit"].get("mandatory_depends_on"))
         install = (APP_ROOT / "install.py").read_text(encoding="utf-8")
+        self.assertIn("optional_text_properties", install)
+        self.assertIn('"mandatory_depends_on"', install)
+        project_client = (APP_ROOT / "public" / "js" / "project.js").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("This is a general ERPNext Project", project_client)
+
         self.assertIn("seed_live_animal_invoice_items()", install)
         self.assertIn("repair_placeholder_livestock_asset_quantities()", install)
         self.assertIn("backfill_animal_stock_batch_references()", install)
@@ -403,6 +423,7 @@ class TestRepositoryContracts(unittest.TestCase):
             "animal_entries_without_asset",
             "inbound_entries_without_batch",
             "duplicate_project_assets",
+            "project_form_metadata_issues",
         ):
             self.assertIn(diagnostic, smoke)
 

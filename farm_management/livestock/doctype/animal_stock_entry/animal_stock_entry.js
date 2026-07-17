@@ -109,7 +109,9 @@ function set_queries(frm) {
 	frm.set_query("project", () => ({
 		filters: {
 			status: "Open",
-			farm: frm.doc.farm || undefined
+			farm: frm.doc.farm || undefined,
+			agriculture_project_type: ["is", "set"],
+			managed_item_doctype: "Livestock Species"
 		}
 	}));
 }

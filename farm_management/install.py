@@ -1274,6 +1274,37 @@ def update_existing_fixture_record(record, existing_name):
     force_update_custom_field_type(record, existing_name)
 
     doc = frappe.get_doc(doctype, existing_name)
+    if doctype == "Custom Field" and record.get("module") == "Farm Management":
+        # App-owned Custom Fields must match the fixture exactly. Frappe's normal
+        # setattr loop does not clear obsolete conditions omitted by a newer
+        # fixture, which can make a whole section permanently inaccessible.
+        optional_text_properties = (
+            "depends_on",
+            "mandatory_depends_on",
+            "read_only_depends_on",
+            "fetch_from",
+            "default",
+            "description",
+            "options",
+        )
+        optional_flag_properties = (
+            "reqd",
+            "hidden",
+            "read_only",
+            "no_copy",
+            "in_list_view",
+            "in_standard_filter",
+            "bold",
+            "allow_on_submit",
+            "translatable",
+        )
+        for fieldname in optional_text_properties:
+            if fieldname not in record:
+                doc.set(fieldname, None)
+        for fieldname in optional_flag_properties:
+            if fieldname not in record:
+                doc.set(fieldname, 0)
+
     for key, value in record.items():
         if key == "doctype":
             continue

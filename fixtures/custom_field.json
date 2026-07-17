@@ -6,7 +6,8 @@
     "fieldname": "section_break_agriculture_details",
     "fieldtype": "Section Break",
     "label": "Agriculture Details",
-    "insert_after": "project_name"
+    "insert_after": "project_name",
+    "depends_on": ""
   },
   {
     "doctype": "Custom Field",
@@ -86,8 +87,10 @@
     "module": "Farm Management",
     "fieldname": "project_quantity",
     "fieldtype": "Float",
-    "label": "Project Quantity",
+    "label": "Planned Area / Capacity",
+    "description": "Planning scale only: hectares for crops and planned head or birds for livestock. Actual livestock quantities are recognized through Animal Stock Entry.",
     "insert_after": "animal_breed",
+    "mandatory_depends_on": "eval:doc.agriculture_project_type",
     "depends_on": "eval:doc.agriculture_project_type"
   },
   {
@@ -96,9 +99,10 @@
     "module": "Farm Management",
     "fieldname": "project_unit",
     "fieldtype": "Link",
-    "label": "Project Unit",
+    "label": "Planning UOM",
     "insert_after": "project_quantity",
     "options": "UOM",
+    "mandatory_depends_on": "eval:doc.agriculture_project_type",
     "depends_on": "eval:doc.agriculture_project_type"
   },
   {
@@ -110,6 +114,7 @@
     "label": "Opening Biological Asset Value",
     "description": "Optional. Use only for animals already owned at project opening. For new purchases, leave zero and let the submitted Animal Stock Entry use the Purchase Invoice cost.",
     "insert_after": "project_unit",
+    "mandatory_depends_on": "",
     "depends_on": "eval:doc.agriculture_project_type && !['Crop Production', 'Horticulture', 'Agroforestry'].includes(doc.agriculture_farm_type)"
   },
   {

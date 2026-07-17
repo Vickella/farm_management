@@ -12,6 +12,30 @@ def run():
     if missing_apps:
         frappe.throw(f"Missing required apps: {', '.join(sorted(missing_apps))}")
 
+    project_form_metadata_issues = []
+    agriculture_section = frappe.db.get_value(
+        "Custom Field",
+        {"dt": "Project", "fieldname": "section_break_agriculture_details"},
+        ["name", "hidden", "depends_on"],
+        as_dict=True,
+    )
+    if not agriculture_section:
+        project_form_metadata_issues.append("Agriculture Details section is missing")
+    elif agriculture_section.hidden or agriculture_section.depends_on:
+        project_form_metadata_issues.append(
+            "Agriculture Details section is hidden by stale metadata"
+        )
+    initial_cost_field = frappe.db.get_value(
+        "Custom Field",
+        {"dt": "Project", "fieldname": "initial_asset_cost"},
+        ["name", "mandatory_depends_on"],
+        as_dict=True,
+    )
+    if initial_cost_field and initial_cost_field.mandatory_depends_on:
+        project_form_metadata_issues.append(
+            "Opening Biological Asset Value is incorrectly mandatory"
+        )
+
     animal_entry = frappe.get_meta("Animal Stock Entry")
     for fieldname in (
         "purchase_invoice",
@@ -208,6 +232,7 @@ def run():
         "mismatches": mismatches,
         "reclassifications": reclassifications,
         "project_issues": project_issues,
+        "project_form_metadata_issues": project_form_metadata_issues,
         "submitted_harvests_without_quantity": submitted_harvests_without_quantity,
         "missing_output_items": missing_output_items,
         "missing_live_animal_items": missing_live_animal_items,
@@ -227,6 +252,7 @@ def run():
                 or farm_types_without_produce
                 or unmapped_assets
                 or project_issues
+                or project_form_metadata_issues
                 or submitted_harvests_without_quantity
                 or animal_entries_without_asset
                 or inbound_entries_without_batch

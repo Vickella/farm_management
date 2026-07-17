@@ -51,7 +51,12 @@ class AnimalStockEntry(Document):
             as_dict=True,
         )
         if not project or project.managed_item_doctype != "Livestock Species":
-            frappe.throw("Animal Stock Entry requires an animal or poultry Agriculture Project.")
+            frappe.throw(
+                f"Project {self.project} is not configured as an animal or poultry "
+                "Agriculture Project. Open the Project, select an Agriculture Project "
+                "Type such as Pig Farming or Broiler Production, select its managed "
+                "animal, Farm, quantity, and UOM, then save it."
+            )
         if not project.biological_asset:
             from farm_management.farm_projects.agriculture_project import (
                 sync_biological_asset_for_project,
