@@ -23,7 +23,7 @@
    "fieldname": "title",
    "fieldtype": "Data",
    "label": "Title",
-   "reqd": 1,
+   "read_only": 1,
    "in_list_view": 1
   },
   {
@@ -53,6 +53,7 @@
   {
    "fieldname": "date",
    "fieldtype": "Date",
+   "default": "Today",
    "label": "Date",
    "reqd": 1,
    "in_list_view": 1
@@ -66,7 +67,8 @@
    "fieldtype": "Select",
    "label": "Status",
    "options": "Draft\nActive\nCompleted\nCancelled",
-   "default": "Draft"
+   "default": "Draft",
+   "read_only": 1
   },
   {
    "fieldname": "sec_field",
@@ -122,6 +124,26 @@
    "cancel": 1,
    "amend": 1,
    "share": 1,
+   "write": 1
+  },
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Farm Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "read": 1,
+   "role": "Farm Worker",
    "write": 1
   }
  ],

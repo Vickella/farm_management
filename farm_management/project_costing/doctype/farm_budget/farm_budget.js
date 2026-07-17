@@ -1,4 +1,10 @@
 frappe.ui.form.on('Farm Budget', {
+    setup(frm) {
+        frm.set_query('project', () => ({filters: {status: 'Open'}}));
+        frm.set_query('farm_bom', () => ({
+            filters: {project: frm.doc.project || undefined},
+        }));
+    },
     refresh(frm) {
         calculate_budget_totals(frm);
     },

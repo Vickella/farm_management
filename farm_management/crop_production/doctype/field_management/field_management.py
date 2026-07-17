@@ -7,6 +7,8 @@ from farm_management.server_validation import apply_project_context, validate_un
 class FieldManagement(Document):
     def validate(self):
         project = apply_project_context(self)
+        if not self.title:
+            self.title = f"{self.project} - {self.activity_type} - {self.date}"
         if project.managed_item_doctype != "Crop Type":
             frappe.throw("Field Management can only use a crop Agriculture Project.")
         if not self.get("requirements"):

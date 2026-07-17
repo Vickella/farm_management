@@ -54,29 +54,43 @@ def validate_agriculture_project(doc, method=None):
     )
 
 
-def on_project_submit(doc, method=None):
-    generate_farm_bom_from_project(doc)
-
-
-def generate_farm_bom_from_project(project):
-    return None
-
-
 def sync_biological_asset_for_project(doc, method=None):
     if not doc.get("agriculture_project_type") or not doc.get("farm"):
         return
 
     if doc.get("biological_asset") and frappe.db.exists("Biological Asset", doc.biological_asset):
-        if not frappe.db.get_value("Biological Asset", doc.biological_asset, "output_item"):
-            profile = get_project_asset_profile(doc)
-            if profile and profile.get("output_item"):
-                frappe.db.set_value(
-                    "Biological Asset",
-                    doc.biological_asset,
-                    "output_item",
-                    profile["output_item"],
-                    update_modified=False,
-                )
+        profile = get_project_asset_profile(doc)
+        asset = frappe.db.get_value(
+            "Biological Asset",
+            doc.biological_asset,
+            ["farm", "farm_type", "managed_item", "output_item"],
+            as_dict=True,
+        )
+        expected = {
+            "farm": doc.farm,
+            "farm_type": profile["farm_type"],
+            "managed_item": profile["managed_item"],
+            "output_item": profile["output_item"],
+        }
+        conflicts = [
+            fieldname
+            for fieldname, value in expected.items()
+            if asset.get(fieldname) and asset.get(fieldname) != value
+        ]
+        if conflicts:
+            frappe.throw(
+                "Farm, Project Type, managed produce, and output Item cannot be changed "
+                "after the Project has created its Biological Asset. Close this Project "
+                "and create a new one for a different enterprise."
+            )
+        if profile.get("output_item") and not asset.output_item:
+            frappe.db.set_value(
+                "Biological Asset",
+                doc.biological_asset,
+                "output_item",
+                profile["output_item"],
+                update_modified=False,
+            )
         return
 
     profile = get_project_asset_profile(doc)

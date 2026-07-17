@@ -1,3 +1,19 @@
+frappe.ui.form.on("Field Management", {
+    setup(frm) {
+        frm.set_query("project", () => ({
+            filters: {status: "Open", managed_item_doctype: "Crop Type"},
+        }));
+    },
+    project(frm) {
+        if (!frm.doc.project) {
+            return;
+        }
+        frappe.db.get_value("Project", frm.doc.project, "farm").then((r) => {
+            frm.set_value("farm", (r.message || {}).farm || null);
+        });
+    },
+});
+
 frappe.ui.form.on("Field Management Requirement", {
     item(frm, cdt, cdn) {
         const row = frappe.get_doc(cdt, cdn);

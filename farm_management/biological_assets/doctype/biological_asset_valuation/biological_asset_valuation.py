@@ -78,6 +78,7 @@ class BiologicalAssetValuation(Document):
         if self.journal_entry and frappe.db.exists("Journal Entry", self.journal_entry):
             journal_entry = frappe.get_doc("Journal Entry", self.journal_entry)
             if journal_entry.docstatus == 1:
+                journal_entry.flags.ignore_permissions = True
                 journal_entry.cancel()
 
         asset = frappe.get_doc("Biological Asset", self.biological_asset)

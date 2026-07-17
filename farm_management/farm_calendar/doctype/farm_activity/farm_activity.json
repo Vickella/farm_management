@@ -194,6 +194,12 @@
    "role": "Farm Manager",
    "share": 1,
    "write": 1
+  },
+  {
+   "create": 1,
+   "read": 1,
+   "role": "Farm Worker",
+   "write": 1
   }
  ],
  "sort_field": "modified",

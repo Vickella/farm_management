@@ -10,7 +10,7 @@ def execute(filters=None):
         {"fieldname": "subledger_value", "label": "IAS 41 Subledger", "fieldtype": "Currency", "width": 150},
         {"fieldname": "gl_balance", "label": "GL Balance", "fieldtype": "Currency", "width": 150},
         {"fieldname": "difference", "label": "Difference", "fieldtype": "Currency", "width": 140},
-        {"fieldname": "status", "label": "Status", "fieldtype": "Data", "width": 110},
+        {"fieldname": "status", "label": "Status", "fieldtype": "Data", "width": 190},
     ]
     data = get_biological_asset_gl_reconciliation(
         company=filters.get("company"),

@@ -11,6 +11,7 @@ from farm_management.server_validation import apply_project_context, get_farm_co
 
 class FarmActivity(Document):
     def validate(self):
+        self.validate_worker_accounting_boundary()
         self.validate_capitalization_immutability()
         project = apply_project_context(self) if self.project else None
         get_farm_context(self.farm)
@@ -43,6 +44,18 @@ class FarmActivity(Document):
                 self.capitalization_source,
                 self.actual_cost,
                 project=self.project,
+            )
+
+    def validate_worker_accounting_boundary(self):
+        roles = set(frappe.get_roles())
+        is_worker_only = (
+            "Farm Worker" in roles
+            and "Farm Manager" not in roles
+            and "System Manager" not in roles
+        )
+        if is_worker_only and self.capitalizable and self.status == "Completed":
+            frappe.throw(
+                "A Farm Manager must review and complete capitalizable activities."
             )
 
     def validate_capitalization_immutability(self):
@@ -89,6 +102,7 @@ class FarmActivity(Document):
         if self.capitalization and frappe.db.exists("Biological Asset Capitalization", self.capitalization):
             capitalization = frappe.get_doc("Biological Asset Capitalization", self.capitalization)
             if capitalization.docstatus == 1:
+                capitalization.flags.ignore_permissions = True
                 capitalization.cancel()
 
 def generate_scheduled_tasks():

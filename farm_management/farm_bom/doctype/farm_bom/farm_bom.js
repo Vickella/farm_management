@@ -1,6 +1,42 @@
 frappe.ui.form.on('Farm BOM', {
     refresh(frm) {
         calculate_bom_total(frm);
+        if (!frm.is_new()) {
+            frm.add_custom_button(__('Create Budget'), () => {
+                frappe.new_doc('Farm Budget', {
+                    farm_bom: frm.doc.name,
+                    farm: frm.doc.farm,
+                    project: frm.doc.project,
+                    budget_period_start: frm.doc.planned_start_date,
+                    budget_period_end: frm.doc.planned_end_date,
+                });
+            }, __('Planning'));
+        }
+    },
+    project(frm) {
+        if (!frm.doc.project) {
+            return;
+        }
+        frappe.db.get_value(
+            'Project',
+            frm.doc.project,
+            [
+                'farm',
+                'agriculture_project_type',
+                'project_quantity',
+                'project_unit',
+                'expected_start_date',
+                'expected_end_date',
+            ]
+        ).then((r) => {
+            const project = r.message || {};
+            frm.set_value('farm', project.farm || null);
+            frm.set_value('project_type', project.agriculture_project_type || null);
+            frm.set_value('planned_quantity', project.project_quantity || null);
+            frm.set_value('planned_quantity_unit', project.project_unit || null);
+            frm.set_value('planned_start_date', project.expected_start_date || null);
+            frm.set_value('planned_end_date', project.expected_end_date || null);
+        });
     }
 });
 

@@ -152,6 +152,7 @@ class HarvestTransaction(Document):
         if self.stock_entry and frappe.db.exists("Stock Entry", self.stock_entry):
             stock_entry = frappe.get_doc("Stock Entry", self.stock_entry)
             if stock_entry.docstatus == 1:
+                stock_entry.flags.ignore_permissions = True
                 stock_entry.cancel()
         asset_category = frappe.db.get_value(
             "Biological Asset", self.biological_asset, "asset_category"

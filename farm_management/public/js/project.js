@@ -4,6 +4,7 @@ frappe.ui.form.on("Project", {
         configure_queries(frm);
     },
     refresh(frm) {
+        add_farm_operation_actions(frm);
         return load_managed_context(frm, false);
     },
     async agriculture_project_type(frm) {
@@ -17,6 +18,53 @@ frappe.ui.form.on("Project", {
         configure_queries(frm);
     },
 });
+
+function add_farm_operation_actions(frm) {
+    if (frm.is_new() || !frm.doc.agriculture_project_type) {
+        return;
+    }
+    const context = {
+        project: frm.doc.name,
+        farm: frm.doc.farm,
+    };
+    frm.add_custom_button(__("Record Farm Activity"), () => {
+        frappe.new_doc("Farm Activity", context);
+    }, __("Farm Operations"));
+    frm.add_custom_button(__("Plan Inputs and Resources"), () => {
+        frappe.new_doc("Farm BOM", {
+            ...context,
+            project_type: frm.doc.agriculture_project_type,
+            planned_quantity: frm.doc.project_quantity,
+            planned_quantity_unit: frm.doc.project_unit,
+            planned_start_date: frm.doc.expected_start_date,
+            planned_end_date: frm.doc.expected_end_date,
+        });
+    }, __("Planning"));
+
+    if (frm.doc.managed_item_doctype === "Crop Type") {
+        frm.add_custom_button(__("Record Field Work"), () => {
+            frappe.new_doc("Field Management", context);
+        }, __("Farm Operations"));
+        frm.add_custom_button(__("Harvest Crop"), () => {
+            frappe.new_doc("Harvest Log", context);
+        }, __("Farm Operations"));
+    } else if (frm.doc.managed_item_doctype === "Livestock Species") {
+        frm.add_custom_button(__("Record Animal Movement"), () => {
+            frappe.new_doc("Animal Stock Entry", context);
+        }, __("Farm Operations"));
+    }
+
+    if (frm.doc.biological_asset) {
+        frm.add_custom_button(__("View Biological Asset"), () => {
+            frappe.set_route("Form", "Biological Asset", frm.doc.biological_asset);
+        }, __("IAS 41"));
+        frm.add_custom_button(__("Record Valuation"), () => {
+            frappe.new_doc("Biological Asset Valuation", {
+                biological_asset: frm.doc.biological_asset,
+            });
+        }, __("IAS 41"));
+    }
+}
 
 async function load_managed_context(frm, use_default) {
     if (!frm.doc.agriculture_project_type) {

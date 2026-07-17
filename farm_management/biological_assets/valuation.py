@@ -256,9 +256,8 @@ def create_capitalization_journal_entry(capitalization, asset=None):
 
     from farm_management.install import setup_biological_asset_accounts
 
-    setup_biological_asset_accounts()
-
     asset = asset or frappe.get_doc("Biological Asset", capitalization.biological_asset)
+    setup_biological_asset_accounts(get_company(asset))
     biological_asset_account = get_biological_asset_account(asset)
     if capitalization.capitalization_type == "Birth":
         default_credit_account = get_fair_value_gain_loss_account(asset)
@@ -317,6 +316,18 @@ def get_biological_asset_account(asset, settings=None):
         return managed_item_account
 
     company = get_company(asset)
+    if asset.managed_item and company:
+        account = frappe.db.get_value(
+            "Account",
+            {
+                "account_name": f"Biological Asset - {asset.managed_item}",
+                "company": company,
+                "is_group": 0,
+            },
+            "name",
+        )
+        if account:
+            return account
     if asset.farm_type and company:
         account_name = f"Biological Asset - {asset.farm_type}"
         account = frappe.db.get_value(
@@ -367,7 +378,12 @@ def get_managed_item_account(asset, fieldname):
     managed_item_key = (asset.managed_item or "").strip().lower()
     for row in farm_type.get("managed_items", []):
         if (row.farm_produce or "").strip().lower() == managed_item_key:
-            return row.get(fieldname)
+            account = row.get(fieldname)
+            if not account:
+                return None
+            company = get_company(asset)
+            account_company = frappe.db.get_value("Account", account, "company")
+            return account if not company or account_company == company else None
     return None
 
 
@@ -377,6 +393,7 @@ def cancel_capitalization_journal_entry(capitalization):
 
     journal_entry = frappe.get_doc("Journal Entry", capitalization.journal_entry)
     if journal_entry.docstatus == 1:
+        journal_entry.flags.ignore_permissions = True
         journal_entry.cancel()
 
 
@@ -512,9 +529,8 @@ def create_asset_outflow_journal_entry(
 
     from farm_management.install import setup_biological_asset_accounts
 
-    setup_biological_asset_accounts()
-
     asset = frappe.get_doc("Biological Asset", biological_asset)
+    setup_biological_asset_accounts(get_company(asset))
     biological_asset_account = get_biological_asset_account(asset)
     outflow_account = debit_account or get_fair_value_gain_loss_account(asset)
     if not biological_asset_account or not outflow_account:
@@ -782,7 +798,7 @@ def cancel_project_material_issue(stock_entry, method=None):
 def create_fair_value_journal_entry(asset, delta=None, posting_date=None):
     from farm_management.install import setup_biological_asset_accounts
 
-    setup_biological_asset_accounts()
+    setup_biological_asset_accounts(get_company(asset))
 
     biological_asset_account = get_biological_asset_account(asset)
     fair_value_gain_loss_account = get_fair_value_gain_loss_account(asset)
@@ -871,16 +887,25 @@ def get_biological_asset_gl_reconciliation(company=None, posting_date=None, thro
         group_by="account",
     )
     gl_balances = {row.account: flt(row.balance) for row in gl_rows}
+    total_difference = flt(sum(subledger.values())) - flt(sum(gl_balances.values()))
+    aggregate_reconciles = abs(total_difference) < 0.01
     rows = []
     for account in sorted(accounts):
         difference = flt(subledger.get(account)) - flt(gl_balances.get(account))
+        status = "Reconciled"
+        if abs(difference) >= 0.01:
+            status = (
+                "Reclassification Required"
+                if aggregate_reconciles
+                else "Mismatch"
+            )
         rows.append(
             {
                 "account": account,
                 "subledger_value": subledger.get(account, 0),
                 "gl_balance": gl_balances.get(account, 0),
                 "difference": difference,
-                "status": "Reconciled" if abs(difference) < 0.01 else "Mismatch",
+                    "status": status,
             }
         )
     if throw_on_difference and any(row["status"] == "Mismatch" for row in rows):
@@ -921,13 +946,17 @@ def append_account(journal_entry, account, debit=0, credit=0, project=None, part
 
 
 def get_company(asset):
-    settings = frappe.get_single("Farm Management Settings")
-    if settings.default_company:
-        return settings.default_company
+    if asset.farm:
+        company = frappe.db.get_value("Farm", asset.farm, "owner_name")
+        if company:
+            return company
     if asset.linked_project:
         company = frappe.db.get_value("Project", asset.linked_project, "company")
         if company:
             return company
+    settings = frappe.get_single("Farm Management Settings")
+    if settings.default_company:
+        return settings.default_company
     return frappe.defaults.get_user_default("Company") or frappe.db.get_single_value(
         "Global Defaults", "default_company"
     )

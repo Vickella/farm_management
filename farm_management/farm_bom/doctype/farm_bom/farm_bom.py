@@ -17,6 +17,9 @@ class FarmBOM(Document):
         if self.project_type and self.project_type != project.agriculture_project_type:
             frappe.throw("Farm BOM Project Type must match the selected Project.")
         self.project_type = project.agriculture_project_type
+        self.farm = project.farm
+        if not self.bom_title:
+            self.bom_title = f"{self.project} Resource Plan"
         self.planned_quantity = self.planned_quantity or project.project_quantity
         self.planned_quantity_unit = self.planned_quantity_unit or project.project_unit
         self.planned_start_date = self.planned_start_date or project.expected_start_date

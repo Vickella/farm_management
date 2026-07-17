@@ -65,7 +65,8 @@
    "fieldname": "status",
    "fieldtype": "Select",
    "label": "Status",
-   "options": "Draft\nSubmitted\nCancelled"
+   "options": "Draft\nSubmitted\nCancelled",
+   "read_only": 1
   },
   {
    "fieldname": "column_break_1",
@@ -150,8 +151,7 @@
    "fieldname": "rate",
    "fieldtype": "Currency",
    "label": "Unit Cost / Rate",
-   "description": "For asset outflows, defaults to current carrying value divided by asset quantity.",
-   "fetch_from": "item.valuation_rate"
+   "description": "Opening, Receipt, and Birth require a user-determined recognition rate. Outflows default to carrying value per unit."
   },
   {
    "fieldname": "amount",
@@ -216,7 +216,8 @@
   {
    "fieldname": "item",
    "fieldtype": "Link",
-   "label": "Item / Input",
+   "label": "Invoice Item (Live Animal)",
+   "description": "Non-stock Item used on the submitted Purchase or Sales Invoice. This is separate from the farm output stock Item.",
    "options": "Item",
    "mandatory_depends_on": "eval:doc.entry_type == 'Purchase' || doc.entry_type == 'Sale'"
   },

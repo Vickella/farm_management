@@ -60,6 +60,7 @@
   {
    "fieldname": "valuation_date",
    "fieldtype": "Date",
+   "default": "Today",
    "label": "Valuation Date",
    "reqd": 1,
    "in_list_view": 1

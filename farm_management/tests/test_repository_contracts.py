@@ -206,6 +206,8 @@ class TestRepositoryContracts(unittest.TestCase):
 
     def test_every_seeded_farm_produce_has_a_preconfigured_output_item(self):
         source = (APP_ROOT / "install.py").read_text(encoding="utf-8")
+        self.assertNotIn('has_column("tab', source)
+        self.assertNotIn('table_exists("tab', source)
         module = ast.parse(source)
         constants = {}
         for statement in module.body:
@@ -252,6 +254,7 @@ class TestRepositoryContracts(unittest.TestCase):
         self.assertIn('asset.output_item = profile["output_item"]', project_controller)
         self.assertIn('asset.initial_cost = profile["initial_cost"]', project_controller)
         self.assertNotIn("asset.initial_cost = 0", project_controller)
+        self.assertIn("cannot be changed", project_controller)
 
         transaction = (
             APP_ROOT
@@ -268,8 +271,46 @@ class TestRepositoryContracts(unittest.TestCase):
             self.assertIn("amended_from", fields)
         hooks = (APP_ROOT / "hooks.py").read_text(encoding="utf-8")
         self.assertIn("sync_status_on_submit", hooks)
+        self.assertNotIn('"*": {', hooks)
         install = (APP_ROOT / "install.py").read_text(encoding="utf-8")
         self.assertIn("ensure_amendable_doctypes", install)
+
+    def test_operational_permissions_match_source_document_ownership(self):
+        for doctype in ("Harvest Log", "Field Management", "Farm Cashbook"):
+            permissions = {
+                row["role"]: row for row in get_doctype(doctype)["permissions"]
+            }
+            farm_manager = permissions["Farm Manager"]
+            self.assertTrue(farm_manager.get("create"))
+            self.assertTrue(farm_manager.get("submit"))
+            self.assertTrue(farm_manager.get("cancel"))
+            self.assertTrue(farm_manager.get("amend"))
+
+        for doctype in ("Harvest Log", "Field Management"):
+            permissions = {
+                row["role"]: row for row in get_doctype(doctype)["permissions"]
+            }
+            self.assertTrue(permissions["Farm Worker"].get("create"))
+            self.assertFalse(permissions["Farm Worker"].get("submit", 0))
+
+        for doctype in ("Biological Asset Capitalization", "Harvest Transaction"):
+            permissions = {
+                row["role"]: row for row in get_doctype(doctype)["permissions"]
+            }
+            self.assertTrue(permissions["Farm Manager"].get("read"))
+            self.assertFalse(permissions["Farm Manager"].get("create", 0))
+            self.assertTrue(permissions["Accounts Manager"].get("submit"))
+
+    def test_source_document_statuses_are_system_driven(self):
+        for doctype in (
+            "Animal Stock Entry",
+            "Field Management",
+            "Harvest Log",
+        ):
+            fields = {
+                row["fieldname"]: row for row in get_doctype(doctype)["fields"]
+            }
+            self.assertTrue(fields["status"].get("read_only"))
 
     def test_workspace_contains_core_farm_accounting_reports(self):
         install = (APP_ROOT / "install.py").read_text(encoding="utf-8")
@@ -277,6 +318,40 @@ class TestRepositoryContracts(unittest.TestCase):
         self.assertIn('"Accounts Receivable Summary", "Report"', install)
         self.assertIn('"Accounts Payable Summary", "Report"', install)
         self.assertNotIn('("Poultry Infrastructure", "DocType")', install)
+        ias_section = install.split('"IAS 41 Biological Assets"', 1)[1].split("],", 1)[0]
+        self.assertNotIn('"Biological Asset Capitalization"', ias_section)
+        self.assertNotIn('"Harvest Transaction"', ias_section)
+
+    def test_project_is_the_contextual_operations_home(self):
+        client = (APP_ROOT / "public" / "js" / "project.js").read_text(
+            encoding="utf-8"
+        )
+        for label in (
+            "Record Farm Activity",
+            "Plan Inputs and Resources",
+            "Record Field Work",
+            "Harvest Crop",
+            "Record Animal Movement",
+            "Record Valuation",
+        ):
+            self.assertIn(label, client)
+
+        farm_client = (
+            APP_ROOT / "farm_setup" / "doctype" / "farm" / "farm.js"
+        ).read_text(encoding="utf-8")
+        self.assertIn("View Weather Forecast", farm_client)
+
+    def test_harvest_migration_repairs_generated_transaction_quantity(self):
+        install = (APP_ROOT / "install.py").read_text(encoding="utf-8")
+        self.assertIn("transaction.quantity_harvested", install)
+        self.assertIn("repair_existing_project_contexts()", install)
+        harvest = get_doctype("Harvest Log")
+        fields = {row["fieldname"]: row for row in harvest["fields"]}
+        self.assertTrue(fields["valuation_rate"].get("read_only"))
+        smoke = (APP_ROOT / "tests" / "runtime_smoke.py").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("farm_types_without_produce", smoke)
 
     def test_live_animal_sales_and_purchases_require_standard_invoices(self):
         doc = get_doctype("Animal Stock Entry")
@@ -297,6 +372,8 @@ class TestRepositoryContracts(unittest.TestCase):
         self.assertIn("base_net_amount", controller)
         self.assertIn("self.set_project_defaults()", controller)
         self.assertIn("project.biological_asset", controller)
+        self.assertIn('self.entry_type == "Opening"', controller)
+        self.assertIn('"Opening", "Receipt", "Birth"', controller)
 
         project_fields = {
             row["fieldname"]: row
@@ -334,6 +411,17 @@ class TestRepositoryContracts(unittest.TestCase):
         valuation = (APP_ROOT / "biological_assets" / "valuation.py").read_text(encoding="utf-8")
         self.assertIn("get_biological_asset_gl_reconciliation", valuation)
         self.assertIn('"GL Entry"', valuation)
+        self.assertIn("Reclassification Required", valuation)
+        get_company_body = valuation.split("def get_company(asset):", 1)[1].split(
+            "\ndef ", 1
+        )[0]
+        self.assertLess(
+            get_company_body.index('"Farm", asset.farm, "owner_name"'),
+            get_company_body.index('"Farm Management Settings"'),
+        )
+        self.assertIn(
+            "setup_biological_asset_accounts(get_company(asset))", valuation
+        )
 
     def test_v15_bench_gate_script_covers_clean_and_upgrade_modes(self):
         script = (REPO_ROOT / "scripts" / "test_erpnext_v15.sh").read_text(encoding="utf-8")

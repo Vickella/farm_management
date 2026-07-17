@@ -250,9 +250,7 @@ WORKSPACE_GROUPS = [
         "IAS 41 Biological Assets",
         [
             ("Biological Asset", "DocType"),
-            ("Biological Asset Capitalization", "DocType"),
             ("Biological Asset Valuation", "DocType"),
-            ("Harvest Transaction", "DocType"),
             ("Biological Asset Register", "Report"),
             ("Biological Asset GL Reconciliation", "Report"),
             ("Animal Stock Ledger", "Report"),
@@ -364,6 +362,7 @@ def apply_phase2_updates():
     seed_missing_crop_types()
     seed_livestock_breeds()
     seed_agriculture_project_types()
+    repair_existing_project_contexts()
     configure_farm_output_items()
     seed_pests()
     seed_animal_diseases()
@@ -387,19 +386,48 @@ def ensure_erpnext_dependency():
 
 
 def migrate_harvest_quantity_field():
+    doctype = "Harvest Log"
     table = "tabHarvest Log"
-    if not frappe.db.table_exists(table):
+    if not frappe.db.table_exists(doctype):
         return
-    if not frappe.db.has_column(table, "total_yield_tons"):
+    if not frappe.db.has_column(doctype, "harvested_quantity"):
         return
-    if not frappe.db.has_column(table, "harvested_quantity"):
+    if frappe.db.has_column(doctype, "total_yield_tons"):
+        frappe.db.sql(
+            f"""update `{table}`
+            set harvested_quantity = total_yield_tons
+            where ifnull(harvested_quantity, 0) = 0
+              and ifnull(total_yield_tons, 0) != 0"""
+        )
+
+    if not frappe.db.table_exists("Harvest Transaction"):
         return
-    frappe.db.sql(
-        f"""update `{table}`
-        set harvested_quantity = total_yield_tons
-        where ifnull(harvested_quantity, 0) = 0
-          and ifnull(total_yield_tons, 0) != 0"""
+    transactions = frappe.get_all(
+        "Harvest Transaction",
+        filters={"docstatus": ["<", 2], "source_harvest_log": ["is", "set"]},
+        fields=["name", "source_harvest_log", "quantity_harvested"],
     )
+    for transaction in transactions:
+        current = frappe.db.get_value(
+            "Harvest Log",
+            transaction.source_harvest_log,
+            ["harvested_quantity", "harvest_transaction"],
+            as_dict=True,
+        )
+        if not current:
+            continue
+        updates = {}
+        if not flt(current.harvested_quantity) and flt(transaction.quantity_harvested):
+            updates["harvested_quantity"] = transaction.quantity_harvested
+        if not current.harvest_transaction:
+            updates["harvest_transaction"] = transaction.name
+        if updates:
+            frappe.db.set_value(
+                "Harvest Log",
+                transaction.source_harvest_log,
+                updates,
+                update_modified=False,
+            )
 
 
 def seed_agricultural_uoms():
@@ -506,7 +534,7 @@ def configure_farm_output_items():
 
 
 def backfill_project_and_asset_output_items():
-    if frappe.db.has_column("tabProject", "expected_output_item"):
+    if frappe.db.has_column("Project", "expected_output_item"):
         projects = frappe.get_all(
             "Project",
             filters={
@@ -535,7 +563,7 @@ def backfill_project_and_asset_output_items():
                     update_modified=False,
                 )
 
-    if not frappe.db.has_column("tabBiological Asset", "output_item"):
+    if not frappe.db.has_column("Biological Asset", "output_item"):
         return
     assets = frappe.get_all(
         "Biological Asset",
@@ -545,7 +573,7 @@ def backfill_project_and_asset_output_items():
     for asset in assets:
         output_item = None
         if asset.linked_project and frappe.db.has_column(
-            "tabProject", "expected_output_item"
+            "Project", "expected_output_item"
         ):
             output_item = frappe.db.get_value(
                 "Project", asset.linked_project, "expected_output_item"
@@ -735,9 +763,9 @@ def setup_farm_management_settings():
         doc.insert(ignore_permissions=True)
 
 
-def setup_biological_asset_accounts():
+def setup_biological_asset_accounts(company=None):
     settings = frappe.get_single("Farm Management Settings")
-    company = settings.default_company or frappe.defaults.get_user_default("Company") or frappe.db.get_single_value(
+    company = company or settings.default_company or frappe.defaults.get_user_default("Company") or frappe.db.get_single_value(
         "Global Defaults", "default_company"
     )
     if not company:
@@ -1008,6 +1036,91 @@ def seed_agriculture_project_types():
         doc.insert(ignore_permissions=True)
 
 
+def repair_existing_project_contexts():
+    required_fields = (
+        "agriculture_project_type",
+        "agriculture_farm_type",
+        "managed_item_doctype",
+        "managed_crop_animal_species",
+        "biological_asset",
+        "farm",
+    )
+    if not all(frappe.db.has_column("Project", fieldname) for fieldname in required_fields):
+        return
+
+    poultry_profiles = {
+        "Broilers": "Broiler Production",
+        "Layers": "Layer Production",
+        "Road Runners": "Road Runner Production",
+    }
+    projects = frappe.get_all(
+        "Project",
+        filters={"agriculture_project_type": ["is", "set"]},
+        fields=["name", *required_fields],
+    )
+    for project in projects:
+        managed_item = project.managed_crop_animal_species
+        if not managed_item and project.biological_asset:
+            managed_item = frappe.db.get_value(
+                "Biological Asset", project.biological_asset, "managed_item"
+            )
+
+        project_type_name = project.agriculture_project_type
+        if (
+            project_type_name == "Poultry Production"
+            and managed_item in poultry_profiles
+        ):
+            project_type_name = poultry_profiles[managed_item]
+
+        project_type = frappe.db.get_value(
+            "Agriculture Project Type",
+            project_type_name,
+            ["farm_type", "managed_item"],
+            as_dict=True,
+        )
+        if not project_type:
+            continue
+        managed_item = managed_item or project_type.managed_item
+        produce_doctype = None
+        if managed_item:
+            produce_doctype = frappe.db.get_value(
+                "Farm Type Managed Item",
+                {
+                    "parent": project_type.farm_type,
+                    "parenttype": "Farm Type",
+                    "farm_produce": managed_item,
+                },
+                "farm_produce_doctype",
+            )
+
+        updates = {}
+        if project_type_name != project.agriculture_project_type:
+            updates["agriculture_project_type"] = project_type_name
+        if project.agriculture_farm_type != project_type.farm_type:
+            updates["agriculture_farm_type"] = project_type.farm_type
+        if managed_item and project.managed_crop_animal_species != managed_item:
+            updates["managed_crop_animal_species"] = managed_item
+        if produce_doctype and project.managed_item_doctype != produce_doctype:
+            updates["managed_item_doctype"] = produce_doctype
+        if updates:
+            frappe.db.set_value(
+                "Project", project.name, updates, update_modified=False
+            )
+
+        if project.farm and not frappe.db.exists(
+            "Farm Type Multiselect",
+            {
+                "parent": project.farm,
+                "parenttype": "Farm",
+                "parentfield": "farm_type",
+                "farm_type": project_type.farm_type,
+            },
+        ):
+            farm = frappe.get_doc("Farm", project.farm)
+            farm.append("farm_type", {"farm_type": project_type.farm_type})
+            farm.save(ignore_permissions=True)
+
+
 def get_fixture_sort_key(fixture_path):
     try:
         return FIXTURE_LOAD_ORDER.index(fixture_path.name)
@@ -1113,6 +1226,7 @@ def retire_legacy_flat_farm_types():
         "Road Runners",
         "Turkey",
         "Ducks",
+        "Fruit Production",
     ]
     for name in legacy_names:
         if frappe.db.exists("Farm Type", name):
@@ -1249,10 +1363,13 @@ def seed_missing_crop_types():
 
 
 def normalize_managed_item_master_links():
+    doctype = "Farm Type Managed Item"
     table = "tabFarm Type Managed Item"
-    if not frappe.db.table_exists(table) or not frappe.db.has_column(table, "farm_produce"):
+    if not frappe.db.table_exists(doctype) or not frappe.db.has_column(
+        doctype, "farm_produce"
+    ):
         return
-    if not frappe.db.has_column(table, "managed_item_name"):
+    if not frappe.db.has_column(doctype, "managed_item_name"):
         return
     activity_sql = (
         "case managed_item_type "

@@ -15,6 +15,13 @@ class FarmBudget(Document):
 
     def set_context_and_bom_items(self):
         project = apply_project_context(self)
+        if not self.budget_title:
+            self.budget_title = f"{self.project} Budget"
+        self.farm = project.farm
+        self.budget_period_start = (
+            self.budget_period_start or project.expected_start_date
+        )
+        self.budget_period_end = self.budget_period_end or project.expected_end_date
         farm = get_farm_context(self.farm)
         if project.company and project.company != farm.owner_name:
             frappe.throw("Budget Project and Farm must belong to the same Company.")

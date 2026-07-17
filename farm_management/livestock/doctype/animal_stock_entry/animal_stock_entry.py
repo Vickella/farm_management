@@ -26,6 +26,10 @@ class AnimalStockEntry(Document):
         self.set_project_defaults()
         self.validate_biological_asset()
         self.validate_standard_invoice()
+        if self.entry_type in ("Opening", "Receipt", "Birth") and flt(self.rate) <= 0:
+            frappe.throw(
+                f"Unit Cost / Rate must be greater than zero for {self.entry_type}."
+            )
         self.amount = flt(self.quantity) * flt(self.rate)
 
     def set_project_defaults(self):
@@ -140,6 +144,11 @@ class AnimalStockEntry(Document):
             frappe.throw(f"Movement Unit must match Biological Asset UOM {asset.unit}.")
         if self.entry_type in ("Issue", "Sale", "Death", "Transfer") and flt(self.quantity) > flt(asset.quantity):
             frappe.throw("Movement Quantity cannot exceed the Biological Asset quantity.")
+        if self.entry_type == "Opening" and flt(asset.quantity) > 0:
+            frappe.throw(
+                "This Biological Asset already has recognized quantity. "
+                "Use Receipt or Purchase for later additions instead of another Opening."
+            )
 
         if not self.species and asset.managed_item:
             self.species = frappe.db.get_value(
@@ -183,11 +192,13 @@ class AnimalStockEntry(Document):
         if self.journal_entry and frappe.db.exists("Journal Entry", self.journal_entry):
             journal_entry = frappe.get_doc("Journal Entry", self.journal_entry)
             if journal_entry.docstatus == 1:
+                journal_entry.flags.ignore_permissions = True
                 journal_entry.cancel()
 
         if self.capitalization and frappe.db.exists("Biological Asset Capitalization", self.capitalization):
             capitalization = frappe.get_doc("Biological Asset Capitalization", self.capitalization)
             if capitalization.docstatus == 1:
+                capitalization.flags.ignore_permissions = True
                 capitalization.cancel()
 
         if flt(self.asset_value_reduction):

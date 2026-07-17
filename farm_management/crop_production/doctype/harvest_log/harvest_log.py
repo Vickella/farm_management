@@ -8,10 +8,15 @@ class HarvestLog(Document):
     def validate(self):
         self.set_project_defaults()
         self.set_item_defaults()
+        if not self.title:
+            self.title = f"{self.project} Harvest - {self.date}"
         if flt(self.harvested_quantity) <= 0:
             frappe.throw("Harvested Quantity must be greater than zero.")
         if flt(self.harvest_fair_value) <= 0:
             frappe.throw("Harvest Fair Value must be greater than zero.")
+        self.valuation_rate = flt(self.harvest_fair_value) / flt(
+            self.harvested_quantity
+        )
         asset = validate_asset_context(self.biological_asset, farm=self.farm, project=self.project, active=True)
         validate_date_order(asset.acquisition_date, self.date, "Asset Acquisition Date", "Harvest Date")
         if self.harvest_transaction and frappe.db.exists(
@@ -106,11 +111,13 @@ class HarvestLog(Document):
         if self.harvest_transaction and frappe.db.exists("Harvest Transaction", self.harvest_transaction):
             transaction = frappe.get_doc("Harvest Transaction", self.harvest_transaction)
             if transaction.docstatus == 1:
+                transaction.flags.ignore_permissions = True
                 transaction.cancel()
         if self.biological_asset_valuation and frappe.db.exists(
             "Biological Asset Valuation", self.biological_asset_valuation
         ):
             valuation = frappe.get_doc("Biological Asset Valuation", self.biological_asset_valuation)
             if valuation.docstatus == 1:
+                valuation.flags.ignore_permissions = True
                 valuation.cancel()
         self.db_set("status", "Cancelled", update_modified=False)

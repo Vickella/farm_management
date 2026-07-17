@@ -32,6 +32,7 @@ class FarmCashbook(Document):
             return
         journal_entry = frappe.get_doc("Journal Entry", self.journal_entry)
         if journal_entry.docstatus == 1:
+            journal_entry.flags.ignore_permissions = True
             journal_entry.cancel()
 
     def validate_entry(self, row):

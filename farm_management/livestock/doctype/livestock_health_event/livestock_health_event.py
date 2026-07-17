@@ -10,6 +10,7 @@ from farm_management.biological_assets.valuation import (
 
 class LivestockHealthEvent(Document):
     def validate(self):
+        self.validate_worker_accounting_boundary()
         self.validate_capitalization_immutability()
         animal = frappe.db.get_value("Livestock Individual", self.animal, ["farm", "biological_asset", "status"], as_dict=True)
         if not animal:
@@ -27,6 +28,18 @@ class LivestockHealthEvent(Document):
             frappe.throw("Product Used must be an enabled Item.")
         self.fetch_item_cost()
         self.validate_capitalization_source()
+
+    def validate_worker_accounting_boundary(self):
+        roles = set(frappe.get_roles())
+        is_worker_only = (
+            "Farm Worker" in roles
+            and "Farm Manager" not in roles
+            and "System Manager" not in roles
+        )
+        if is_worker_only and self.capitalize_cost and self.status == "Completed":
+            frappe.throw(
+                "A Farm Manager must review and complete health costs marked for capitalization."
+            )
 
     def validate_capitalization_source(self):
         if (
@@ -115,4 +128,5 @@ class LivestockHealthEvent(Document):
         if self.capitalization and frappe.db.exists("Biological Asset Capitalization", self.capitalization):
             capitalization = frappe.get_doc("Biological Asset Capitalization", self.capitalization)
             if capitalization.docstatus == 1:
+                capitalization.flags.ignore_permissions = True
                 capitalization.cancel()

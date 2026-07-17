@@ -23,7 +23,7 @@ class FarmWeatherPage {
 
 	add_farm_selector() {
 		const me = this;
-		this.page.add_field({
+		this.farm_field = this.page.add_field({
 			fieldtype: 'Link',
 			fieldname: 'farm',
 			options: 'Farm',
@@ -36,6 +36,11 @@ class FarmWeatherPage {
 				}
 			}
 		});
+		const route_farm = frappe.route_options && frappe.route_options.farm;
+		frappe.route_options = null;
+		if (route_farm) {
+			this.farm_field.set_value(route_farm);
+		}
 
 		this.page.add_button('Refresh', () => {
 			if (me.selected_farm) me.load_weather(me.selected_farm);
