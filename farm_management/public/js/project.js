@@ -18,6 +18,17 @@ frappe.ui.form.on("Project", {
         set_expected_output_item(frm);
         configure_queries(frm);
     },
+    project_quantity(frm) {
+        suggest_opening_quantity(frm);
+    },
+    create_opening_stock_entry(frm) {
+        if (frm.doc.create_opening_stock_entry) {
+            suggest_opening_quantity(frm);
+            if (!frm.doc.opening_recognition_date) {
+                frm.set_value("opening_recognition_date", frappe.datetime.get_today());
+            }
+        }
+    },
 });
 
 function set_project_guidance(frm) {
@@ -64,9 +75,29 @@ function add_farm_operation_actions(frm) {
             frappe.new_doc("Harvest Log", context);
         }, __("Farm Operations"));
     } else if (frm.doc.managed_item_doctype === "Livestock Species") {
-        frm.add_custom_button(__("Record Animal Movement"), () => {
-            frappe.new_doc("Animal Stock Entry", context);
+        if (frm.doc.opening_stock_entry) {
+            frm.add_custom_button(__("Review Opening Animal Entry"), () => {
+                frappe.set_route(
+                    "Form",
+                    "Animal Stock Entry",
+                    frm.doc.opening_stock_entry
+                );
+            }, __("Start Project"));
+        }
+        frm.add_custom_button(__("Add Animal Group / Movement"), () => {
+            frappe.new_doc("Animal Stock Entry", {
+                ...context,
+                entry_type: "Receipt",
+            });
         }, __("Farm Operations"));
+        frm.add_custom_button(__("Add Individually Tracked Animal"), () => {
+            frappe.new_doc("Livestock Individual", {
+                farm: frm.doc.farm,
+                species: frm.doc.managed_crop_animal_species,
+                breed: frm.doc.animal_breed,
+                biological_asset: frm.doc.biological_asset,
+            });
+        }, __("Livestock Records"));
     }
 
     if (frm.doc.biological_asset) {
@@ -115,7 +146,21 @@ async function load_managed_context(frm, use_default) {
     } else if (use_default && options.length === 1) {
         await frm.set_value("managed_crop_animal_species", options[0]);
     }
+    if (context.doctype === "Livestock Species") {
+        suggest_opening_quantity(frm);
+    }
     await set_expected_output_item(frm);
+}
+
+function suggest_opening_quantity(frm) {
+    if (
+        frm.doc.managed_item_doctype === "Livestock Species"
+        && !frm.doc.opening_stock_entry
+        && !frm.doc.opening_quantity
+        && frm.doc.project_quantity
+    ) {
+        frm.set_value("opening_quantity", frm.doc.project_quantity);
+    }
 }
 
 async function set_expected_output_item(frm) {

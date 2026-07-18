@@ -16,6 +16,7 @@
   "asset_quantity_before",
   "asset_quantity_after",
   "asset_quantity_reduction",
+  "final_harvest",
   "unit",
   "quality_grade",
   "harvest_value",
@@ -139,6 +140,14 @@
    "fieldtype": "Float",
    "hidden": 1,
    "label": "Asset Quantity Reduction",
+   "read_only": 1
+  },
+  {
+   "default": "1",
+   "fieldname": "final_harvest",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Final Harvest",
    "read_only": 1
   },
   {

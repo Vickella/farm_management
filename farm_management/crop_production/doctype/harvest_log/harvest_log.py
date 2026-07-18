@@ -8,12 +8,24 @@ class HarvestLog(Document):
     def validate(self):
         self.set_project_defaults()
         self.set_item_defaults()
+        self.harvest_completion = self.harvest_completion or "Final"
         if not self.title:
             self.title = f"{self.project} Harvest - {self.date}"
         if flt(self.harvested_quantity) <= 0:
             frappe.throw("Harvested Quantity must be greater than zero.")
         if flt(self.harvest_fair_value) <= 0:
             frappe.throw("Harvest Fair Value must be greater than zero.")
+        if self.harvest_completion == "Partial":
+            if flt(self.remaining_crop_fair_value) <= 0:
+                frappe.throw(
+                    "Remaining Crop Fair Value must be greater than zero for a partial harvest. "
+                    "Choose Final when the crop asset is fully harvested."
+                )
+        else:
+            self.harvest_completion = "Final"
+            self.remaining_crop_fair_value = 0
+        if self.moisture_content is not None and not 0 <= flt(self.moisture_content) <= 100:
+            frappe.throw("Moisture Content must be between 0 and 100 percent.")
         self.valuation_rate = flt(self.harvest_fair_value) / flt(
             self.harvested_quantity
         )
@@ -77,6 +89,7 @@ class HarvestLog(Document):
                 "quantity_harvested": self.harvested_quantity,
                 "unit": self.harvest_uom,
                 "harvest_value": self.harvest_fair_value,
+                "final_harvest": 1 if self.harvest_completion == "Final" else 0,
                 "conversion_item": self.conversion_item,
                 "target_warehouse": self.target_warehouse,
                 "source_harvest_log": self.name,
@@ -89,17 +102,54 @@ class HarvestLog(Document):
 
     def create_harvest_valuation(self):
         asset = frappe.get_doc("Biological Asset", self.biological_asset)
-        if abs(flt(asset.net_fair_value) - flt(self.harvest_fair_value)) <= 0.01:
+        target_net_fair_value = flt(self.harvest_fair_value) + (
+            flt(self.remaining_crop_fair_value)
+            if self.harvest_completion == "Partial"
+            else 0
+        )
+        if abs(flt(asset.net_fair_value) - target_net_fair_value) <= 0.01:
             return
+        later_valuation = frappe.db.get_value(
+            "Biological Asset Valuation",
+            {
+                "biological_asset": asset.name,
+                "valuation_date": [">", self.date],
+                "docstatus": 1,
+            },
+            "name",
+            order_by="valuation_date desc",
+        )
+        if later_valuation:
+            frappe.throw(
+                f"Cancel later Biological Asset Valuation {later_valuation} before posting this harvest."
+            )
+        same_day_valuation = frappe.db.get_value(
+            "Biological Asset Valuation",
+            {
+                "biological_asset": asset.name,
+                "valuation_date": self.date,
+                "docstatus": ["<", 2],
+            },
+            ["name", "docstatus", "net_fair_value"],
+            as_dict=True,
+        )
+        if same_day_valuation:
+            frappe.throw(
+                f"Biological Asset Valuation {same_day_valuation.name} already exists on the harvest date. "
+                f"Set its Net Fair Value to {target_net_fair_value} and submit it before retrying."
+            )
         valuation = frappe.get_doc(
             {
                 "doctype": "Biological Asset Valuation",
                 "biological_asset": asset.name,
                 "valuation_date": self.date,
                 "valuation_method": "Manual Fair Value",
-                "current_fair_value": self.harvest_fair_value,
+                "current_fair_value": target_net_fair_value,
                 "cost_to_sell": 0,
-                "valuation_basis": f"Fair value at harvest from Harvest Log {self.name}",
+                "valuation_basis": (
+                    f"Fair value at harvest from Harvest Log {self.name}; "
+                    f"{self.harvest_completion.lower()} harvest"
+                ),
                 "post_journal_entry": 1,
             }
         )

@@ -19,15 +19,15 @@ class AnimalStockEntry(Document):
     def validate(self):
         if not self.posting_date:
             self.posting_date = today()
-        if flt(self.quantity) <= 0:
-            frappe.throw("Quantity must be greater than zero.")
-        validate_non_negative(self, ("rate", "amount", "sale_amount"))
 
         self.set_project_defaults()
         self.validate_biological_asset()
         self.set_batch_reference()
         self.set_invoice_item_default()
         self.validate_standard_invoice()
+        if flt(self.quantity) <= 0:
+            frappe.throw("Quantity must be greater than zero.")
+        validate_non_negative(self, ("rate", "amount", "sale_amount"))
         if self.entry_type in ("Opening", "Receipt", "Birth") and flt(self.rate) <= 0:
             frappe.throw(
                 f"Unit Cost / Rate must be greater than zero for {self.entry_type}."
@@ -47,6 +47,11 @@ class AnimalStockEntry(Document):
                 "managed_crop_animal_species",
                 "animal_breed",
                 "project_unit",
+                "project_quantity",
+                "opening_quantity",
+                "opening_unit_rate",
+                "opening_recognition_date",
+                "opening_stock_entry",
             ],
             as_dict=True,
         )
@@ -81,6 +86,32 @@ class AnimalStockEntry(Document):
             self.breed = project.animal_breed
         if not self.unit:
             self.unit = project.project_unit
+        if self.entry_type == "Opening" and not flt(self.quantity):
+            self.quantity = flt(project.opening_quantity) or flt(
+                project.project_quantity
+            )
+        if self.entry_type == "Opening" and not flt(self.rate):
+            self.rate = flt(project.opening_unit_rate)
+        if (
+            self.entry_type == "Opening"
+            and project.opening_recognition_date
+            and self.is_new()
+        ):
+            self.posting_date = project.opening_recognition_date
+        if (
+            self.entry_type == "Opening"
+            and project.opening_stock_entry
+            and project.opening_stock_entry != self.name
+        ):
+            linked_status = frappe.db.get_value(
+                "Animal Stock Entry", project.opening_stock_entry, "docstatus"
+            )
+            if linked_status is not None and linked_status < 2:
+                frappe.throw(
+                    f"Project {self.project} already has Opening Animal Entry "
+                    f"{project.opening_stock_entry}. Open that record instead of "
+                    "creating another opening."
+                )
 
     def set_batch_reference(self):
         if self.entry_type in ("Opening", "Receipt", "Purchase", "Birth"):

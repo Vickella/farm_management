@@ -194,15 +194,36 @@ class TestRepositoryContracts(unittest.TestCase):
         fields = {field["fieldname"]: field for field in harvest["fields"]}
         self.assertEqual(fields["harvest_uom"]["options"], "UOM")
         self.assertEqual(fields["conversion_item"]["options"], "Item")
+        self.assertEqual(fields["harvest_completion"]["options"], "Partial\nFinal")
+        self.assertIn("mandatory_depends_on", fields["remaining_crop_fair_value"])
         controller = (
             APP_ROOT / "crop_production" / "doctype" / "harvest_log" / "harvest_log.py"
         ).read_text(encoding="utf-8")
         self.assertIn('"doctype": "Harvest Transaction"', controller)
         self.assertIn("transaction.submit()", controller)
         self.assertIn('"Biological Asset", self.biological_asset, "output_item"', controller)
+        self.assertIn('"final_harvest"', controller)
+        self.assertIn("target_net_fair_value", controller)
         transaction = get_doctype("Harvest Transaction")
         unit = next(field for field in transaction["fields"] if field["fieldname"] == "unit")
         self.assertNotIn("fetch_from", unit)
+        transaction_controller = (
+            APP_ROOT
+            / "biological_assets"
+            / "doctype"
+            / "harvest_transaction"
+            / "harvest_transaction.py"
+        ).read_text(encoding="utf-8")
+        self.assertIn("reduce_asset_value", transaction_controller)
+        self.assertIn("self.final_harvest", transaction_controller)
+        asset_controller = (
+            APP_ROOT
+            / "biological_assets"
+            / "doctype"
+            / "biological_asset"
+            / "biological_asset.py"
+        ).read_text(encoding="utf-8")
+        self.assertIn("if self.is_new():", asset_controller)
 
     def test_every_seeded_farm_produce_has_a_preconfigured_output_item(self):
         source = (APP_ROOT / "install.py").read_text(encoding="utf-8")
@@ -321,6 +342,17 @@ class TestRepositoryContracts(unittest.TestCase):
         ias_section = install.split('"IAS 41 Biological Assets"', 1)[1].split("],", 1)[0]
         self.assertNotIn('"Biological Asset Capitalization"', ias_section)
         self.assertNotIn('"Harvest Transaction"', ias_section)
+        for card in (
+            "Farm Setup",
+            "Field Operations",
+            "Livestock Records",
+            "IAS 41 Biological Assets",
+            "Disease and Pest Intelligence",
+            "Farm Accounting, Planning and Costing",
+        ):
+            self.assertIn(f'"{card}"', install)
+        self.assertNotIn('"Farm Infrastructure"', install)
+        self.assertNotIn('"Planning and Costing"', install)
 
     def test_project_is_the_contextual_operations_home(self):
         client = (APP_ROOT / "public" / "js" / "project.js").read_text(
@@ -331,7 +363,8 @@ class TestRepositoryContracts(unittest.TestCase):
             "Plan Inputs and Resources",
             "Record Field Work",
             "Harvest Crop",
-            "Record Animal Movement",
+            "Add Animal Group / Movement",
+            "Add Individually Tracked Animal",
             "Record Valuation",
         ):
             self.assertIn(label, client)
@@ -403,6 +436,14 @@ class TestRepositoryContracts(unittest.TestCase):
             project_fields["project_quantity"].get("mandatory_depends_on")
         )
         self.assertTrue(project_fields["project_unit"].get("mandatory_depends_on"))
+        for fieldname in (
+            "opening_quantity",
+            "opening_unit_rate",
+            "opening_recognition_date",
+            "opening_stock_entry",
+            "create_opening_stock_entry",
+        ):
+            self.assertIn(fieldname, project_fields)
         install = (APP_ROOT / "install.py").read_text(encoding="utf-8")
         self.assertIn("optional_text_properties", install)
         self.assertIn('"mandatory_depends_on"', install)
@@ -414,6 +455,7 @@ class TestRepositoryContracts(unittest.TestCase):
         self.assertIn("seed_live_animal_invoice_items()", install)
         self.assertIn("repair_placeholder_livestock_asset_quantities()", install)
         self.assertIn("backfill_animal_stock_batch_references()", install)
+        self.assertIn("backfill_project_opening_contexts()", install)
 
         smoke = (APP_ROOT / "tests" / "runtime_smoke.py").read_text(
             encoding="utf-8"
@@ -423,9 +465,19 @@ class TestRepositoryContracts(unittest.TestCase):
             "animal_entries_without_asset",
             "inbound_entries_without_batch",
             "duplicate_project_assets",
+            "duplicate_project_openings",
             "project_form_metadata_issues",
         ):
             self.assertIn(diagnostic, smoke)
+        self.assertIn("run_project_onboarding_transaction_test", smoke)
+        self.assertIn("frappe.db.rollback()", smoke)
+
+        hooks = (APP_ROOT / "hooks.py").read_text(encoding="utf-8")
+        self.assertIn("sync_project_operational_records", hooks)
+        self.assertNotIn(
+            '"after_insert": "farm_management.farm_projects.agriculture_project.sync_biological_asset_for_project"',
+            hooks,
+        )
 
     def test_removed_feature_doctypes_do_not_return(self):
         removed = {

@@ -3,6 +3,9 @@ frappe.ui.form.on("Field Management", {
         frm.set_query("project", () => ({
             filters: {status: "Open", managed_item_doctype: "Crop Type"},
         }));
+        frm.set_query("item", "requirements", () => ({
+            filters: {disabled: 0},
+        }));
     },
     project(frm) {
         if (!frm.doc.project) {

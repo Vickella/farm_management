@@ -6,6 +6,7 @@ from farm_management.server_validation import get_farm_context, validate_asset_c
 from farm_management.biological_assets.valuation import (
     get_biological_asset_account,
     get_asset_valuation_snapshot,
+    reduce_asset_value,
     reduce_asset_quantity,
     restore_asset_quantity,
 )
@@ -36,6 +37,20 @@ class HarvestTransaction(Document):
                 f"Harvested Item must be the Biological Asset output Item {asset.output_item}."
             )
         if self.source_harvest_log:
+            source = frappe.db.get_value(
+                "Harvest Log",
+                self.source_harvest_log,
+                ["farm", "biological_asset", "conversion_item", "docstatus"],
+                as_dict=True,
+            )
+            if not source or source.docstatus != 1:
+                frappe.throw("Source Harvest Log must be submitted.")
+            if (
+                source.farm != self.farm
+                or source.biological_asset != self.biological_asset
+                or source.conversion_item != self.conversion_item
+            ):
+                frappe.throw("Source Harvest Log context does not match this Harvest Transaction.")
             duplicate = frappe.db.exists(
                 "Harvest Transaction",
                 {
@@ -86,21 +101,24 @@ class HarvestTransaction(Document):
     def calculate_asset_impact(self):
         asset = frappe.get_doc("Biological Asset", self.biological_asset)
         self.asset_quantity_before = flt(asset.quantity)
-        self.asset_quantity_reduction = (
-            flt(asset.quantity)
-            if asset.asset_category == "Crops in Growth"
-            else flt(self.quantity_harvested)
-        )
+        self.asset_quantity_reduction = flt(asset.quantity) if self.final_harvest else 0
         self.asset_quantity_after = max(
             flt(asset.quantity) - flt(self.asset_quantity_reduction), 0
         )
-        if asset.asset_category != "Crops in Growth" and flt(asset.quantity):
-            self.asset_value_reduction = flt(asset.net_fair_value) * flt(self.quantity_harvested) / flt(asset.quantity)
-        else:
+        if self.final_harvest:
             self.asset_value_reduction = flt(asset.net_fair_value)
+        else:
+            self.asset_value_reduction = flt(self.harvest_value)
+            if self.asset_value_reduction <= 0:
+                frappe.throw("Harvest Value must be greater than zero for a partial harvest.")
+            if self.asset_value_reduction >= flt(asset.net_fair_value) - 0.005:
+                frappe.throw(
+                    "A partial harvest must leave a positive carrying value on the crop Biological Asset. "
+                    "Choose Final if no crop value remains."
+                )
         if not self.harvest_value:
             self.harvest_value = self.asset_value_reduction
-        if abs(flt(self.harvest_value) - flt(self.asset_value_reduction)) > 0.01:
+        if self.final_harvest and abs(flt(self.harvest_value) - flt(self.asset_value_reduction)) > 0.01:
             frappe.throw(
                 "Harvest Value must equal the Biological Asset carrying value being transferred. "
                 "Submit a Biological Asset Valuation first if fair value changed at harvest."
@@ -112,12 +130,20 @@ class HarvestTransaction(Document):
             get_asset_valuation_snapshot(self.biological_asset),
             update_modified=False,
         )
-        self.asset_value_reduction = reduce_asset_quantity(
-            self.biological_asset,
-            self.asset_quantity_reduction,
-            source_doctype=self.doctype,
-            source_name=self.name,
-        )
+        if self.final_harvest:
+            self.asset_value_reduction = reduce_asset_quantity(
+                self.biological_asset,
+                self.asset_quantity_reduction,
+                source_doctype=self.doctype,
+                source_name=self.name,
+            )
+        else:
+            self.asset_value_reduction = reduce_asset_value(
+                self.biological_asset,
+                self.harvest_value,
+                source_doctype=self.doctype,
+                source_name=self.name,
+            )
         if self.conversion_item and not self.stock_entry:
             asset = frappe.get_doc("Biological Asset", self.biological_asset)
             biological_asset_account = get_biological_asset_account(asset)

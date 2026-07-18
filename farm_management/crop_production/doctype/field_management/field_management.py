@@ -19,10 +19,12 @@ class FieldManagement(Document):
             if flt(row.quantity) <= 0:
                 frappe.throw(f"Requirement quantity must be greater than zero on row {row.idx}.")
             item = frappe.db.get_value(
-                "Item", row.item, ["stock_uom", "valuation_rate"], as_dict=True
+                "Item", row.item, ["stock_uom", "valuation_rate", "disabled"], as_dict=True
             )
-            if not item:
-                frappe.throw(f"Select a valid Item on requirement row {row.idx}.")
+            if not item or item.disabled:
+                frappe.throw(f"Select an enabled Item on requirement row {row.idx}.")
+            if not item.stock_uom:
+                frappe.throw(f"Requirement Item on row {row.idx} must have a Stock UOM.")
             row.uom = item.stock_uom
             if not flt(row.valuation_rate):
                 row.valuation_rate = flt(item.valuation_rate)

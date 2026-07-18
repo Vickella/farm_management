@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 
 import frappe
-from frappe.utils import flt
+from frappe.utils import flt, today
 
 
 FIXTURE_UNIQUE_FIELDS = {
@@ -229,13 +229,6 @@ WORKSPACE_GROUPS = [
         ],
     ),
     (
-        "Farm Infrastructure",
-        [
-            ("Farm Pen", "DocType"),
-            ("Fowl Run", "DocType"),
-        ],
-    ),
-    (
         "Livestock Records",
         [
             ("Animal Stock Entry", "DocType"),
@@ -244,6 +237,8 @@ WORKSPACE_GROUPS = [
             ("Livestock Breed", "DocType"),
             ("Livestock Health Event", "DocType"),
             ("Livestock Breeding Record", "DocType"),
+            ("Farm Pen", "DocType"),
+            ("Fowl Run", "DocType"),
         ],
     ),
     (
@@ -261,17 +256,12 @@ WORKSPACE_GROUPS = [
         [("Disease Incident", "DocType"), ("Animal Disease", "DocType"), ("Pest", "DocType")],
     ),
     (
-        "Planning and Costing",
+        "Farm Accounting, Planning and Costing",
         [
             ("Farm BOM", "DocType"),
             ("Farm Budget", "DocType"),
-            ("Farm Budget Variance Analysis", "Report"),
-        ],
-    ),
-    (
-        "Farm Accounting",
-        [
             ("Farm Cashbook", "DocType"),
+            ("Farm Budget Variance Analysis", "Report"),
             ("Profit and Loss Statement", "Report"),
             ("Accounts Receivable Summary", "Report"),
             ("Accounts Payable Summary", "Report"),
@@ -283,8 +273,8 @@ WORKSPACE_GROUPS = [
 
 WORKSPACE_SHORTCUTS = [
     "Farm",
-    ("Farm Weather", "Page", "farm-weather"),
     "Project",
+    ("Farm Weather", "Page", "farm-weather"),
     "Farm Activity",
     "Animal Stock Entry",
     "Harvest Log",
@@ -368,6 +358,7 @@ def apply_phase2_updates():
     configure_farm_output_items()
     repair_existing_project_contexts()
     repair_placeholder_livestock_asset_quantities()
+    backfill_project_opening_contexts()
     backfill_animal_stock_batch_references()
     configure_farm_output_items()
     seed_pests()
@@ -1196,6 +1187,92 @@ def repair_placeholder_livestock_asset_quantities():
                 asset.name,
                 {"quantity": 0, "previous_quantity": 0},
                 update_modified=False,
+            )
+
+
+def backfill_project_opening_contexts():
+    required_fields = (
+        "opening_quantity",
+        "opening_unit_rate",
+        "opening_recognition_date",
+        "opening_stock_entry",
+        "create_opening_stock_entry",
+    )
+    if not all(frappe.db.has_column("Project", field) for field in required_fields):
+        return
+
+    projects = frappe.get_all(
+        "Project",
+        filters={
+            "managed_item_doctype": "Livestock Species",
+            "biological_asset": ["is", "set"],
+        },
+        fields=[
+            "name",
+            "project_quantity",
+            "expected_start_date",
+            "biological_asset",
+            *required_fields,
+        ],
+    )
+    for project in projects:
+        opening_entry = frappe.db.get_value(
+            "Animal Stock Entry",
+            {
+                "project": project.name,
+                "biological_asset": project.biological_asset,
+                "entry_type": "Opening",
+                "docstatus": ["<", 2],
+            },
+            ["name", "docstatus", "quantity", "rate", "posting_date"],
+            as_dict=True,
+            order_by="posting_date asc, creation asc",
+        )
+        updates = {}
+        if opening_entry:
+            if not project.opening_stock_entry:
+                updates["opening_stock_entry"] = opening_entry.name
+            if not flt(project.opening_quantity):
+                updates["opening_quantity"] = opening_entry.quantity
+            if not flt(project.opening_unit_rate):
+                updates["opening_unit_rate"] = opening_entry.rate
+            if not project.opening_recognition_date:
+                updates["opening_recognition_date"] = opening_entry.posting_date
+            updates["create_opening_stock_entry"] = 1
+        else:
+            asset_quantity = flt(
+                frappe.db.get_value(
+                    "Biological Asset", project.biological_asset, "quantity"
+                )
+            )
+            has_recognition = frappe.db.exists(
+                "Animal Stock Entry",
+                {
+                    "biological_asset": project.biological_asset,
+                    "docstatus": 1,
+                    "entry_type": [
+                        "in",
+                        ["Opening", "Receipt", "Purchase", "Birth"],
+                    ],
+                },
+            )
+            if (
+                not asset_quantity
+                and not has_recognition
+                and not flt(project.opening_quantity)
+                and flt(project.project_quantity)
+            ):
+                # Suggest the planned headcount for confirmation, but do not
+                # enable automatic recognition or post accounting.
+                updates["opening_quantity"] = project.project_quantity
+            if not project.opening_recognition_date:
+                updates["opening_recognition_date"] = (
+                    project.expected_start_date or today()
+                )
+
+        if updates:
+            frappe.db.set_value(
+                "Project", project.name, updates, update_modified=False
             )
 
 

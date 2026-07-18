@@ -82,12 +82,20 @@ class BiologicalAsset(Document):
             # Animal Stock Entry establishes and subsequently changes the actual count.
             "quantity": project.project_quantity if asset_category == "Crops in Growth" else 0,
             "unit": project.project_unit,
-            "initial_cost": project.initial_asset_cost,
+            "initial_cost": (
+                project.initial_asset_cost
+                if asset_category == "Crops in Growth"
+                else 0
+            ),
             "acquisition_date": project.expected_start_date,
         }
-        for fieldname, value in defaults.items():
-            if value not in (None, "") and not self.get(fieldname):
-                self.set(fieldname, value)
+        # Project values initialise a new asset only. Reapplying them on every
+        # save resurrects a fully harvested crop's hectare quantity and can
+        # overwrite legitimate operational movements.
+        if self.is_new():
+            for fieldname, value in defaults.items():
+                if value not in (None, "") and not self.get(fieldname):
+                    self.set(fieldname, value)
 
     def validate_mandatory_fields(self):
         if self.asset_category != "Crops in Growth":

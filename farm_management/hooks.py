@@ -44,8 +44,8 @@ doc_events = {
 doc_events.update({
     "Project": {
         "validate": "farm_management.farm_projects.agriculture_project.validate_agriculture_project",
-        "after_insert": "farm_management.farm_projects.agriculture_project.sync_biological_asset_for_project",
-        "on_update": "farm_management.farm_projects.agriculture_project.sync_biological_asset_for_project",
+        "after_insert": "farm_management.farm_projects.agriculture_project.sync_project_operational_records",
+        "on_update": "farm_management.farm_projects.agriculture_project.sync_project_operational_records",
     },
     "Stock Entry": {
         "on_submit": "farm_management.biological_assets.valuation.sync_project_material_issue",

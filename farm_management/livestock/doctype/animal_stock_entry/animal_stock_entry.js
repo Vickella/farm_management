@@ -16,7 +16,17 @@ frappe.ui.form.on("Animal Stock Entry", {
 		frappe.db.get_value(
 			"Project",
 			frm.doc.project,
-			["farm", "biological_asset", "managed_crop_animal_species", "animal_breed", "project_unit"]
+			[
+				"farm",
+				"biological_asset",
+				"managed_crop_animal_species",
+				"animal_breed",
+				"project_unit",
+				"project_quantity",
+				"opening_quantity",
+				"opening_unit_rate",
+				"opening_recognition_date"
+			]
 		).then((r) => {
 			const project = r.message || {};
 			frm.set_value("farm", project.farm || null);
@@ -24,6 +34,17 @@ frappe.ui.form.on("Animal Stock Entry", {
 			frm.set_value("species", project.managed_crop_animal_species || null);
 			frm.set_value("breed", project.animal_breed || null);
 			frm.set_value("unit", project.project_unit || null);
+			if (frm.doc.entry_type === "Opening") {
+				frm.set_value(
+					"quantity",
+					project.opening_quantity || project.project_quantity || null
+				);
+				frm.set_value("rate", project.opening_unit_rate || null);
+				frm.set_value(
+					"posting_date",
+					project.opening_recognition_date || frm.doc.posting_date
+				);
+			}
 		});
 	},
 

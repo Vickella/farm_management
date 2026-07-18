@@ -34,6 +34,7 @@ def validate_agriculture_project(doc, method=None):
             f"Select one of: {choices}."
         )
     validate_project_breed(context["doctype"], managed_item, doc.get("animal_breed"))
+    validate_project_opening_recognition(doc, context["doctype"])
     output_item = get_project_output_item(project_type, managed_item)
     if not output_item:
         frappe.throw(
@@ -43,15 +44,68 @@ def validate_agriculture_project(doc, method=None):
     doc.expected_output_item = output_item
 
     if flt(doc.get("project_quantity")) <= 0:
-        frappe.throw("Project Quantity must be greater than zero.")
+        frappe.throw("Planned Area / Capacity must be greater than zero.")
     if not doc.get("project_unit"):
-        frappe.throw("Project Unit is required.")
+        frappe.throw("Planning UOM is required.")
+    expected_unit = get_default_unit_from_farm_type(
+        get_primary_farm_activity(project_type.farm_type) or project_type.farm_type
+    )
+    if doc.project_unit != expected_unit:
+        frappe.throw(
+            f"Planning UOM for {project_type.name} must be {expected_unit}, "
+            f"not {doc.project_unit}."
+        )
     validate_date_order(
         doc.get("expected_start_date"),
         doc.get("expected_end_date"),
         "Expected Start Date",
         "Expected End Date",
     )
+
+
+def validate_project_opening_recognition(doc, managed_item_doctype):
+    for fieldname, label in (
+        ("opening_quantity", "Opening Quantity"),
+        ("opening_unit_rate", "Opening Value per Head / Bird"),
+    ):
+        if flt(doc.get(fieldname)) < 0:
+            frappe.throw(f"{label} cannot be negative.")
+
+    if managed_item_doctype != "Livestock Species":
+        if doc.get("create_opening_stock_entry"):
+            frappe.throw("Opening Animal Entry is only available for livestock or poultry Projects.")
+        return
+
+    if doc.get("opening_stock_entry") and frappe.db.exists(
+        "Animal Stock Entry", doc.opening_stock_entry
+    ):
+        entry = frappe.db.get_value(
+            "Animal Stock Entry",
+            doc.opening_stock_entry,
+            ["project", "docstatus", "quantity", "rate", "posting_date"],
+            as_dict=True,
+        )
+        if entry.project != doc.name:
+            frappe.throw("Opening Animal Entry must belong to this Project.")
+        if entry.docstatus == 1:
+            doc.create_opening_stock_entry = 1
+            doc.opening_quantity = entry.quantity
+            doc.opening_unit_rate = entry.rate
+            doc.opening_recognition_date = entry.posting_date
+
+    if not doc.get("create_opening_stock_entry"):
+        return
+    if flt(doc.get("opening_quantity")) <= 0:
+        frappe.throw("Opening Quantity must be greater than zero.")
+    if flt(doc.get("opening_unit_rate")) <= 0:
+        frappe.throw("Opening Value per Head / Bird must be greater than zero.")
+    if not doc.get("opening_recognition_date"):
+        frappe.throw("Opening Recognition Date is required.")
+
+
+def sync_project_operational_records(doc, method=None):
+    sync_biological_asset_for_project(doc, method)
+    sync_project_opening_stock_entry(doc)
 
 
 def sync_biological_asset_for_project(doc, method=None):
@@ -133,6 +187,95 @@ def sync_biological_asset_for_project(doc, method=None):
     doc.db_set("biological_asset", asset.name, update_modified=False)
 
 
+def sync_project_opening_stock_entry(doc):
+    if (
+        doc.get("managed_item_doctype") != "Livestock Species"
+        or not doc.get("biological_asset")
+    ):
+        return
+
+    linked_entry = doc.get("opening_stock_entry")
+    if linked_entry and not frappe.db.exists("Animal Stock Entry", linked_entry):
+        doc.db_set("opening_stock_entry", None, update_modified=False)
+        linked_entry = None
+
+    if not doc.get("create_opening_stock_entry"):
+        if linked_entry:
+            entry_status = frappe.db.get_value(
+                "Animal Stock Entry", linked_entry, "docstatus"
+            )
+            if entry_status == 0:
+                frappe.delete_doc(
+                    "Animal Stock Entry",
+                    linked_entry,
+                    ignore_permissions=True,
+                )
+                doc.db_set("opening_stock_entry", None, update_modified=False)
+            elif entry_status == 2:
+                doc.db_set("opening_stock_entry", None, update_modified=False)
+        return
+
+    if linked_entry:
+        entry = frappe.get_doc("Animal Stock Entry", linked_entry)
+        if entry.docstatus == 1:
+            return
+        if entry.docstatus == 2:
+            frappe.throw(
+                "The linked Opening Animal Entry is cancelled. Amend it or clear "
+                "Prepare Opening Animal Entry before continuing."
+            )
+    else:
+        linked_entry = frappe.db.get_value(
+            "Animal Stock Entry",
+            {
+                "project": doc.name,
+                "biological_asset": doc.biological_asset,
+                "entry_type": "Opening",
+                "docstatus": 0,
+            },
+            "name",
+        )
+        if linked_entry:
+            entry = frappe.get_doc("Animal Stock Entry", linked_entry)
+        else:
+            recognized_entry = frappe.db.get_value(
+                "Animal Stock Entry",
+                {
+                    "biological_asset": doc.biological_asset,
+                    "docstatus": 1,
+                    "entry_type": [
+                        "in",
+                        ["Opening", "Receipt", "Purchase", "Birth"],
+                    ],
+                },
+                "name",
+            )
+            if recognized_entry:
+                frappe.throw(
+                    f"Biological Asset {doc.biological_asset} already has recognized "
+                    f"animals through {recognized_entry}. Add later animals using "
+                    "Receipt, Purchase, or Birth instead of preparing an opening entry."
+                )
+            entry = frappe.new_doc("Animal Stock Entry")
+            entry.entry_type = "Opening"
+
+    entry.project = doc.name
+    entry.farm = doc.farm
+    entry.biological_asset = doc.biological_asset
+    entry.species = doc.managed_crop_animal_species
+    entry.breed = doc.get("animal_breed")
+    entry.quantity = doc.opening_quantity
+    entry.unit = doc.project_unit
+    entry.rate = doc.opening_unit_rate
+    entry.posting_date = doc.opening_recognition_date
+    if entry.is_new():
+        entry.insert(ignore_permissions=True)
+    else:
+        entry.save(ignore_permissions=True)
+    if doc.get("opening_stock_entry") != entry.name:
+        doc.db_set("opening_stock_entry", entry.name, update_modified=False)
+
+
 def get_project_asset_profile(doc):
     project_type = get_agriculture_project_type(doc.get("agriculture_project_type"))
     if project_type:
@@ -152,7 +295,13 @@ def get_project_asset_profile(doc):
             "quantity": quantity,
             "unit": doc.get("project_unit") or get_default_unit_from_farm_type(farm_category),
             "acquisition_date": doc.get("expected_start_date") or today(),
-            "initial_cost": flt(doc.get("initial_asset_cost")),
+            # Livestock is recognized through the reviewable opening Animal
+            # Stock Entry, never silently through Project save.
+            "initial_cost": (
+                flt(doc.get("initial_asset_cost"))
+                if get_asset_category_from_farm_type(farm_category) == "Crops in Growth"
+                else 0
+            ),
         }
 
     return None

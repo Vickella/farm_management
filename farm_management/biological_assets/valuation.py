@@ -422,6 +422,36 @@ def reduce_asset_quantity(biological_asset, quantity, source_doctype=None, sourc
     return value_before - flt(asset.net_fair_value)
 
 
+def reduce_asset_value(biological_asset, amount, source_doctype=None, source_name=None):
+    """Transfer harvested produce value while leaving crop area and status active."""
+    amount = flt(amount)
+    if not biological_asset or amount <= 0:
+        return 0
+
+    asset = frappe.get_doc("Biological Asset", biological_asset)
+    if asset.asset_category != "Crops in Growth":
+        frappe.throw("Partial value-only harvests are only valid for crops in growth.")
+    if amount >= flt(asset.net_fair_value) - 0.005:
+        frappe.throw("Partial harvest value must be less than the crop carrying value.")
+
+    value_before = flt(asset.net_fair_value)
+    asset.current_fair_value = flt(asset.current_fair_value) - amount
+    asset.recalculate_valuation()
+    asset.last_valuation_date = today()
+    asset.add_comment(
+        "Info",
+        get_capitalization_comment(
+            0,
+            source_doctype,
+            source_name,
+            "Partial harvest value transferred; crop area remains in growth",
+            0,
+        ),
+    )
+    asset.save(ignore_permissions=True)
+    return value_before - flt(asset.net_fair_value)
+
+
 def get_asset_valuation_snapshot(biological_asset):
     asset = frappe.get_doc("Biological Asset", biological_asset)
     return frappe.as_json(
@@ -454,7 +484,7 @@ def restore_asset_quantity(
     valuation_snapshot=None,
 ):
     quantity = flt(quantity)
-    if not biological_asset or not quantity:
+    if not biological_asset:
         return
 
     asset = frappe.get_doc("Biological Asset", biological_asset)
@@ -494,6 +524,9 @@ def restore_asset_quantity(
                 snapshot["last_valuation_date"],
                 update_modified=False,
             )
+        return
+
+    if not quantity:
         return
 
     asset.quantity = flt(asset.quantity) + quantity

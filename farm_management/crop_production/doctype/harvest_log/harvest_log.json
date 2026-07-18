@@ -17,6 +17,8 @@
   "harvested_quantity",
   "harvest_uom",
   "harvest_fair_value",
+  "harvest_completion",
+  "remaining_crop_fair_value",
   "valuation_rate",
   "moisture_content",
   "col_break_2",
@@ -116,6 +118,23 @@
    "label": "Total Harvest Fair Value",
    "description": "Total IAS 41 fair value of the harvested produce at the harvest date.",
    "reqd": 1
+  },
+  {
+   "default": "Final",
+   "description": "Use Partial for repeat-pick crops or staged harvesting. A final harvest closes the crop Biological Asset.",
+   "fieldname": "harvest_completion",
+   "fieldtype": "Select",
+   "label": "Harvest Completion",
+   "options": "Partial\nFinal",
+   "reqd": 1
+  },
+  {
+   "depends_on": "eval:doc.harvest_completion=='Partial'",
+   "description": "IAS 41 fair value of the unharvested crop that remains in growth after this harvest.",
+   "fieldname": "remaining_crop_fair_value",
+   "fieldtype": "Currency",
+   "label": "Remaining Crop Fair Value",
+   "mandatory_depends_on": "eval:doc.harvest_completion=='Partial'"
   },
   {
    "fieldname": "valuation_rate",
