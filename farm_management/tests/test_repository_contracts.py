@@ -93,6 +93,18 @@ class TestRepositoryContracts(unittest.TestCase):
         self.assertIn("run_fresh_master_seed_transaction_test", runtime_smoke)
         self.assertIn("second_seed_duplicate_rows", runtime_smoke)
 
+        modules = {
+            row.strip()
+            for row in (APP_ROOT / "modules.txt").read_text(encoding="utf-8").splitlines()
+            if row.strip()
+        }
+        custom_fields = json.loads(
+            (REPO_ROOT / "fixtures" / "custom_field.json").read_text(encoding="utf-8")
+        )
+        fixture_modules = {row.get("module") for row in custom_fields if row.get("module")}
+        self.assertTrue(fixture_modules <= modules)
+        self.assertEqual(fixture_modules, {"Farm Setup"})
+
     def test_master_selection_fields_are_links(self):
         expected = {
             ("Farm Pen", "managed_species"): ("Link", "Livestock Species"),

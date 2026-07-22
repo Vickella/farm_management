@@ -2,7 +2,7 @@
   {
     "doctype": "Custom Field",
     "dt": "Project",
-    "module": "Farm Management",
+    "module": "Farm Setup",
     "fieldname": "section_break_agriculture_details",
     "fieldtype": "Section Break",
     "label": "Agriculture Details",
@@ -12,7 +12,7 @@
   {
     "doctype": "Custom Field",
     "dt": "Project",
-    "module": "Farm Management",
+    "module": "Farm Setup",
     "fieldname": "agriculture_project_type",
     "fieldtype": "Link",
     "label": "Agriculture Project Type",
@@ -22,7 +22,7 @@
   {
     "doctype": "Custom Field",
     "dt": "Project",
-    "module": "Farm Management",
+    "module": "Farm Setup",
     "fieldname": "agriculture_farm_type",
     "fieldtype": "Link",
     "label": "Farm Type",
@@ -35,7 +35,7 @@
   {
     "doctype": "Custom Field",
     "dt": "Project",
-    "module": "Farm Management",
+    "module": "Farm Setup",
     "fieldname": "managed_item_doctype",
     "fieldtype": "Link",
     "label": "Managed Produce Type",
@@ -48,7 +48,7 @@
   {
     "doctype": "Custom Field",
     "dt": "Project",
-    "module": "Farm Management",
+    "module": "Farm Setup",
     "fieldname": "managed_crop_animal_species",
     "fieldtype": "Dynamic Link",
     "label": "Managed Crop / Animal / Species",
@@ -60,7 +60,7 @@
   {
     "doctype": "Custom Field",
     "dt": "Project",
-    "module": "Farm Management",
+    "module": "Farm Setup",
     "fieldname": "expected_output_item",
     "fieldtype": "Link",
     "label": "Expected Output Item",
@@ -73,7 +73,7 @@
   {
     "doctype": "Custom Field",
     "dt": "Project",
-    "module": "Farm Management",
+    "module": "Farm Setup",
     "fieldname": "animal_breed",
     "fieldtype": "Link",
     "label": "Breed",
@@ -84,7 +84,7 @@
   {
     "doctype": "Custom Field",
     "dt": "Project",
-    "module": "Farm Management",
+    "module": "Farm Setup",
     "fieldname": "project_quantity",
     "fieldtype": "Float",
     "label": "Planned Area / Capacity",
@@ -96,7 +96,7 @@
   {
     "doctype": "Custom Field",
     "dt": "Project",
-    "module": "Farm Management",
+    "module": "Farm Setup",
     "fieldname": "project_unit",
     "fieldtype": "Link",
     "label": "Planning UOM",
@@ -108,7 +108,7 @@
   {
     "doctype": "Custom Field",
     "dt": "Project",
-    "module": "Farm Management",
+    "module": "Farm Setup",
     "fieldname": "initial_asset_cost",
     "fieldtype": "Currency",
     "label": "Legacy Opening Asset Value",
@@ -120,7 +120,7 @@
   {
     "doctype": "Custom Field",
     "dt": "Project",
-    "module": "Farm Management",
+    "module": "Farm Setup",
     "fieldname": "farm",
     "fieldtype": "Link",
     "label": "Farm",
@@ -132,7 +132,7 @@
   {
     "doctype": "Custom Field",
     "dt": "Project",
-    "module": "Farm Management",
+    "module": "Farm Setup",
     "fieldname": "section_break_opening_recognition",
     "fieldtype": "Section Break",
     "label": "Opening Livestock Recognition",
@@ -143,7 +143,7 @@
   {
     "doctype": "Custom Field",
     "dt": "Project",
-    "module": "Farm Management",
+    "module": "Farm Setup",
     "fieldname": "create_opening_stock_entry",
     "fieldtype": "Check",
     "label": "Prepare Opening Animal Entry",
@@ -155,7 +155,7 @@
   {
     "doctype": "Custom Field",
     "dt": "Project",
-    "module": "Farm Management",
+    "module": "Farm Setup",
     "fieldname": "opening_quantity",
     "fieldtype": "Float",
     "label": "Opening Quantity",
@@ -167,7 +167,7 @@
   {
     "doctype": "Custom Field",
     "dt": "Project",
-    "module": "Farm Management",
+    "module": "Farm Setup",
     "fieldname": "opening_unit_rate",
     "fieldtype": "Currency",
     "label": "Opening Value per Head / Bird",
@@ -179,7 +179,7 @@
   {
     "doctype": "Custom Field",
     "dt": "Project",
-    "module": "Farm Management",
+    "module": "Farm Setup",
     "fieldname": "opening_recognition_date",
     "fieldtype": "Date",
     "label": "Opening Recognition Date",
@@ -191,7 +191,7 @@
   {
     "doctype": "Custom Field",
     "dt": "Project",
-    "module": "Farm Management",
+    "module": "Farm Setup",
     "fieldname": "opening_stock_entry",
     "fieldtype": "Link",
     "label": "Opening Animal Entry",
@@ -203,7 +203,7 @@
   {
     "doctype": "Custom Field",
     "dt": "Project",
-    "module": "Farm Management",
+    "module": "Farm Setup",
     "fieldname": "biological_asset",
     "fieldtype": "Link",
     "label": "Biological Asset",

@@ -21,6 +21,11 @@ def run():
     if missing_apps:
         frappe.throw(f"Missing required apps: {', '.join(sorted(missing_apps))}")
 
+    fixture_module_issues = []
+    for module_name in {"Farm Setup"}:
+        if not frappe.db.exists("Module Def", module_name):
+            fixture_module_issues.append(module_name)
+
     project_form_metadata_issues = []
     agriculture_section = frappe.db.get_value(
         "Custom Field",
@@ -400,6 +405,7 @@ def run():
     )
     return {
         "installed_apps": sorted(required_apps),
+        "fixture_module_issues": fixture_module_issues,
         "companies": companies,
         "reconciliation_rows": sum(len(rows) for rows in reconciliation.values()),
         "mismatches": mismatches,
@@ -422,6 +428,7 @@ def run():
             "passed"
             if not (
                 mismatches
+                or fixture_module_issues
                 or missing_output_items
                 or missing_live_animal_items
                 or unmapped_farm_produce
@@ -703,6 +710,13 @@ def run_fresh_master_seed_transaction_test():
     previous_in_migrate = getattr(frappe.flags, "in_migrate", False)
     try:
         frappe.flags.in_migrate = True
+        frappe.db.delete("Module Def", {"name": "Farm Setup"})
+        from farm_management.install import ensure_module_defs
+
+        ensure_module_defs()
+        ensure_module_defs()
+        if frappe.db.count("Module Def", {"name": "Farm Setup"}) != 1:
+            frappe.throw("Required fixture Module Def was not created idempotently.")
         frappe.db.delete(
             "Farm Type Managed Item",
             {"parenttype": "Farm Type", "parent": ["in", farm_types]},
@@ -779,6 +793,7 @@ def run_fresh_master_seed_transaction_test():
             "species": len(species_names),
             "managed_produce_rows": second_row_count,
             "second_seed_duplicate_rows": second_row_count - first_row_count,
+            "fixture_module_defs": 1,
             "rolled_back": True,
         }
     finally:

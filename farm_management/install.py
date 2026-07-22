@@ -678,7 +678,7 @@ def ensure_amendable_doctypes():
                     "no_copy": 1,
                     "print_hide": 1,
                     "insert_after": "naming_series",
-                    "module": "Farm Management",
+                    "module": "Farm Setup",
                 },
                 ignore_validate=True,
             )
@@ -1366,7 +1366,7 @@ def update_existing_fixture_record(record, existing_name):
     force_update_custom_field_type(record, existing_name)
 
     doc = frappe.get_doc(doctype, existing_name)
-    if doctype == "Custom Field" and record.get("module") == "Farm Management":
+    if doctype == "Custom Field" and record.get("module") == "Farm Setup":
         # App-owned Custom Fields must match the fixture exactly. Frappe's normal
         # setattr loop does not clear obsolete conditions omitted by a newer
         # fixture, which can make a whole section permanently inaccessible.

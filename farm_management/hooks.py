@@ -21,7 +21,7 @@ doctype_js = {
 }
 
 fixtures = [
-    {"dt": "Custom Field", "filters": [["module", "=", "Farm Management"]]},
+    {"dt": "Custom Field", "filters": [["module", "=", "Farm Setup"]]},
 ]
 
 status_sync_events = {
