@@ -3,7 +3,14 @@ from frappe.utils import flt
 from frappe.utils import today
 
 from farm_management.biological_assets.valuation import get_biological_asset_gl_reconciliation
-from farm_management.install import FARM_OUTPUT_ITEMS
+from farm_management.install import (
+    FARM_OUTPUT_ITEMS,
+    configure_farm_output_items,
+    link_managed_produce_masters_to_farm_types,
+    seed_fixture_data,
+    seed_livestock_breeds,
+    seed_missing_crop_types,
+)
 
 
 def run():
@@ -91,6 +98,31 @@ def run():
         },
         fields=["parent", "farm_produce"],
     )
+    managed_master_link_issues = []
+    for row in frappe.get_all(
+        "Farm Type Managed Item",
+        filters={
+            "parent": ["in", active_farm_types],
+            "farm_produce": ["is", "set"],
+            "farm_produce_doctype": ["in", ["Crop Type", "Livestock Species"]],
+        },
+        fields=["parent", "farm_produce_doctype", "farm_produce"],
+    ):
+        parent_field = (
+            "category" if row.farm_produce_doctype == "Crop Type" else "farm_type"
+        )
+        linked_parent = frappe.db.get_value(
+            row.farm_produce_doctype, row.farm_produce, parent_field
+        )
+        if linked_parent != row.parent:
+            managed_master_link_issues.append(
+                {
+                    "farm_type": row.parent,
+                    "produce_doctype": row.farm_produce_doctype,
+                    "produce": row.farm_produce,
+                    "linked_parent": linked_parent,
+                }
+            )
     farm_types_without_produce = [
         farm_type
         for farm_type in frappe.get_all(
@@ -379,6 +411,7 @@ def run():
         "missing_output_items": missing_output_items,
         "missing_live_animal_items": missing_live_animal_items,
         "unmapped_farm_produce": unmapped_farm_produce,
+        "managed_master_link_issues": managed_master_link_issues,
         "farm_types_without_produce": farm_types_without_produce,
         "unmapped_assets": unmapped_assets,
         "animal_entries_without_asset": animal_entries_without_asset,
@@ -392,6 +425,7 @@ def run():
                 or missing_output_items
                 or missing_live_animal_items
                 or unmapped_farm_produce
+                or managed_master_link_issues
                 or farm_types_without_produce
                 or unmapped_assets
                 or project_issues
@@ -643,4 +677,110 @@ def run_crop_lifecycle_transaction_test():
             "rolled_back": True,
         }
     finally:
+        frappe.db.rollback()
+
+
+def run_fresh_master_seed_transaction_test():
+    """Reproduce fresh master seeding twice and roll back every change."""
+    fixtures_dir = frappe.get_app_path("farm_management", "..", "fixtures")
+    farm_type_path = f"{fixtures_dir}/farm_type.json"
+    with open(farm_type_path, encoding="utf-8") as fixture_file:
+        farm_type_records = frappe.parse_json(fixture_file.read())
+
+    farm_types = [row["farm_type_name"] for row in farm_type_records]
+    crop_names = {
+        child["managed_item_name"]
+        for row in farm_type_records
+        for child in row.get("managed_items", [])
+        if child.get("managed_item_type") in ("Crop", "Other")
+    }
+    species_names = {
+        child["managed_item_name"]
+        for row in farm_type_records
+        for child in row.get("managed_items", [])
+        if child.get("managed_item_type") in ("Animal Species", "Poultry", "Apiary")
+    }
+    previous_in_migrate = getattr(frappe.flags, "in_migrate", False)
+    try:
+        frappe.flags.in_migrate = True
+        frappe.db.delete(
+            "Farm Type Managed Item",
+            {"parenttype": "Farm Type", "parent": ["in", farm_types]},
+        )
+        frappe.db.delete("Farm Type", {"name": ["in", farm_types]})
+        frappe.db.delete("Crop Type", {"name": ["in", list(crop_names)]})
+        frappe.db.delete(
+            "Livestock Species", {"name": ["in", list(species_names)]}
+        )
+
+        def rebuild_and_validate():
+            seed_missing_crop_types()
+            seed_livestock_breeds()
+            seed_fixture_data({"crop_type.json", "farm_type.json"})
+            link_managed_produce_masters_to_farm_types()
+            configure_farm_output_items()
+
+            missing_farm_types = [
+                name for name in farm_types if not frappe.db.exists("Farm Type", name)
+            ]
+            missing_crops = [
+                name for name in crop_names if not frappe.db.exists("Crop Type", name)
+            ]
+            missing_species = [
+                name
+                for name in species_names
+                if not frappe.db.exists("Livestock Species", name)
+            ]
+            link_issues = []
+            for row in frappe.get_all(
+                "Farm Type Managed Item",
+                filters={"parent": ["in", farm_types], "parenttype": "Farm Type"},
+                fields=["parent", "farm_produce_doctype", "farm_produce"],
+            ):
+                if not frappe.db.exists(row.farm_produce_doctype, row.farm_produce):
+                    link_issues.append(f"{row.parent}: missing {row.farm_produce}")
+                    continue
+                parent_field = (
+                    "category"
+                    if row.farm_produce_doctype == "Crop Type"
+                    else "farm_type"
+                )
+                if frappe.db.get_value(
+                    row.farm_produce_doctype, row.farm_produce, parent_field
+                ) != row.parent:
+                    link_issues.append(f"{row.parent}: reverse link for {row.farm_produce}")
+                if not row.farm_produce or not row.farm_produce_doctype:
+                    link_issues.append(f"{row.parent}: incomplete managed produce row")
+            if missing_farm_types or missing_crops or missing_species or link_issues:
+                frappe.throw(
+                    "Fresh master seed failed: "
+                    + frappe.as_json(
+                        {
+                            "missing_farm_types": missing_farm_types,
+                            "missing_crops": missing_crops,
+                            "missing_species": missing_species,
+                            "link_issues": link_issues,
+                        }
+                    )
+                )
+            return frappe.db.count(
+                "Farm Type Managed Item",
+                {"parent": ["in", farm_types], "parenttype": "Farm Type"},
+            )
+
+        first_row_count = rebuild_and_validate()
+        second_row_count = rebuild_and_validate()
+        if second_row_count != first_row_count:
+            frappe.throw("Repeated master seed changed the managed produce row count.")
+        return {
+            "status": "passed",
+            "farm_types": len(farm_types),
+            "crops": len(crop_names),
+            "species": len(species_names),
+            "managed_produce_rows": second_row_count,
+            "second_seed_duplicate_rows": second_row_count - first_row_count,
+            "rolled_back": True,
+        }
+    finally:
+        frappe.flags.in_migrate = previous_in_migrate
         frappe.db.rollback()

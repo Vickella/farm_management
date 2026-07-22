@@ -13,8 +13,8 @@ FIXTURE_UNIQUE_FIELDS = {
 }
 
 FIXTURE_LOAD_ORDER = [
-    "farm_type.json",
     "crop_type.json",
+    "farm_type.json",
     "farm_activity_type.json",
     "pest.json",
     "animal_disease.json",
@@ -346,7 +346,13 @@ def apply_phase2_updates():
     seed_farm_output_items()
     seed_erpnext_operational_masters()
     normalize_managed_item_master_links()
+    # Farm Type rows dynamically link to Crop Type/Livestock Species, while
+    # those masters optionally link back to Farm Type. Seed the produce side
+    # first without the circular parent, then create Farm Types and backfill.
+    seed_missing_crop_types()
+    seed_livestock_breeds()
     seed_fixture_data()
+    link_managed_produce_masters_to_farm_types()
     retire_legacy_flat_farm_types()
     normalize_existing_farm_type_links()
     seed_missing_crop_types()
@@ -935,19 +941,28 @@ def get_root_account(company, root_type):
     )
 
 
-def seed_fixture_data():
+def seed_fixture_data(fixture_names=None):
     fixtures_dir = Path(frappe.get_app_path("farm_management")).parent / "fixtures"
     if not fixtures_dir.exists():
         return
 
+    fixture_names = set(fixture_names or [])
     fixture_paths = sorted(fixtures_dir.glob("*.json"), key=get_fixture_sort_key)
     for fixture_path in fixture_paths:
+        if fixture_names and fixture_path.name not in fixture_names:
+            continue
         if fixture_path.name in EXCLUDED_INSTALL_FIXTURES:
             continue
         with fixture_path.open(encoding="utf-8") as fixture_file:
             records = json.load(fixture_file)
 
         for record in records:
+            if record.get("doctype") == "Crop Type":
+                # Category is linked after Farm Types and their managed produce
+                # rows exist; retaining it here creates a circular fresh-install
+                # dependency that Frappe rejects during link validation.
+                record = dict(record)
+                record["category"] = None
             if record.get("doctype") == "Farm Type":
                 record = normalize_farm_type_fixture(record)
             doctype = record.get("doctype")
@@ -1545,6 +1560,16 @@ def seed_livestock_breeds():
             doc.species_group = species_group
             doc.is_active = 1
             doc.insert(ignore_permissions=True)
+        elif farm_type and frappe.db.exists("Farm Type", farm_type) and not frappe.db.get_value(
+            "Livestock Species", species_name, "farm_type"
+        ):
+            frappe.db.set_value(
+                "Livestock Species",
+                species_name,
+                "farm_type",
+                farm_type,
+                update_modified=False,
+            )
         for breed_name in breeds:
             if not frappe.db.exists("Livestock Breed", breed_name):
                 breed = frappe.new_doc("Livestock Breed")
@@ -1573,6 +1598,39 @@ def seed_missing_crop_types():
         crop.crop_name = crop_name
         crop.category = category if frappe.db.exists("Farm Type", category) else None
         crop.insert(ignore_permissions=True)
+
+
+def link_managed_produce_masters_to_farm_types():
+    """Complete circular master links only after Farm Type rows exist."""
+    if not frappe.db.table_exists("Farm Type Managed Item"):
+        return
+    for row in frappe.get_all(
+        "Farm Type Managed Item",
+        filters={
+            "parenttype": "Farm Type",
+            "farm_produce": ["is", "set"],
+            "farm_produce_doctype": ["in", ["Crop Type", "Livestock Species"]],
+        },
+        fields=["parent", "farm_produce_doctype", "farm_produce"],
+    ):
+        parent_field = (
+            "category" if row.farm_produce_doctype == "Crop Type" else "farm_type"
+        )
+        if not frappe.db.exists(row.farm_produce_doctype, row.farm_produce):
+            frappe.throw(
+                f"Farm Type {row.parent} references missing "
+                f"{row.farm_produce_doctype} {row.farm_produce}."
+            )
+        if not frappe.db.get_value(
+            row.farm_produce_doctype, row.farm_produce, parent_field
+        ):
+            frappe.db.set_value(
+                row.farm_produce_doctype,
+                row.farm_produce,
+                parent_field,
+                row.parent,
+                update_modified=False,
+            )
 
 
 def normalize_managed_item_master_links():

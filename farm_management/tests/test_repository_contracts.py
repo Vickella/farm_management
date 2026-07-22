@@ -82,6 +82,16 @@ class TestRepositoryContracts(unittest.TestCase):
     def test_transactional_bom_fixture_is_excluded(self):
         install = (APP_ROOT / "install.py").read_text(encoding="utf-8")
         self.assertIn('EXCLUDED_INSTALL_FIXTURES = {"farm_bom.json"}', install)
+        self.assertLess(
+            install.index('"crop_type.json"'), install.index('"farm_type.json"')
+        )
+        self.assertIn("link_managed_produce_masters_to_farm_types()", install)
+        self.assertIn('record["category"] = None', install)
+        runtime_smoke = (APP_ROOT / "tests" / "runtime_smoke.py").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("run_fresh_master_seed_transaction_test", runtime_smoke)
+        self.assertIn("second_seed_duplicate_rows", runtime_smoke)
 
     def test_master_selection_fields_are_links(self):
         expected = {
