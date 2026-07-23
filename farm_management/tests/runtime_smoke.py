@@ -799,3 +799,95 @@ def run_fresh_master_seed_transaction_test():
     finally:
         frappe.flags.in_migrate = previous_in_migrate
         frappe.db.rollback()
+
+
+def run_cashbook_transaction_test():
+    """Post and cancel a balanced Cashbook Journal Entry, then roll it back."""
+    try:
+        farm_row = frappe.db.get_value(
+            "Farm",
+            {"owner_name": ["is", "set"]},
+            ["name", "owner_name"],
+            as_dict=True,
+        )
+        if not farm_row:
+            frappe.throw("Cashbook acceptance test requires a Farm linked to a Company.")
+
+        accounts = frappe.get_all(
+            "Account",
+            filters={
+                "company": farm_row.owner_name,
+                "is_group": 0,
+                "disabled": 0,
+                "root_type": ["in", ["Asset", "Liability", "Equity"]],
+                "account_type": ["not in", ["Receivable", "Payable", "Stock"]],
+            },
+            fields=["name", "account_currency"],
+            order_by="name",
+        )
+        company_currency = frappe.db.get_value(
+            "Company", farm_row.owner_name, "default_currency"
+        )
+        base_currency_accounts = [
+            row for row in accounts if row.account_currency == company_currency
+        ]
+        if len(base_currency_accounts) < 2:
+            frappe.throw(
+                "Cashbook acceptance test requires two non-stock balance-sheet "
+                f"ledger accounts in {company_currency}."
+            )
+
+        cashbook = frappe.get_doc(
+            {
+                "doctype": "Farm Cashbook",
+                "date": today(),
+                "farm": farm_row.name,
+                "description": "Rollback-only balanced Cashbook acceptance test",
+                "entries": [
+                    {
+                        "account": base_currency_accounts[0].name,
+                        "debit": 25,
+                        "description": "Acceptance test debit",
+                    },
+                    {
+                        "account": base_currency_accounts[1].name,
+                        "credit": 25,
+                        "description": "Acceptance test credit",
+                    },
+                ],
+            }
+        )
+        cashbook.insert(ignore_permissions=True)
+        if (
+            flt(cashbook.total_debit) != 25
+            or flt(cashbook.total_credit) != 25
+            or flt(cashbook.difference)
+        ):
+            frappe.throw("Cashbook totals were not calculated as a balanced journal.")
+        cashbook.submit()
+        cashbook.reload()
+        journal_entry = frappe.get_doc("Journal Entry", cashbook.journal_entry)
+        if journal_entry.docstatus != 1 or len(journal_entry.accounts) != 2:
+            frappe.throw("Cashbook did not create one submitted two-line Journal Entry.")
+        if (
+            sum(flt(row.debit_in_account_currency) for row in journal_entry.accounts)
+            != 25
+            or sum(flt(row.credit_in_account_currency) for row in journal_entry.accounts)
+            != 25
+        ):
+            frappe.throw("Cashbook Journal Entry did not preserve debit/credit totals.")
+
+        cashbook.cancel()
+        journal_entry.reload()
+        if cashbook.docstatus != 2 or journal_entry.docstatus != 2:
+            frappe.throw("Cancelling Cashbook did not cancel its Journal Entry.")
+        return {
+            "status": "passed",
+            "journal_lines": 2,
+            "total_debit": 25,
+            "total_credit": 25,
+            "journal_cancelled": True,
+            "rolled_back": True,
+        }
+    finally:
+        frappe.db.rollback()

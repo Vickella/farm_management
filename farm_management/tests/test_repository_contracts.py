@@ -355,6 +355,78 @@ class TestRepositoryContracts(unittest.TestCase):
             }
             self.assertTrue(fields["status"].get("read_only"))
 
+    def test_cashbook_uses_standard_balanced_journal_lines(self):
+        cashbook = get_doctype("Farm Cashbook")
+        parent_fields = {row["fieldname"]: row for row in cashbook["fields"]}
+        self.assertEqual(parent_fields["entries"]["label"], "Journal Lines")
+        self.assertTrue({"total_debit", "total_credit", "difference"} <= parent_fields.keys())
+
+        entry = get_doctype("Farm Cashbook Entry")
+        fields = {row["fieldname"]: row for row in entry["fields"]}
+        self.assertTrue({"account", "debit", "credit", "description"} <= fields.keys())
+        self.assertFalse({"expense_type", "debit_account", "credit_account", "amount"} & fields.keys())
+        self.assertEqual(fields["account"]["columns"], 4)
+        self.assertEqual(fields["debit"]["columns"], 2)
+        self.assertEqual(fields["credit"]["columns"], 2)
+
+        controller = (
+            APP_ROOT / "accounting" / "doctype" / "farm_cashbook" / "farm_cashbook.py"
+        ).read_text(encoding="utf-8")
+        self.assertIn("Cashbook is not balanced", controller)
+        self.assertIn("cannot contain both a Debit and a Credit", controller)
+        install = (APP_ROOT / "install.py").read_text(encoding="utf-8")
+        self.assertIn("migrate_farm_cashbook_journal_lines()", install)
+        smoke = (APP_ROOT / "tests" / "runtime_smoke.py").read_text(encoding="utf-8")
+        self.assertIn("run_cashbook_transaction_test", smoke)
+
+    def test_dense_doctype_sections_use_columns(self):
+        long_fieldtypes = {
+            "Attach Image",
+            "Code",
+            "HTML",
+            "Long Text",
+            "Small Text",
+            "Table",
+            "Table MultiSelect",
+            "Text Editor",
+        }
+        issues = []
+        for path in APP_ROOT.rglob("*.json"):
+            data = json.loads(path.read_text(encoding="utf-8"))
+            if data.get("doctype") != "DocType" or data.get("istable"):
+                continue
+            fields = {row.get("fieldname"): row for row in data.get("fields", [])}
+            sections = []
+            current_label = "Main"
+            current_fields = []
+            for fieldname in data.get("field_order", []):
+                field = fields[fieldname]
+                if field.get("fieldtype") == "Section Break":
+                    if current_fields:
+                        sections.append((current_label, current_fields))
+                    current_label = field.get("label") or fieldname
+                    current_fields = []
+                elif not field.get("hidden") and field.get("fieldtype") != "Button":
+                    current_fields.append(field)
+            if current_fields:
+                sections.append((current_label, current_fields))
+
+            for label, section_fields in sections:
+                compact_fields = [
+                    field
+                    for field in section_fields
+                    if field.get("fieldtype") not in long_fieldtypes | {"Column Break"}
+                ]
+                has_column = any(
+                    field.get("fieldtype") == "Column Break"
+                    for field in section_fields
+                )
+                if len(compact_fields) >= 5 and not has_column:
+                    issues.append(f"{data['name']}: {label}")
+                if section_fields and section_fields[0].get("fieldtype") == "Column Break":
+                    issues.append(f"{data['name']}: {label} starts with a Column Break")
+        self.assertEqual([], issues)
+
     def test_workspace_contains_core_farm_accounting_reports(self):
         install = (APP_ROOT / "install.py").read_text(encoding="utf-8")
         self.assertIn('"Profit and Loss Statement", "Report"', install)

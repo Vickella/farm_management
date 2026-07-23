@@ -337,6 +337,7 @@ def after_install():
 def apply_phase2_updates():
     ensure_erpnext_dependency()
     migrate_harvest_quantity_field()
+    migrate_farm_cashbook_journal_lines()
     remove_legacy_project_custom_fields()
     remove_legacy_doctypes()
     retire_removed_fish_masters()
@@ -431,6 +432,95 @@ def migrate_harvest_quantity_field():
                 updates,
                 update_modified=False,
             )
+
+
+def migrate_farm_cashbook_journal_lines():
+    """Convert legacy paired-account rows into standard debit/credit lines."""
+    child_doctype = "Farm Cashbook Entry"
+    if not frappe.db.table_exists(child_doctype):
+        return
+    required_new_fields = ("account", "debit", "credit")
+    if not all(frappe.db.has_column(child_doctype, field) for field in required_new_fields):
+        return
+    legacy_fields = ("debit_account", "credit_account", "amount", "expense_type")
+    if not all(frappe.db.has_column(child_doctype, field) for field in legacy_fields):
+        backfill_farm_cashbook_totals()
+        return
+
+    legacy_rows = frappe.db.sql(
+        """
+        select name, parent, parenttype, parentfield, idx,
+               debit_account, credit_account, amount, expense_type,
+               project, cost_center, description
+        from `tabFarm Cashbook Entry`
+        where ifnull(account, '') = ''
+          and ifnull(debit_account, '') != ''
+          and ifnull(credit_account, '') != ''
+          and ifnull(amount, 0) > 0
+        order by parent, idx
+        """,
+        as_dict=True,
+    )
+    for legacy in legacy_rows:
+        description = legacy.description or legacy.expense_type
+        frappe.db.set_value(
+            child_doctype,
+            legacy.name,
+            {
+                "idx": (legacy.idx or 1) * 2 - 1,
+                "account": legacy.debit_account,
+                "debit": legacy.amount,
+                "credit": 0,
+                "description": description,
+            },
+            update_modified=False,
+        )
+        credit_line = frappe.new_doc(child_doctype)
+        credit_line.parent = legacy.parent
+        credit_line.parenttype = legacy.parenttype
+        credit_line.parentfield = legacy.parentfield
+        credit_line.idx = (legacy.idx or 1) * 2
+        credit_line.account = legacy.credit_account
+        credit_line.debit = 0
+        credit_line.credit = legacy.amount
+        credit_line.project = legacy.project
+        credit_line.cost_center = legacy.cost_center
+        credit_line.description = description
+        credit_line.db_insert()
+
+    backfill_farm_cashbook_totals()
+
+
+def backfill_farm_cashbook_totals():
+    if not frappe.db.table_exists("Farm Cashbook"):
+        return
+    if not all(
+        frappe.db.has_column("Farm Cashbook", field)
+        for field in ("total_debit", "total_credit", "difference")
+    ):
+        return
+    totals = frappe.db.sql(
+        """
+        select parent,
+               sum(ifnull(debit, 0)) as total_debit,
+               sum(ifnull(credit, 0)) as total_credit
+        from `tabFarm Cashbook Entry`
+        where parenttype = 'Farm Cashbook'
+        group by parent
+        """,
+        as_dict=True,
+    )
+    for total in totals:
+        frappe.db.set_value(
+            "Farm Cashbook",
+            total.parent,
+            {
+                "total_debit": flt(total.total_debit),
+                "total_credit": flt(total.total_credit),
+                "difference": flt(total.total_debit) - flt(total.total_credit),
+            },
+            update_modified=False,
+        )
 
 
 def seed_agricultural_uoms():
