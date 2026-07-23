@@ -22,7 +22,7 @@
    "options": "Account",
    "reqd": 1,
    "in_list_view": 1,
-   "columns": 4
+   "columns": 3
   },
   {
    "fieldname": "debit",
@@ -43,7 +43,7 @@
    "fieldtype": "Data",
    "label": "Description",
    "in_list_view": 1,
-   "columns": 4
+   "columns": 3
   },
   {
    "fieldname": "project",

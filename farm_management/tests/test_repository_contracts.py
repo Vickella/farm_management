@@ -360,14 +360,27 @@ class TestRepositoryContracts(unittest.TestCase):
         parent_fields = {row["fieldname"]: row for row in cashbook["fields"]}
         self.assertEqual(parent_fields["entries"]["label"], "Journal Lines")
         self.assertTrue({"total_debit", "total_credit", "difference"} <= parent_fields.keys())
+        self.assertLess(
+            cashbook["field_order"].index("entries"),
+            cashbook["field_order"].index("section_totals"),
+        )
+        self.assertLess(
+            cashbook["field_order"].index("section_totals"),
+            cashbook["field_order"].index("total_debit"),
+        )
 
         entry = get_doctype("Farm Cashbook Entry")
         fields = {row["fieldname"]: row for row in entry["fields"]}
         self.assertTrue({"account", "debit", "credit", "description"} <= fields.keys())
         self.assertFalse({"expense_type", "debit_account", "credit_account", "amount"} & fields.keys())
-        self.assertEqual(fields["account"]["columns"], 4)
+        self.assertEqual(fields["account"]["columns"], 3)
         self.assertEqual(fields["debit"]["columns"], 2)
         self.assertEqual(fields["credit"]["columns"], 2)
+        self.assertEqual(fields["description"]["columns"], 3)
+        self.assertEqual(
+            sum(fields[fieldname]["columns"] for fieldname in ("account", "debit", "credit", "description")),
+            10,
+        )
 
         controller = (
             APP_ROOT / "accounting" / "doctype" / "farm_cashbook" / "farm_cashbook.py"

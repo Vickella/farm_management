@@ -12,6 +12,7 @@
   "project",
   "section_entries",
   "entries",
+  "section_totals",
   "total_debit",
   "column_break_totals",
   "total_credit",
@@ -73,6 +74,11 @@
    "label": "Journal Lines",
    "options": "Farm Cashbook Entry",
    "reqd": 1
+  },
+  {
+   "fieldname": "section_totals",
+   "fieldtype": "Section Break",
+   "label": "Balance Check"
   },
   {
    "fieldname": "total_debit",
