@@ -12,16 +12,17 @@
   "tag_number",
   "species",
   "breed",
+  "column_break_identity",
   "sex",
   "date_of_birth",
   "age_months",
   "birth_weight_kg",
   "current_weight_kg",
-  "column_break_1",
   "section_location",
   "farm",
   "pen",
   "status",
+  "column_break_location",
   "acquisition_type",
   "acquisition_date",
   "purchase_price",
@@ -29,11 +30,13 @@
   "section_break_parentage",
   "dam",
   "sire",
+  "column_break_parentage",
   "siblings",
   "litter_size",
   "section_break_physical",
   "color_markings",
   "horn_status",
+  "column_break_physical",
   "microchip_number"
  ],
  "fields": [
@@ -114,7 +117,19 @@
    "label": "Location and Acquisition"
   },
   {
-   "fieldname": "column_break_1",
+   "fieldname": "column_break_identity",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_location",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_parentage",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_physical",
    "fieldtype": "Column Break"
   },
   {

@@ -12,7 +12,10 @@
   "project",
   "section_entries",
   "entries",
-  "total_amount",
+  "total_debit",
+  "column_break_totals",
+  "total_credit",
+  "difference",
   "section_details",
   "description",
   "journal_entry"
@@ -67,16 +70,33 @@
   {
    "fieldname": "entries",
    "fieldtype": "Table",
-   "label": "Transactions",
+   "label": "Journal Lines",
    "options": "Farm Cashbook Entry",
    "reqd": 1
   },
   {
-   "fieldname": "total_amount",
+   "fieldname": "total_debit",
    "fieldtype": "Currency",
-   "label": "Total Amount",
+   "label": "Total Debit",
    "read_only": 1,
    "in_list_view": 1
+  },
+  {
+   "fieldname": "column_break_totals",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_credit",
+   "fieldtype": "Currency",
+   "label": "Total Credit",
+   "read_only": 1
+  },
+  {
+   "fieldname": "difference",
+   "fieldtype": "Currency",
+   "label": "Difference",
+   "read_only": 1,
+   "description": "Must be zero before submission."
   },
   {
    "fieldname": "section_details",

@@ -24,6 +24,7 @@
   "quantity",
   "unit",
   "average_weight_kg",
+  "column_break_quantity_growth",
   "mortality_to_date",
   "section_valuation",
   "initial_cost",
@@ -36,9 +37,7 @@
   "last_posted_net_fair_value",
   "last_journal_entry",
   "last_valuation_date",
-  "previous_quantity",
-  "section_break_quantity",
-  "column_break_2"
+  "previous_quantity"
  ],
  "fields": [
   {
@@ -127,11 +126,6 @@
    "options": "Livestock Breed"
   },
   {
-   "fieldname": "section_break_quantity",
-   "fieldtype": "Section Break",
-   "label": "Quantity"
-  },
-  {
    "fieldname": "acquisition_date",
    "fieldtype": "Date",
    "label": "Acquisition Date",
@@ -161,10 +155,6 @@
    "fieldtype": "Float",
    "label": "Mortality To Date",
    "depends_on": "eval:doc.asset_category != 'Crops in Growth'"
-  },
-  {
-   "fieldname": "column_break_2",
-   "fieldtype": "Column Break"
   },
   {
    "fieldname": "initial_cost",
@@ -241,6 +231,10 @@
    "fieldname": "section_quantity",
    "fieldtype": "Section Break",
    "label": "Quantity and Growth"
+  },
+  {
+   "fieldname": "column_break_quantity_growth",
+   "fieldtype": "Column Break"
   },
   {
    "fieldname": "section_valuation",

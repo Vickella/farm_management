@@ -21,6 +21,7 @@
   "actual_cost",
   "capitalizable",
   "biological_asset",
+  "column_break_cost",
   "capitalization_source_doctype",
   "capitalization_source",
   "capitalization_credit_account",
@@ -96,7 +97,12 @@
   },
   {
    "fieldname": "section_break_cost",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "label": "Cost and IAS 41 Capitalization"
+  },
+  {
+   "fieldname": "column_break_cost",
+   "fieldtype": "Column Break"
   },
   {
    "fieldname": "cost_center",

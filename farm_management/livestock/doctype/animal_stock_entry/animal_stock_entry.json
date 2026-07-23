@@ -29,12 +29,15 @@
   "purchase_invoice",
   "supplier",
   "purchase_expense_account",
+  "column_break_cost",
   "sales_invoice",
   "customer",
   "sale_amount",
   "item",
+  "section_generated_accounting",
   "capitalization",
   "asset_value_reduction",
+  "column_break_generated_accounting",
   "valuation_snapshot",
   "journal_entry",
   "amended_from"
@@ -177,6 +180,19 @@
    "label": "Sale Proceeds Amount",
    "depends_on": "eval:doc.entry_type == 'Sale'",
    "read_only": 1
+  },
+  {
+   "fieldname": "column_break_cost",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_generated_accounting",
+   "fieldtype": "Section Break",
+   "label": "Generated Accounting"
+  },
+  {
+   "fieldname": "column_break_generated_accounting",
+   "fieldtype": "Column Break"
   },
   {
    "depends_on": "eval:doc.entry_type == 'Purchase'",

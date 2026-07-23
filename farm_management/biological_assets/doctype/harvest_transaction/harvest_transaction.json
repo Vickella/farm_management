@@ -12,19 +12,23 @@
   "company",
   "biological_asset",
   "harvest_date",
+  "column_break_harvest",
   "quantity_harvested",
+  "unit",
+  "quality_grade",
   "asset_quantity_before",
   "asset_quantity_after",
   "asset_quantity_reduction",
   "final_harvest",
-  "unit",
-  "quality_grade",
+  "section_valuation",
   "harvest_value",
+  "column_break_valuation",
   "asset_value_reduction",
   "valuation_snapshot",
   "section_stock",
   "conversion_item",
   "target_warehouse",
+  "column_break_stock",
   "stock_entry"
   ,"source_harvest_log"
  ],
@@ -87,6 +91,10 @@
    "reqd": 1
   },
   {
+   "fieldname": "column_break_harvest",
+   "fieldtype": "Column Break"
+  },
+  {
    "fieldname": "asset_quantity_before",
    "fieldtype": "Float",
    "label": "Asset Quantity Before",
@@ -130,6 +138,15 @@
    "label": "Harvest Value"
   },
   {
+   "fieldname": "section_valuation",
+   "fieldtype": "Section Break",
+   "label": "IAS 41 Value Transfer"
+  },
+  {
+   "fieldname": "column_break_valuation",
+   "fieldtype": "Column Break"
+  },
+  {
    "fieldname": "asset_value_reduction",
    "fieldtype": "Currency",
    "label": "Asset Value Reduction",
@@ -161,6 +178,10 @@
    "fieldname": "section_stock",
    "fieldtype": "Section Break",
    "label": "Stock Conversion"
+  },
+  {
+   "fieldname": "column_break_stock",
+   "fieldtype": "Column Break"
   },
   {
    "fieldname": "source_harvest_log",

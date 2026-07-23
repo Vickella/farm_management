@@ -10,6 +10,7 @@
   "naming_series",
   "dam",
   "sire",
+  "column_break_mating",
   "farm",
   "mating_date",
   "mating_method",
@@ -27,6 +28,10 @@
    "fieldname": "section_mating",
    "fieldtype": "Section Break",
    "label": "Mating"
+  },
+  {
+   "fieldname": "column_break_mating",
+   "fieldtype": "Column Break"
   },
   {
    "fieldname": "naming_series",

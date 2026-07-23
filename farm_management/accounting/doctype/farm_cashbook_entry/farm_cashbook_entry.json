@@ -5,49 +5,45 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "expense_type",
-  "debit_account",
-  "credit_account",
-  "amount",
+  "account",
+  "debit",
+  "credit",
+  "description",
   "project",
   "cost_center",
-  "description"
+  "party_type",
+  "party"
  ],
  "fields": [
   {
-   "fieldname": "expense_type",
-   "fieldtype": "Select",
-   "label": "Transaction Type",
-   "in_list_view": 1,
-   "columns": 2,
-   "options": "Fuel and Lubricants\nSeed and Planting Materials\nFertilizer and Soil Amendments\nChemicals and Pesticides\nAnimal Feed\nVeterinary and Medication\nLabour and Wages\nMachinery Repairs and Maintenance\nIrrigation and Water\nElectricity and Utilities\nTransport and Logistics\nPackaging and Storage\nEquipment and Tools\nLand Preparation\nHarvesting Costs\nInsurance\nLicences and Levies\nProfessional Fees\nSales Income\nOther Income\nOther Expense",
-   "reqd": 1
-  },
-  {
-   "fieldname": "debit_account",
+   "fieldname": "account",
    "fieldtype": "Link",
-   "label": "Debit Account",
+   "label": "Account",
    "options": "Account",
    "reqd": 1,
    "in_list_view": 1,
-   "columns": 2
+   "columns": 4
   },
   {
-   "fieldname": "credit_account",
-   "fieldtype": "Link",
-   "label": "Credit Account",
-   "options": "Account",
-   "reqd": 1,
-   "in_list_view": 1,
-   "columns": 2
-  },
-  {
-   "fieldname": "amount",
+   "fieldname": "debit",
    "fieldtype": "Currency",
-   "label": "Amount",
-   "reqd": 1,
+   "label": "Debit",
    "in_list_view": 1,
-   "columns": 1
+   "columns": 2
+  },
+  {
+   "fieldname": "credit",
+   "fieldtype": "Currency",
+   "label": "Credit",
+   "in_list_view": 1,
+   "columns": 2
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Data",
+   "label": "Description",
+   "in_list_view": 1,
+   "columns": 4
   },
   {
    "fieldname": "project",
@@ -62,11 +58,16 @@
    "options": "Cost Center"
   },
   {
-   "fieldname": "description",
-   "fieldtype": "Small Text",
-   "label": "Description",
-   "in_list_view": 1,
-   "columns": 2
+   "fieldname": "party_type",
+   "fieldtype": "Link",
+   "label": "Party Type",
+   "options": "DocType"
+  },
+  {
+   "fieldname": "party",
+   "fieldtype": "Dynamic Link",
+   "label": "Party",
+   "options": "party_type"
   }
  ],
  "istable": 1,

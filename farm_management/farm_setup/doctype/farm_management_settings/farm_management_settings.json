@@ -8,14 +8,17 @@
   "section_accounting",
   "default_company",
   "default_cost_center",
+  "column_break_accounting",
   "default_harvest_warehouse",
   "section_biological_asset_sales",
   "biological_asset_sales_receivable_account",
   "biological_asset_sales_income_account",
+  "column_break_biological_asset_sales",
   "biological_asset_cost_of_sales_account",
   "section_break_flags",
   "enable_auto_activity_generation",
   "enable_fair_value_scheduler",
+  "column_break_automation",
   "auto_post_fair_value_journals",
   "section_break_weather",
   "weather_api_key",
@@ -46,6 +49,10 @@
    "options": "Warehouse"
   },
   {
+   "fieldname": "column_break_accounting",
+   "fieldtype": "Column Break"
+  },
+  {
    "fieldname": "section_biological_asset_sales",
    "fieldtype": "Section Break",
    "label": "Biological Asset Sales"
@@ -69,6 +76,10 @@
    "options": "Account"
   },
   {
+   "fieldname": "column_break_biological_asset_sales",
+   "fieldtype": "Column Break"
+  },
+  {
    "fieldname": "section_break_flags",
    "fieldtype": "Section Break",
    "label": "Automation"
@@ -90,6 +101,10 @@
    "fieldname": "auto_post_fair_value_journals",
    "fieldtype": "Check",
    "label": "Auto-post Fair Value Journals"
+  },
+  {
+   "fieldname": "column_break_automation",
+   "fieldtype": "Column Break"
   },
   {
    "fieldname": "section_break_weather",
