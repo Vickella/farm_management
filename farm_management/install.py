@@ -212,29 +212,34 @@ WORKSPACE_GROUPS = [
             ("Farm", "DocType"),
             ("Farm Type", "DocType"),
             ("Agriculture Project Type", "DocType"),
-            ("Crop Type", "DocType"),
-            ("Project", "DocType"),
             ("Farm Management Settings", "DocType"),
             ("Farm Weather", "Page", "farm-weather"),
         ],
     ),
     (
-        "Field Operations",
+        "Production Configuration",
         [
+            ("Crop Type", "DocType"),
+            ("Livestock Species", "DocType"),
+            ("Livestock Breed", "DocType"),
+            ("Farm Activity Type", "DocType"),
+        ],
+    ),
+    (
+        "Crop Operations",
+        [
+            ("Project", "DocType"),
             ("Farm Field", "DocType"),
             ("Field Management", "DocType"),
-            ("Farm Activity Type", "DocType"),
             ("Farm Activity", "DocType"),
             ("Harvest Log", "DocType"),
         ],
     ),
     (
-        "Livestock Records",
+        "Livestock Operations",
         [
             ("Animal Stock Entry", "DocType"),
             ("Livestock Individual", "DocType"),
-            ("Livestock Species", "DocType"),
-            ("Livestock Breed", "DocType"),
             ("Livestock Health Event", "DocType"),
             ("Livestock Breeding Record", "DocType"),
             ("Farm Pen", "DocType"),
@@ -242,7 +247,11 @@ WORKSPACE_GROUPS = [
         ],
     ),
     (
-        "IAS 41 Biological Assets",
+        "Disease and Pest Intelligence",
+        [("Disease Incident", "DocType"), ("Animal Disease", "DocType"), ("Pest", "DocType")],
+    ),
+    (
+        "IAS 41 Assets and Valuation",
         [
             ("Biological Asset", "DocType"),
             ("Biological Asset Valuation", "DocType"),
@@ -252,21 +261,22 @@ WORKSPACE_GROUPS = [
         ],
     ),
     (
-        "Disease and Pest Intelligence",
-        [("Disease Incident", "DocType"), ("Animal Disease", "DocType"), ("Pest", "DocType")],
-    ),
-    (
-        "Farm Accounting, Planning and Costing",
+        "Planning and Costing",
         [
             ("Farm BOM", "DocType"),
             ("Farm Budget", "DocType"),
-            ("Farm Cashbook", "DocType"),
             ("Farm Budget Variance Analysis", "Report"),
+            ("Farm KPI Summary", "Report"),
+        ],
+    ),
+    (
+        "Accounting and Performance",
+        [
+            ("Farm Cashbook", "DocType"),
             ("Profit and Loss Statement", "Report"),
             ("Accounts Receivable Summary", "Report"),
             ("Accounts Payable Summary", "Report"),
             ("General Ledger", "Report"),
-            ("Farm KPI Summary", "Report"),
         ],
     ),
 ]
@@ -278,14 +288,12 @@ WORKSPACE_SHORTCUTS = [
     "Farm Activity",
     "Animal Stock Entry",
     "Harvest Log",
-    "Biological Asset",
+    "Biological Asset Valuation",
     "Farm Cashbook",
-    ("Farm KPI Summary", "Report"),
-    ("Profit and Loss Statement", "Report"),
 ]
 
 def get_workspace_content():
-    content = [{"id": "farm-shortcuts-header", "type": "header", "data": {"text": "Shortcuts", "col": 12}}]
+    content = [{"id": "farm-shortcuts-header", "type": "header", "data": {"text": "Quick Actions", "col": 12}}]
 
     content.extend(
         {
@@ -302,7 +310,7 @@ def get_workspace_content():
             {
                 "id": "farm-management-header",
                 "type": "header",
-                "data": {"text": "Farm Management", "col": 12},
+                "data": {"text": "Farm Operations", "col": 12},
             },
         ]
     )
@@ -311,7 +319,7 @@ def get_workspace_content():
         {
             "id": f"card-{group.lower().replace(' ', '-').replace('&', 'and')}",
             "type": "card",
-            "data": {"card_name": group, "col": 4},
+            "data": {"card_name": group, "col": 3},
         }
         for group, links in WORKSPACE_GROUPS
         if links

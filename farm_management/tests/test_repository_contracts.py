@@ -446,20 +446,61 @@ class TestRepositoryContracts(unittest.TestCase):
         self.assertIn('"Accounts Receivable Summary", "Report"', install)
         self.assertIn('"Accounts Payable Summary", "Report"', install)
         self.assertNotIn('("Poultry Infrastructure", "DocType")', install)
-        ias_section = install.split('"IAS 41 Biological Assets"', 1)[1].split("],", 1)[0]
+        ias_section = install.split('"IAS 41 Assets and Valuation"', 1)[1].split("],", 1)[0]
         self.assertNotIn('"Biological Asset Capitalization"', ias_section)
         self.assertNotIn('"Harvest Transaction"', ias_section)
         for card in (
             "Farm Setup",
-            "Field Operations",
-            "Livestock Records",
-            "IAS 41 Biological Assets",
+            "Production Configuration",
+            "Crop Operations",
+            "Livestock Operations",
             "Disease and Pest Intelligence",
-            "Farm Accounting, Planning and Costing",
+            "IAS 41 Assets and Valuation",
+            "Planning and Costing",
+            "Accounting and Performance",
         ):
             self.assertIn(f'"{card}"', install)
         self.assertNotIn('"Farm Infrastructure"', install)
-        self.assertNotIn('"Planning and Costing"', install)
+
+    def test_workspace_is_visually_balanced_and_process_focused(self):
+        install_path = APP_ROOT / "install.py"
+        install = install_path.read_text(encoding="utf-8")
+        tree = ast.parse(install)
+        constants = {}
+        for node in tree.body:
+            if not isinstance(node, ast.Assign) or len(node.targets) != 1:
+                continue
+            target = node.targets[0]
+            if isinstance(target, ast.Name) and target.id in {
+                "WORKSPACE_GROUPS",
+                "WORKSPACE_SHORTCUTS",
+            }:
+                constants[target.id] = ast.literal_eval(node.value)
+
+        groups = constants["WORKSPACE_GROUPS"]
+        shortcuts = constants["WORKSPACE_SHORTCUTS"]
+        self.assertEqual(8, len(shortcuts))
+        self.assertEqual(8, len(groups))
+        shortcut_labels = [
+            shortcut[0] if isinstance(shortcut, tuple) else shortcut
+            for shortcut in shortcuts
+        ]
+        grouped_links = [
+            link[0]
+            for _label, links in groups
+            for link in links
+        ]
+        self.assertEqual(len(shortcut_labels), len(set(shortcut_labels)))
+        self.assertEqual(len(grouped_links), len(set(grouped_links)))
+        self.assertTrue(all(3 <= len(links) <= 6 for _label, links in groups))
+        self.assertLessEqual(
+            max(len(links) for _label, links in groups)
+            - min(len(links) for _label, links in groups),
+            3,
+        )
+        self.assertIn('"text": "Quick Actions"', install)
+        self.assertIn('"data": {"shortcut_name": get_shortcut_label(shortcut), "col": 3}', install)
+        self.assertIn('"data": {"card_name": group, "col": 3}', install)
 
     def test_project_is_the_contextual_operations_home(self):
         client = (APP_ROOT / "public" / "js" / "project.js").read_text(
