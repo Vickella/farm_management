@@ -247,7 +247,7 @@ WORKSPACE_GROUPS = [
         ],
     ),
     (
-        "Disease and Pest Intelligence",
+        "Disease & Pest Control",
         [("Disease Incident", "DocType"), ("Animal Disease", "DocType"), ("Pest", "DocType")],
     ),
     (

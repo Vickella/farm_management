@@ -454,7 +454,7 @@ class TestRepositoryContracts(unittest.TestCase):
             "Production Configuration",
             "Crop Operations",
             "Livestock Operations",
-            "Disease and Pest Intelligence",
+            "Disease & Pest Control",
             "IAS 41 Assets and Valuation",
             "Planning and Costing",
             "Farm Accounting",
