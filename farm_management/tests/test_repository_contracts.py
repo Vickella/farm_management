@@ -457,7 +457,7 @@ class TestRepositoryContracts(unittest.TestCase):
             "Disease and Pest Intelligence",
             "IAS 41 Assets and Valuation",
             "Planning and Costing",
-            "Accounting and Performance",
+            "Farm Accounting",
         ):
             self.assertIn(f'"{card}"', install)
         self.assertNotIn('"Farm Infrastructure"', install)

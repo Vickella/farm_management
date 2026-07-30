@@ -270,7 +270,7 @@ WORKSPACE_GROUPS = [
         ],
     ),
     (
-        "Accounting and Performance",
+        "Farm Accounting",
         [
             ("Farm Cashbook", "DocType"),
             ("Profit and Loss Statement", "Report"),
